@@ -1,0 +1,7 @@
+allennlp>=0.8.4
+
+# Used to create grammars for parsing SQL
+parsimonious>=0.8.0
+
+# Used to format and postprocess SQL
+sqlparse>=0.2.4
