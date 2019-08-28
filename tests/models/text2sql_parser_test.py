@@ -1,7 +1,7 @@
 from allennlp.common.testing import ModelTestCase
 from allennlp.state_machines.states import GrammarStatelet
 from allennlp.models.semantic_parsing.text2sql_parser import Text2SqlParser
-from allennlp.semparse.worlds.text2sql_world import Text2SqlWorld
+from allennlp_semparse.worlds.text2sql_world import Text2SqlWorld
 
 class Text2SqlParserTest(ModelTestCase):
 
