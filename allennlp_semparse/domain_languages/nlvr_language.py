@@ -2,7 +2,8 @@ from collections import defaultdict
 from typing import Callable, Dict, List, NamedTuple, Set
 
 from allennlp.common.util import JsonDict
-from allennlp.semparse.domain_languages.domain_language import DomainLanguage, predicate
+
+from allennlp_semparse.domain_languages.domain_language import DomainLanguage, predicate
 
 
 class Object:

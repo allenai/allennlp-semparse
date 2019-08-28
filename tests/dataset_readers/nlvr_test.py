@@ -1,10 +1,11 @@
 # pylint: disable=no-self-use,invalid-name
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.data.dataset_readers import NlvrDatasetReader
-from allennlp.semparse.domain_languages import NlvrLanguage
+from .. import SemparseTestCase
+
+from allennlp_semparse.dataset_readers import NlvrDatasetReader
+from allennlp_semparse.domain_languages import NlvrLanguage
 
 
-class TestNlvrDatasetReader(AllenNlpTestCase):
+class TestNlvrDatasetReader(SemparseTestCase):
     def test_reader_reads_ungrouped_data(self):
         test_file = str(self.FIXTURES_ROOT / "data" / "nlvr" /
                         "sample_ungrouped_data.jsonl")

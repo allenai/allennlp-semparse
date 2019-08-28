@@ -1,13 +1,13 @@
 # pylint: disable=invalid-name,no-self-use,protected-access
 from flaky import flaky
 
-from allennlp.common.testing import ModelTestCase
-from allennlp.semparse.contexts.sql_context_utils import action_sequence_to_sql
+from ... import ModelTestCase
+from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import action_sequence_to_sql
 
 class AtisSemanticParserTest(ModelTestCase):
     def setUp(self):
         super(AtisSemanticParserTest, self).setUp()
-        self.set_up_model(str(self.FIXTURES_ROOT / "semantic_parsing" / "atis" / "experiment.json"),
+        self.set_up_model(str(self.FIXTURES_ROOT / "atis" / "experiment.json"),
                           str(self.FIXTURES_ROOT / "data" / "atis" / "sample.json"))
 
     @flaky

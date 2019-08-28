@@ -6,9 +6,9 @@ from typing import List, Dict
 from sqlite3 import Cursor
 
 
-from allennlp.data.dataset_readers.dataset_utils.text2sql_utils import TableColumn
-from allennlp.data.dataset_readers.dataset_utils.text2sql_utils import column_has_numeric_type
-from allennlp.data.dataset_readers.dataset_utils.text2sql_utils import column_has_string_type
+from allennlp_semparse.common.sql.text2sql_utils import TableColumn
+from allennlp_semparse.common.sql.text2sql_utils import column_has_numeric_type
+from allennlp_semparse.common.sql.text2sql_utils import column_has_string_type
 
 GRAMMAR_DICTIONARY = {}
 GRAMMAR_DICTIONARY["statement"] = ['(query ws ";")', '(query ws)']

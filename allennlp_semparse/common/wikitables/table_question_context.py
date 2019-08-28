@@ -5,8 +5,13 @@ from collections import defaultdict
 
 from unidecode import unidecode
 from allennlp.data.tokenizers import Token
-from allennlp.semparse.common import Date
-from allennlp.semparse.contexts.knowledge_graph import KnowledgeGraph
+
+from allennlp_semparse.common import (Date,
+                                      MONTH_NUMBERS,
+                                      NUMBER_CHARACTERS,
+                                      NUMBER_WORDS,
+                                      ORDER_OF_MAGNITUDE_WORDS)
+from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
 
 # == stop words that will be omitted by ContextGenerator
 STOP_WORDS = {"", "", "all", "being", "-", "over", "through", "yourselves", "its", "before",

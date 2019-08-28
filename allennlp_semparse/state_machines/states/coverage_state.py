@@ -2,12 +2,13 @@ from typing import Any, List, Sequence
 
 import torch
 
-from allennlp.data.fields.production_rule_field import ProductionRule
+from allennlp_semparse.fields.production_rule_field import ProductionRule
 from allennlp.nn import util
-from allennlp.state_machines.states.checklist_statelet import ChecklistStatelet
-from allennlp.state_machines.states.grammar_based_state import GrammarBasedState
-from allennlp.state_machines.states.grammar_statelet import GrammarStatelet
-from allennlp.state_machines.states.rnn_statelet import RnnStatelet
+
+from allennlp_semparse.state_machines.states.checklist_statelet import ChecklistStatelet
+from allennlp_semparse.state_machines.states.grammar_based_state import GrammarBasedState
+from allennlp_semparse.state_machines.states.grammar_statelet import GrammarStatelet
+from allennlp_semparse.state_machines.states.rnn_statelet import RnnStatelet
 
 
 class CoverageState(GrammarBasedState):

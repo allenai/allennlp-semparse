@@ -1,11 +1,12 @@
 # pylint: disable=invalid-name,no-self-use,protected-access
 import torch
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines import util
+from .. import SemparseTestCase
+
+from allennlp_semparse.state_machines import util
 
 
-class TestStateMachinesUtil(AllenNlpTestCase):
+class TestStateMachinesUtil(SemparseTestCase):
     def test_create_allowed_transitions(self):
         targets = torch.Tensor([[[2, 3, 4], [1, 3, 4], [1, 2, 4]], [[3, 4, 0], [2, 3, 4], [0, 0, 0]]])
         target_mask = torch.Tensor([[[1, 1, 1], [1, 1, 1], [1, 1, 1]], [[1, 1, 0], [1, 1, 1], [0, 0, 0]]])

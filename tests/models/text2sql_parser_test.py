@@ -1,14 +1,15 @@
-from allennlp.common.testing import ModelTestCase
-from allennlp.state_machines.states import GrammarStatelet
-from allennlp.models.semantic_parsing.text2sql_parser import Text2SqlParser
-from allennlp_semparse.worlds.text2sql_world import Text2SqlWorld
+from .. import ModelTestCase
+
+from allennlp_semparse.state_machines.states import GrammarStatelet
+from allennlp_semparse.models.text2sql_parser import Text2SqlParser
+from allennlp_semparse.parsimonious_languages.worlds.text2sql_world import Text2SqlWorld
 
 class Text2SqlParserTest(ModelTestCase):
 
     def setUp(self):
         super().setUp()
 
-        self.set_up_model(str(self.FIXTURES_ROOT / "semantic_parsing" / "text2sql" / "experiment.json"),
+        self.set_up_model(str(self.FIXTURES_ROOT / "text2sql" / "experiment.json"),
                           str(self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants_tiny.json"))
         self.schema = str(self.FIXTURES_ROOT / 'data' / 'text2sql' / 'restaurants-schema.csv')
 

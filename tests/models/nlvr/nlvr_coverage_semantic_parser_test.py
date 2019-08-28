@@ -3,7 +3,7 @@ from numpy.testing import assert_almost_equal
 import torch
 
 from allennlp.common import Params
-from allennlp.common.testing import ModelTestCase
+from ... import ModelTestCase
 from allennlp.data import Vocabulary
 from allennlp.data.iterators import BucketIterator
 from allennlp.models import Model
@@ -13,8 +13,7 @@ from allennlp.models.archival import load_archive
 class NlvrCoverageSemanticParserTest(ModelTestCase):
     def setUp(self):
         super(NlvrCoverageSemanticParserTest, self).setUp()
-        self.set_up_model(self.FIXTURES_ROOT / "semantic_parsing" /
-                          "nlvr_coverage_semantic_parser" / "experiment.json",
+        self.set_up_model(self.FIXTURES_ROOT / "nlvr_coverage_semantic_parser" / "experiment.json",
                           self.FIXTURES_ROOT / "data" / "nlvr" / "sample_grouped_data.jsonl")
 
     def test_model_can_train_save_and_load(self):
@@ -22,12 +21,12 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
 
     def test_ungrouped_model_can_train_save_and_load(self):
         # pylint: disable=line-too-long
-        self.ensure_model_can_train_save_and_load(self.FIXTURES_ROOT / "semantic_parsing" /
+        self.ensure_model_can_train_save_and_load(self.FIXTURES_ROOT /
                                                   "nlvr_coverage_semantic_parser" / "ungrouped_experiment.json")
 
     def test_mml_initialized_model_can_train_save_and_load(self):
         # pylint: disable=line-too-long
-        self.ensure_model_can_train_save_and_load(self.FIXTURES_ROOT / "semantic_parsing" /
+        self.ensure_model_can_train_save_and_load(self.FIXTURES_ROOT /
                                                   "nlvr_coverage_semantic_parser" / "mml_init_experiment.json")
 
     def test_get_checklist_info(self):
@@ -66,7 +65,7 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
         original_model_weights = {name: parameter.data.clone().numpy()
                                   for name, parameter in original_model_parameters}
         # pylint: disable=line-too-long
-        mml_model_archive_file = (self.FIXTURES_ROOT / "semantic_parsing" / "nlvr_direct_semantic_parser" /
+        mml_model_archive_file = (self.FIXTURES_ROOT / "nlvr_direct_semantic_parser" /
                                   "serialization" / "model.tar.gz")
         archive = load_archive(mml_model_archive_file)
         archived_model_parameters = archive.model.named_parameters()
@@ -86,7 +85,7 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
 
     def test_get_vocab_index_mapping(self):
         # pylint: disable=line-too-long
-        mml_model_archive_file = (self.FIXTURES_ROOT / "semantic_parsing" / "nlvr_direct_semantic_parser" /
+        mml_model_archive_file = (self.FIXTURES_ROOT / "nlvr_direct_semantic_parser" /
                                   "serialization" / "model.tar.gz")
         archive = load_archive(mml_model_archive_file)
         mapping = self.model._get_vocab_index_mapping(archive.model.vocab)

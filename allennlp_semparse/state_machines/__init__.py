@@ -23,8 +23,8 @@ The key abstractions in this code are the following:
 There is also a generic ``BeamSearch`` class for finding the ``k`` highest-scoring transition
 sequences given a trained ``TransitionFunction`` and an initial ``State``.
 """
-from allennlp.state_machines.beam_search import BeamSearch
-from allennlp.state_machines.constrained_beam_search import ConstrainedBeamSearch
-from allennlp.state_machines.states import State
-from allennlp.state_machines.trainers import DecoderTrainer
-from allennlp.state_machines.transition_functions import TransitionFunction
+from allennlp_semparse.state_machines.beam_search import BeamSearch
+from allennlp_semparse.state_machines.constrained_beam_search import ConstrainedBeamSearch
+from allennlp_semparse.state_machines.states import State
+from allennlp_semparse.state_machines.trainers import DecoderTrainer
+from allennlp_semparse.state_machines.transition_functions import TransitionFunction

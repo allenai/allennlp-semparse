@@ -1,11 +1,11 @@
 # pylint: disable=no-self-use,invalid-name
 from allennlp.common.file_utils import cached_path
-from allennlp.data.dataset_readers import AtisDatasetReader
-from allennlp.common.testing import AllenNlpTestCase
+from allennlp_semparse.dataset_readers import AtisDatasetReader
+from .. import SemparseTestCase
 
-from allennlp.semparse.worlds import AtisWorld
+from allennlp_semparse.parsimonious_languages.worlds import AtisWorld
 
-class TestAtisReader(AllenNlpTestCase):
+class TestAtisReader(SemparseTestCase):
     def test_atis_keep_unparseable(self):
         database_file = cached_path("https://allennlp.s3.amazonaws.com/datasets/atis/atis.db")
         reader = AtisDatasetReader(database_file=database_file, keep_if_unparseable=True)
@@ -18,7 +18,7 @@ class TestAtisReader(AllenNlpTestCase):
         assert instance.fields['target_action_sequence'].field_list[0].sequence_index == -1
 
     def test_atis_read_from_file(self):
-        data_path = AllenNlpTestCase.FIXTURES_ROOT / "data" / "atis" / "sample.json"
+        data_path = SemparseTestCase.FIXTURES_ROOT / "data" / "atis" / "sample.json"
         database_file = "https://allennlp.s3.amazonaws.com/datasets/atis/atis.db"
         reader = AtisDatasetReader(database_file=database_file)
 

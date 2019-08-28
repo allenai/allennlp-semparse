@@ -1,10 +1,10 @@
 # pylint: disable=no-self-use,invalid-name
 
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
-class TestQuarelParserPredictor(AllenNlpTestCase):
+class TestQuarelParserPredictor(SemparseTestCase):
 
     def test_answer_present(self):
         inputs = {
@@ -14,7 +14,7 @@ class TestQuarelParserPredictor(AllenNlpTestCase):
                 'entitycues': 'smoothness: smoother\nspeed:faster'
         }
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'quarel' / 'zeroshot' / 'serialization' / 'model.tar.gz'  # pylint: disable=line-too-long
+        archive_path = self.FIXTURES_ROOT / 'quarel' / 'zeroshot' / 'serialization' / 'model.tar.gz'  # pylint: disable=line-too-long
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'quarel-parser')
 

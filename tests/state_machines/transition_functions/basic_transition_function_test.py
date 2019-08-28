@@ -2,14 +2,15 @@
 from numpy.testing import assert_almost_equal
 import torch
 
-from allennlp.common.testing import AllenNlpTestCase
+from ... import SemparseTestCase
 from allennlp.modules import Attention
-from allennlp.semparse.type_declarations.type_declaration import is_nonterminal
-from allennlp.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
-from allennlp.state_machines.transition_functions import BasicTransitionFunction
+
+from allennlp_semparse.nltk_languages.type_declarations.type_declaration import is_nonterminal
+from allennlp_semparse.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
+from allennlp_semparse.state_machines.transition_functions import BasicTransitionFunction
 
 
-class BasicTransitionFunctionTest(AllenNlpTestCase):
+class BasicTransitionFunctionTest(SemparseTestCase):
     def setUp(self):
         super().setUp()
         self.decoder_step = BasicTransitionFunction(encoder_output_dim=2,

@@ -2,12 +2,13 @@
 import torch
 
 from allennlp.common import Params
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines import BeamSearch
+from .. import SemparseTestCase
+
+from allennlp_semparse.state_machines import BeamSearch
 from .simple_transition_system import SimpleState, SimpleTransitionFunction
 
 
-class TestBeamSearch(AllenNlpTestCase):
+class TestBeamSearch(SemparseTestCase):
     def test_search(self):
         beam_search = BeamSearch.from_params(Params({'beam_size': 4}))
         initial_state = SimpleState([0, 1, 2, 3],

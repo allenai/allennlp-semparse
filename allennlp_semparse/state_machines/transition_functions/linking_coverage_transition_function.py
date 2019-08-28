@@ -9,8 +9,9 @@ from torch.nn import Parameter
 from allennlp.common.checks import check_dimensions_match
 from allennlp.modules import Attention, FeedForward
 from allennlp.nn import Activation
-from allennlp.state_machines.states import CoverageState, ChecklistStatelet
-from allennlp.state_machines.transition_functions.coverage_transition_function import CoverageTransitionFunction
+
+from allennlp_semparse.state_machines.states import CoverageState, ChecklistStatelet
+from allennlp_semparse.state_machines.transition_functions.coverage_transition_function import CoverageTransitionFunction
 
 
 class LinkingCoverageTransitionFunction(CoverageTransitionFunction):

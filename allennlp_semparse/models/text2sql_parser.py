@@ -8,19 +8,20 @@ from overrides import overrides
 import torch
 
 from allennlp.data import Vocabulary
-from allennlp.data.fields.production_rule_field import ProductionRule
 from allennlp.models.model import Model
 from allennlp.modules import Attention, Seq2SeqEncoder, TextFieldEmbedder, Embedding
 from allennlp.nn import util
 from allennlp.nn.initializers import InitializerApplicator
 from allennlp.nn.regularizers import RegularizerApplicator
-from allennlp.semparse.contexts.sql_context_utils import action_sequence_to_sql
-from allennlp.state_machines.states import GrammarBasedState
-from allennlp.state_machines.transition_functions import BasicTransitionFunction
-from allennlp.state_machines import BeamSearch
-from allennlp.state_machines.trainers import MaximumMarginalLikelihood
-from allennlp.state_machines.states import GrammarStatelet, RnnStatelet
 from allennlp.training.metrics import Average
+
+from allennlp_semparse.fields.production_rule_field import ProductionRule
+from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import action_sequence_to_sql
+from allennlp_semparse.state_machines import BeamSearch
+from allennlp_semparse.state_machines.states import GrammarBasedState
+from allennlp_semparse.state_machines.states import GrammarStatelet, RnnStatelet
+from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
+from allennlp_semparse.state_machines.transition_functions import BasicTransitionFunction
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

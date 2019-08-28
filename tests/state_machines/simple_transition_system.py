@@ -12,7 +12,7 @@ from typing import List, Set, Dict
 from overrides import overrides
 import torch
 
-from allennlp.state_machines import State, TransitionFunction
+from allennlp_semparse.state_machines import State, TransitionFunction
 
 class SimpleState(State['SimpleState']):
     def __init__(self,

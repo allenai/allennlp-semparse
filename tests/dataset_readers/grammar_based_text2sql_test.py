@@ -2,11 +2,12 @@
 
 import pytest
 
-from allennlp.data.dataset_readers.semantic_parsing.grammar_based_text2sql import GrammarBasedText2SqlDatasetReader
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
+
+from allennlp_semparse.dataset_readers.grammar_based_text2sql import GrammarBasedText2SqlDatasetReader
 
 @pytest.mark.skip(reason="Mark will fix in a nearby PR.")
-class TestGrammarBasedText2SqlDatasetReader(AllenNlpTestCase):
+class TestGrammarBasedText2SqlDatasetReader(SemparseTestCase):
     def setUp(self):
         super().setUp()
         self.data_path = str(self.FIXTURES_ROOT / 'data' / 'text2sql'/ '*.json')

@@ -2,7 +2,7 @@ from typing import Generic, List, Set, TypeVar
 
 import torch
 
-from allennlp.state_machines.states import State
+from allennlp_semparse.state_machines.states import State
 
 StateType = TypeVar('StateType', bound=State)  # pylint: disable=invalid-name
 

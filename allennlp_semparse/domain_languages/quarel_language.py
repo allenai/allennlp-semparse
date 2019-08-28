@@ -4,7 +4,7 @@ about qualitative relations.
 """
 from typing import Callable
 
-from allennlp.semparse.domain_languages.domain_language import DomainLanguage, predicate
+from allennlp_semparse.domain_languages.domain_language import DomainLanguage, predicate
 
 
 class Property:

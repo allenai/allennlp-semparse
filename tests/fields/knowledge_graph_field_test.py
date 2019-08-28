@@ -5,16 +5,17 @@ import pytest
 from numpy.testing import assert_almost_equal
 import torch
 
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
 from allennlp.data import Vocabulary
-from allennlp.data.fields import KnowledgeGraphField
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenCharactersIndexer
 from allennlp.data.tokenizers import WordTokenizer
 from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
-from allennlp.semparse.contexts import TableQuestionContext
+
+from allennlp_semparse.common.wikitables import TableQuestionContext
+from allennlp_semparse.fields import KnowledgeGraphField
 
 
-class KnowledgeGraphFieldTest(AllenNlpTestCase):
+class KnowledgeGraphFieldTest(SemparseTestCase):
     def setUp(self):
         self.tokenizer = WordTokenizer(SpacyWordSplitter(pos_tags=True))
         self.utterance = self.tokenizer.tokenize("where is mersin?")

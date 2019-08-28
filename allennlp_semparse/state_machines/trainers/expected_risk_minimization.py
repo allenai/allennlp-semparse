@@ -4,9 +4,10 @@ from collections import defaultdict
 import torch
 
 from allennlp.nn import util as nn_util
-from allennlp.state_machines.states import State
-from allennlp.state_machines.trainers.decoder_trainer import DecoderTrainer
-from allennlp.state_machines.transition_functions import TransitionFunction
+
+from allennlp_semparse.state_machines.states import State
+from allennlp_semparse.state_machines.trainers.decoder_trainer import DecoderTrainer
+from allennlp_semparse.state_machines.transition_functions import TransitionFunction
 
 StateType = TypeVar('StateType', bound=State)  # pylint: disable=invalid-name
 

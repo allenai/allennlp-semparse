@@ -7,12 +7,13 @@ import os
 from overrides import overrides
 
 from allennlp.common.file_utils import cached_path
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
+from allennlp.data import DatasetReader
 from allennlp.data.fields import TextField, Field, SequenceLabelField, LabelField
 from allennlp.data.instance import Instance
 from allennlp.data.tokenizers import Token
 from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.dataset_readers.dataset_utils import text2sql_utils
+
+from allennlp_semparse.common.sql import text2sql_utils
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name

@@ -3,8 +3,9 @@ import pytest
 import torch
 from numpy.testing import assert_almost_equal
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines.states import LambdaGrammarStatelet
+from ... import SemparseTestCase
+
+from allennlp_semparse.state_machines.states import LambdaGrammarStatelet
 
 def is_nonterminal(symbol: str) -> bool:
     if symbol == 'identity':
@@ -16,7 +17,7 @@ def is_nonterminal(symbol: str) -> bool:
     return True
 
 
-class TestLambdaGrammarStatelet(AllenNlpTestCase):
+class TestLambdaGrammarStatelet(SemparseTestCase):
     def test_is_finished_just_uses_nonterminal_stack(self):
         state = LambdaGrammarStatelet(['s'], {}, {}, {}, is_nonterminal)
         assert not state.is_finished()

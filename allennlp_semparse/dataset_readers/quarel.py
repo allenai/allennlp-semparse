@@ -14,18 +14,19 @@ import tqdm
 
 from allennlp.common.file_utils import cached_path
 from allennlp.common.util import JsonDict
+from allennlp.data import DatasetReader
+from allennlp.data.fields import ArrayField, Field, TextField, LabelField
+from allennlp.data.fields import IndexField, ListField, MetadataField, SequenceLabelField
 from allennlp.data.instance import Instance
+from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
 from allennlp.data.tokenizers import Token, Tokenizer, WordTokenizer
 from allennlp.data.tokenizers.word_stemmer import PorterStemmer
-from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.fields import ArrayField, Field, TextField, KnowledgeGraphField, LabelField
-from allennlp.data.fields import IndexField, ListField, MetadataField, ProductionRuleField
-from allennlp.data.fields import SequenceLabelField
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
-from allennlp.semparse.contexts.knowledge_graph import KnowledgeGraph
-from allennlp.semparse.contexts.quarel_utils import WorldTaggerExtractor, words_from_entity_string
-from allennlp.semparse.contexts.quarel_utils import LEXICAL_CUES, align_entities
-from allennlp.semparse.worlds.quarel_world import QuarelWorld
+
+from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
+from allennlp_semparse.fields import KnowledgeGraphField, ProductionRuleField
+from allennlp_semparse.nltk_languages.contexts.quarel_utils import WorldTaggerExtractor, words_from_entity_string
+from allennlp_semparse.nltk_languages.contexts.quarel_utils import LEXICAL_CUES, align_entities
+from allennlp_semparse.nltk_languages.worlds.quarel_world import QuarelWorld
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name

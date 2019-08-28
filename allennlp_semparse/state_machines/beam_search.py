@@ -4,9 +4,10 @@ from typing import Dict, Generic, List, TypeVar, Tuple
 import torch
 
 from allennlp.common.registrable import FromParams
-from allennlp.state_machines import util
-from allennlp.state_machines.states import State
-from allennlp.state_machines.transition_functions import TransitionFunction
+
+from allennlp_semparse.state_machines import util
+from allennlp_semparse.state_machines.states import State
+from allennlp_semparse.state_machines.transition_functions import TransitionFunction
 
 StateType = TypeVar('StateType', bound=State)  # pylint: disable=invalid-name
 

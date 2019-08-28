@@ -2,10 +2,10 @@ from typing import Any, Dict, List, Sequence, Tuple
 
 import torch
 
-from allennlp.data.fields.production_rule_field import ProductionRule
-from allennlp.state_machines.states.grammar_statelet import GrammarStatelet
-from allennlp.state_machines.states.rnn_statelet import RnnStatelet
-from allennlp.state_machines.states.state import State
+from allennlp_semparse.fields.production_rule_field import ProductionRule
+from allennlp_semparse.state_machines.states.grammar_statelet import GrammarStatelet
+from allennlp_semparse.state_machines.states.rnn_statelet import RnnStatelet
+from allennlp_semparse.state_machines.states.state import State
 
 # This syntax is pretty weird and ugly, but it's necessary to make mypy happy with the API that
 # we've defined.  We're using generics to make the type of `combine_states` come out right.  See

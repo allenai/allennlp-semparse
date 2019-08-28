@@ -8,10 +8,10 @@ import re
 from nltk.sem.logic import Type
 from overrides import overrides
 
-from allennlp.semparse import util as semparse_util
-from allennlp.semparse.contexts.knowledge_graph import KnowledgeGraph
-from allennlp.semparse.type_declarations.quarel_type_declaration import QuarelTypeDeclaration
-from allennlp.semparse.worlds.world import World
+from allennlp_semparse.common import util
+from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
+from allennlp_semparse.nltk_languages.type_declarations.quarel_type_declaration import QuarelTypeDeclaration
+from allennlp_semparse.nltk_languages.worlds.world import World
 
 class QuarelWorld(World):
     """
@@ -171,7 +171,7 @@ class QuarelWorld(World):
         """
         # Remove "a:" prefixes from attributes (hack)
         logical_form = re.sub(r"\(a:", r"(", lf_raw)
-        parse = semparse_util.lisp_to_nested_expression(logical_form)
+        parse = util.lisp_to_nested_expression(logical_form)
         if len(parse) < 2:
             return -1
         if parse[0] == 'infer':

@@ -1,7 +1,7 @@
 """
 Defines all the types in the QuaRel domain.
 """
-from allennlp.semparse.type_declarations.type_declaration import ComplexType, NamedBasicType, NameMapper
+from allennlp_semparse.nltk_languages.type_declarations.type_declaration import ComplexType, NamedBasicType, NameMapper
 
 class QuarelTypeDeclaration:
     def __init__(self, syntax: str) -> None:

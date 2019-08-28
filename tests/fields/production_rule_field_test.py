@@ -3,12 +3,14 @@ from collections import defaultdict
 
 from numpy.testing import assert_almost_equal
 
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
 from allennlp.data import Vocabulary
-from allennlp.data.fields import ListField, ProductionRuleField
+from allennlp.data.fields import ListField
+
+from allennlp_semparse.fields import ProductionRuleField
 
 
-class TestProductionRuleField(AllenNlpTestCase):
+class TestProductionRuleField(SemparseTestCase):
     def setUp(self):
         super(TestProductionRuleField, self).setUp()
         self.vocab = Vocabulary()

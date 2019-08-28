@@ -10,10 +10,10 @@ internal state, ``GrammarStatelet``, which keeps track of what actions are allow
 of decoding (if your outputs are production rules from a grammar), and ``ChecklistStatelet`` that
 keeps track of coverage information if you are training a coverage-based parser.
 """
-from allennlp.state_machines.states.checklist_statelet import ChecklistStatelet
-from allennlp.state_machines.states.coverage_state import CoverageState
-from allennlp.state_machines.states.grammar_based_state import GrammarBasedState
-from allennlp.state_machines.states.grammar_statelet import GrammarStatelet
-from allennlp.state_machines.states.lambda_grammar_statelet import LambdaGrammarStatelet
-from allennlp.state_machines.states.rnn_statelet import RnnStatelet
-from allennlp.state_machines.states.state import State
+from allennlp_semparse.state_machines.states.checklist_statelet import ChecklistStatelet
+from allennlp_semparse.state_machines.states.coverage_state import CoverageState
+from allennlp_semparse.state_machines.states.grammar_based_state import GrammarBasedState
+from allennlp_semparse.state_machines.states.grammar_statelet import GrammarStatelet
+from allennlp_semparse.state_machines.states.lambda_grammar_statelet import LambdaGrammarStatelet
+from allennlp_semparse.state_machines.states.rnn_statelet import RnnStatelet
+from allennlp_semparse.state_machines.states.state import State

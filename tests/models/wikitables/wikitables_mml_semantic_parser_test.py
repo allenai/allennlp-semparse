@@ -5,14 +5,15 @@ from numpy.testing import assert_almost_equal
 import torch
 
 from allennlp.common import Params
-from allennlp.common.testing import ModelTestCase
+from ... import ModelTestCase
 from allennlp.data.iterators import DataIterator
 
 
 class WikiTablesMmlSemanticParserTest(ModelTestCase):
     def setUp(self):
         super(WikiTablesMmlSemanticParserTest, self).setUp()
-        config_path = self.FIXTURES_ROOT /  "semantic_parsing" / "wikitables" / "experiment.json"
+        print(self.FIXTURES_ROOT)
+        config_path = self.FIXTURES_ROOT /  "wikitables" / "experiment.json"
         data_path = self.FIXTURES_ROOT / "data" / "wikitables" / "sample_data.examples"
         self.set_up_model(config_path, data_path)
 

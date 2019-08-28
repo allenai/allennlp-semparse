@@ -1,9 +1,10 @@
 # pylint: disable=no-self-use
 
 from allennlp.common import Params
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.data.dataset_readers import WikiTablesDatasetReader
-from allennlp.semparse.domain_languages import WikiTablesLanguage
+from .. import SemparseTestCase
+
+from allennlp_semparse.dataset_readers import WikiTablesDatasetReader
+from allennlp_semparse.domain_languages import WikiTablesLanguage
 
 
 def assert_dataset_correct(dataset):
@@ -60,7 +61,7 @@ def assert_dataset_correct(dataset):
                        'NumberColumn -> number_column:year']
 
 
-class WikiTablesDatasetReaderTest(AllenNlpTestCase):
+class WikiTablesDatasetReaderTest(SemparseTestCase):
     def test_reader_reads(self):
         offline_search_directory = self.FIXTURES_ROOT / "data" / "wikitables" / "action_space_walker_output"
         params = {

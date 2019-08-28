@@ -10,8 +10,9 @@ from nltk.stem import PorterStemmer as NltkPorterStemmer  # For typing
 
 from allennlp.common.util import JsonDict
 from allennlp.data.tokenizers import Token
-from allennlp.semparse import util as semparse_util
-from allennlp.semparse.worlds.quarel_world import QuarelWorld
+
+from allennlp_semparse.common import util
+from allennlp_semparse.nltk_languages.worlds.quarel_world import QuarelWorld
 
 
 #
@@ -143,7 +144,7 @@ def get_explanation(logical_form: str,
     else:
         nl_world['world1'] = 'world1'
         nl_world['world2'] = 'world2'
-    parse = semparse_util.lisp_to_nested_expression(logical_form)
+    parse = util.lisp_to_nested_expression(logical_form)
     if parse[0] != "infer":
         return None
     setup = parse[1]

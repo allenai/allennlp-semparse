@@ -5,14 +5,15 @@ from overrides import overrides
 
 import torch
 
-from allennlp.data.fields.production_rule_field import ProductionRule
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models.model import Model
 from allennlp.modules import TextFieldEmbedder, Seq2SeqEncoder, Embedding
 from allennlp.nn import util
-from allennlp.semparse.domain_languages import NlvrLanguage, START_SYMBOL
-from allennlp.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
 from allennlp.training.metrics import Average
+
+from allennlp_semparse.domain_languages import NlvrLanguage, START_SYMBOL
+from allennlp_semparse.fields.production_rule_field import ProductionRule
+from allennlp_semparse.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

@@ -1,18 +1,18 @@
 # pylint: disable=no-self-use,invalid-name
 from flaky import flaky
 
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
-class TestAtisParserPredictor(AllenNlpTestCase):
+class TestAtisParserPredictor(SemparseTestCase):
     @flaky
     def test_atis_parser_uses_named_inputs(self):
         inputs = {
                 "utterance": "show me the flights to seattle",
         }
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'atis' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'atis' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'atis-parser')
 
@@ -33,7 +33,7 @@ class TestAtisParserPredictor(AllenNlpTestCase):
                 "utterance": "show me flights to seattle"
         }
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'atis' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'atis' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'atis-parser')
 
@@ -47,7 +47,7 @@ class TestAtisParserPredictor(AllenNlpTestCase):
                 "utterance": "show me flights to seattle",
         }]
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'atis' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'atis' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'atis-parser')
 

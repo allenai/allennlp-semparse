@@ -10,18 +10,19 @@ import tarfile
 
 from overrides import overrides
 
+from allennlp.data import DatasetReader
+from allennlp.data.fields import Field, TextField, MetadataField, ListField, IndexField
 from allennlp.data.instance import Instance
-from allennlp.data.fields import (Field, TextField, MetadataField, ProductionRuleField,
-                                  ListField, IndexField, KnowledgeGraphField)
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
+from allennlp.data.token_indexers import SingleIdTokenIndexer
+from allennlp.data.token_indexers.token_indexer import TokenIndexer
 from allennlp.data.tokenizers import WordTokenizer
 from allennlp.data.tokenizers.tokenizer import Tokenizer
 from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
-from allennlp.data.token_indexers import SingleIdTokenIndexer
-from allennlp.data.token_indexers.token_indexer import TokenIndexer
-from allennlp.semparse import ParsingError
-from allennlp.semparse.contexts import TableQuestionContext
-from allennlp.semparse.domain_languages import WikiTablesLanguage
+
+from allennlp_semparse.common import ParsingError
+from allennlp_semparse.common.wikitables import TableQuestionContext
+from allennlp_semparse.domain_languages import WikiTablesLanguage
+from allennlp_semparse.fields import KnowledgeGraphField, ProductionRuleField
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -182,6 +183,7 @@ class WikiTablesDatasetReader(DatasetReader):
                     logical_forms_filename = os.path.join(self._offline_logical_forms_directory,
                                                           parsed_info["id"] + '.gz')
                     try:
+                        print(logical_forms_filename)
                         logical_forms_file = gzip.open(logical_forms_filename)
                         logical_forms = []
                         for logical_form_line in logical_forms_file:

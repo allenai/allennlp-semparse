@@ -6,10 +6,10 @@ import re
 from nltk import Tree
 from nltk.sem.logic import ApplicationExpression, Expression, LambdaExpression, BasicType, Type
 
-from allennlp.semparse.type_declarations import type_declaration as types
-from allennlp.semparse.domain_languages.domain_language import nltk_tree_to_logical_form
-from allennlp.semparse import util as semparse_util
-from allennlp.semparse.common.errors import ParsingError
+from allennlp_semparse.common import util
+from allennlp_semparse.common.errors import ParsingError
+from allennlp_semparse.domain_languages.domain_language import nltk_tree_to_logical_form
+from allennlp_semparse.nltk_languages.type_declarations import type_declaration as types
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -228,7 +228,7 @@ class World:
             logical_form = re.sub(r'\(([x-z])\)', r'\1', logical_form)
             # Replace "(var x)" with "(x)"
             logical_form = re.sub(r'\(var ([x-z])\)', r'(\1)', logical_form)
-        parsed_lisp = semparse_util.lisp_to_nested_expression(logical_form)
+        parsed_lisp = util.lisp_to_nested_expression(logical_form)
         translated_string = self._process_nested_expression(parsed_lisp)
         type_signature = self.local_type_signatures.copy()
         type_signature.update(self.global_type_signatures)

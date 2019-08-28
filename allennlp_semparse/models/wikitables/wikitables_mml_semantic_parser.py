@@ -4,16 +4,16 @@ from overrides import overrides
 import torch
 
 from allennlp.data import Vocabulary
-from allennlp.data.fields.production_rule_field import ProductionRuleArray
 from allennlp.models.model import Model
 from allennlp.modules import Attention, FeedForward, Seq2SeqEncoder, Seq2VecEncoder, TextFieldEmbedder
-from allennlp.state_machines import BeamSearch
-from allennlp.state_machines.states import GrammarBasedState
-from allennlp.state_machines.trainers import MaximumMarginalLikelihood
-from allennlp.state_machines.transition_functions import LinkingTransitionFunction
-from allennlp.semparse.domain_languages import WikiTablesLanguage
-from allennlp.models.semantic_parsing.wikitables.wikitables_semantic_parser \
-        import WikiTablesSemanticParser
+
+from allennlp_semparse.domain_languages import WikiTablesLanguage
+from allennlp_semparse.fields.production_rule_field import ProductionRuleArray
+from allennlp_semparse.models.wikitables.wikitables_semantic_parser import WikiTablesSemanticParser
+from allennlp_semparse.state_machines import BeamSearch
+from allennlp_semparse.state_machines.states import GrammarBasedState
+from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
+from allennlp_semparse.state_machines.transition_functions import LinkingTransitionFunction
 
 @Model.register("wikitables_mml_parser")
 class WikiTablesMmlSemanticParser(WikiTablesSemanticParser):
@@ -25,7 +25,7 @@ class WikiTablesMmlSemanticParser(WikiTablesSemanticParser):
     <https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a>`_,
     by Jayant Krishnamurthy, Pradeep Dasigi, and Matt Gardner (EMNLP 2017). The language used by
     this model is different from LambdaDCS, the one in the paper above though. This model uses the
-    variable free language from ``allennlp.semparse.domain_languages.wikitables_language``.
+    variable free language from ``allennlp_semparse.domain_languages.wikitables_language``.
 
     Parameters
     ----------

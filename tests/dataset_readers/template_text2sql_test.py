@@ -1,15 +1,16 @@
 # pylint: disable=no-self-use,invalid-name,line-too-long
 
-from allennlp.data.dataset_readers import TemplateText2SqlDatasetReader
 from allennlp.common.util import ensure_list
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
+
+from allennlp_semparse.dataset_readers import TemplateText2SqlDatasetReader
 
 
-class TestTemplateText2SqlDatasetReader(AllenNlpTestCase):
+class TestTemplateText2SqlDatasetReader(SemparseTestCase):
     def test_reader(self):
         reader = TemplateText2SqlDatasetReader()
 
-        instances = reader.read(str(AllenNlpTestCase.FIXTURES_ROOT / "data" / "text2sql" / "*.json"))
+        instances = reader.read(str(SemparseTestCase.FIXTURES_ROOT / "data" / "text2sql" / "*.json"))
         instances = ensure_list(instances)
 
         fields = instances[0].fields

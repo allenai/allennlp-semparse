@@ -4,12 +4,13 @@ import math
 from numpy.testing import assert_almost_equal
 import torch
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines.trainers import MaximumMarginalLikelihood
+from ... import SemparseTestCase
+
+from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
 from ..simple_transition_system import SimpleState, SimpleTransitionFunction
 
 
-class TestMaximumMarginalLikelihood(AllenNlpTestCase):
+class TestMaximumMarginalLikelihood(SemparseTestCase):
     def setUp(self):
         super().setUp()
         self.initial_state = SimpleState([0, 1],

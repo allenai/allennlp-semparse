@@ -3,12 +3,13 @@ import torch
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines.trainers import ExpectedRiskMinimization
+from ... import SemparseTestCase
+
+from allennlp_semparse.state_machines.trainers import ExpectedRiskMinimization
 from ..simple_transition_system import SimpleState, SimpleTransitionFunction
 
 
-class TestExpectedRiskMinimization(AllenNlpTestCase):
+class TestExpectedRiskMinimization(SemparseTestCase):
     def setUp(self):
         super().setUp()
         self.initial_state = SimpleState([0], [[0]], [torch.Tensor([0.0])])

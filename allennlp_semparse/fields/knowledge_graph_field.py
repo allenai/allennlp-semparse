@@ -17,7 +17,8 @@ from allennlp.data.tokenizers.token import Token
 from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.nn import util as nn_util
-from allennlp.semparse.contexts.knowledge_graph import KnowledgeGraph
+
+from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
 
 TokenList = List[TokenType]  # pylint: disable=invalid-name
 

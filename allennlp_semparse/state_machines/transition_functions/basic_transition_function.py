@@ -9,8 +9,9 @@ from torch.nn.modules.linear import Linear
 
 from allennlp.modules import Attention
 from allennlp.nn import util, Activation
-from allennlp.state_machines.states import RnnStatelet, GrammarBasedState
-from allennlp.state_machines.transition_functions.transition_function import TransitionFunction
+
+from allennlp_semparse.state_machines.states import RnnStatelet, GrammarBasedState
+from allennlp_semparse.state_machines.transition_functions.transition_function import TransitionFunction
 
 
 class BasicTransitionFunction(TransitionFunction[GrammarBasedState]):

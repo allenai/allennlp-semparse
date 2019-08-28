@@ -4,10 +4,11 @@ from typing import Dict, List, Tuple
 import torch
 
 from allennlp.nn import util
-from allennlp.state_machines.constrained_beam_search import ConstrainedBeamSearch
-from allennlp.state_machines.states import State
-from allennlp.state_machines.trainers.decoder_trainer import DecoderTrainer
-from allennlp.state_machines.transition_functions import TransitionFunction
+
+from allennlp_semparse.state_machines.constrained_beam_search import ConstrainedBeamSearch
+from allennlp_semparse.state_machines.states import State
+from allennlp_semparse.state_machines.trainers.decoder_trainer import DecoderTrainer
+from allennlp_semparse.state_machines.transition_functions import TransitionFunction
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

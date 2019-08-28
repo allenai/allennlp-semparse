@@ -5,14 +5,15 @@ import logging
 from overrides import overrides
 
 from allennlp.common.util import JsonDict
+from allennlp.data import DatasetReader
+from allennlp.data.fields import Field, TextField, ListField, IndexField, LabelField, MetadataField
 from allennlp.data.instance import Instance
-from allennlp.data.fields import Field, TextField, ListField, IndexField, LabelField
-from allennlp.data.fields import ProductionRuleField, MetadataField
-from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
-from allennlp.semparse.domain_languages import NlvrLanguage
-from allennlp.semparse.domain_languages.nlvr_language import Box
+from allennlp.data.tokenizers import Tokenizer, WordTokenizer
+
+from allennlp_semparse.domain_languages import NlvrLanguage
+from allennlp_semparse.domain_languages.nlvr_language import Box
+from allennlp_semparse.fields import ProductionRuleField
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name

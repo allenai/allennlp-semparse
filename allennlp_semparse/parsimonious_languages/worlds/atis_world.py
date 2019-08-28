@@ -6,11 +6,12 @@ from nltk import ngrams, bigrams
 from parsimonious.grammar import Grammar
 from parsimonious.expressions import Expression, OneOf, Sequence, Literal
 
-from allennlp.semparse.contexts.atis_tables import * # pylint: disable=wildcard-import,unused-wildcard-import
-from allennlp.semparse.contexts.atis_sql_table_context import AtisSqlTableContext, KEYWORDS, NUMERIC_NONTERMINALS
-from allennlp.semparse.contexts.sql_context_utils import SqlVisitor, format_action, initialize_valid_actions
-
 from allennlp.data.tokenizers import Token, Tokenizer, WordTokenizer
+
+from allennlp_semparse.parsimonious_languages.contexts.atis_tables import * # pylint: disable=wildcard-import,unused-wildcard-import
+from allennlp_semparse.parsimonious_languages.contexts.atis_sql_table_context import AtisSqlTableContext, KEYWORDS, NUMERIC_NONTERMINALS
+from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import SqlVisitor, format_action, initialize_valid_actions
+
 
 def get_strings_from_utterance(tokenized_utterance: List[Token]) -> Dict[str, List[int]]:
     """

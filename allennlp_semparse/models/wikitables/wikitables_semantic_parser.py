@@ -6,16 +6,17 @@ import torch
 from allennlp.common.checks import check_dimensions_match
 from allennlp.common.util import pad_sequence_to_length
 from allennlp.data import Vocabulary
-from allennlp.data.fields.production_rule_field import ProductionRuleArray
 from allennlp.models.model import Model
 from allennlp.modules import Embedding, Seq2SeqEncoder, Seq2VecEncoder, TextFieldEmbedder, TimeDistributed
 from allennlp.modules.seq2vec_encoders import BagOfEmbeddingsEncoder
 from allennlp.nn import util
-from allennlp.semparse import ParsingError
-from allennlp.semparse.domain_languages.domain_language import ExecutionError
-from allennlp.semparse.domain_languages import WikiTablesLanguage, START_SYMBOL
-from allennlp.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
 from allennlp.training.metrics import Average
+
+from allennlp_semparse.common import ParsingError
+from allennlp_semparse.domain_languages import WikiTablesLanguage, START_SYMBOL
+from allennlp_semparse.domain_languages.domain_language import ExecutionError
+from allennlp_semparse.fields.production_rule_field import ProductionRuleArray
+from allennlp_semparse.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
 
 
 class WikiTablesSemanticParser(Model):

@@ -9,14 +9,15 @@ from overrides import overrides
 
 from allennlp.common.file_utils import cached_path
 from allennlp.common.checks import ConfigurationError
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
-from allennlp.data.fields import TextField, Field, ProductionRuleField, ListField, IndexField
+from allennlp.data import DatasetReader
+from allennlp.data.fields import TextField, Field, ListField, IndexField
 from allennlp.data.instance import Instance
 from allennlp.data.tokenizers import Token
 from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.dataset_readers.dataset_utils import text2sql_utils
-from allennlp.semparse.worlds.text2sql_world import Text2SqlWorld
-from allennlp.data.dataset_readers.dataset_utils.text2sql_utils import read_dataset_schema
+
+from allennlp_semparse.common.sql import text2sql_utils as util
+from allennlp_semparse.fields import ProductionRuleField
+from allennlp_semparse.parsimonious_languages.worlds.text2sql_world import Text2SqlWorld
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -109,16 +110,16 @@ class GrammarBasedText2SqlDatasetReader(DatasetReader):
         """
         files = [p for p in glob.glob(file_path)
                  if self._cross_validation_split_to_exclude not in os.path.basename(p)]
-        schema = read_dataset_schema(self._schema_path)
+        schema = util.read_dataset_schema(self._schema_path)
 
         for path in files:
             with open(cached_path(path), "r") as data_file:
                 data = json.load(data_file)
 
-            for sql_data in text2sql_utils.process_sql_data(data,
-                                                            use_all_sql=self._use_all_sql,
-                                                            remove_unneeded_aliases=self._remove_unneeded_aliases,
-                                                            schema=schema):
+            for sql_data in util.process_sql_data(data,
+                                                  use_all_sql=self._use_all_sql,
+                                                  remove_unneeded_aliases=self._remove_unneeded_aliases,
+                                                  schema=schema):
                 linked_entities = sql_data.sql_variables if self._use_prelinked_entities else None
                 instance = self.text_to_instance(sql_data.text_with_variables, linked_entities, sql_data.sql)
                 if instance is not None:

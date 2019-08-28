@@ -7,16 +7,16 @@ from overrides import overrides
 from parsimonious.exceptions import ParseError
 
 from allennlp.common.file_utils import cached_path
-from allennlp.data.dataset_readers.dataset_reader import DatasetReader
-from allennlp.data.fields import Field, ArrayField, ListField, IndexField, \
-        ProductionRuleField, TextField, MetadataField
+from allennlp.data import DatasetReader
+from allennlp.data.fields import Field, ArrayField, ListField, IndexField, TextField, MetadataField
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
 from allennlp.data.tokenizers import Tokenizer, WordTokenizer
 from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 
-from allennlp.semparse.worlds.atis_world import AtisWorld
-from allennlp.semparse.contexts.atis_sql_table_context import NUMERIC_NONTERMINALS
+from allennlp_semparse.fields import ProductionRuleField
+from allennlp_semparse.parsimonious_languages.worlds.atis_world import AtisWorld
+from allennlp_semparse.parsimonious_languages.contexts.atis_sql_table_context import NUMERIC_NONTERMINALS
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

@@ -9,8 +9,8 @@ import types
 from nltk import Tree
 
 from allennlp.common.util import START_SYMBOL
-from allennlp.semparse import util
-from allennlp.semparse.common.errors import ParsingError, ExecutionError
+
+from allennlp_semparse.common import util, ParsingError, ExecutionError
 
 logger = logging.getLogger(__name__)
 
@@ -256,7 +256,7 @@ class DomainLanguage:
     This is done by calling ``add_constant()`` with each ``NumberColumn`` twice: once without a
     ``type_`` argument (which infers the type as ``NumberColumn``), and once with ``type_=Column``.
     You can see a concrete example of how this works in the
-    :class:`~allennlp.semparse.domain_languages.wikitables_language.WikiTablesLanguage`.
+    :class:`~allennlp_semparse.domain_languages.wikitables_language.WikiTablesLanguage`.
     """
     def __init__(self,
                  allowed_constants: Dict[str, Any] = None,

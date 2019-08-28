@@ -1,20 +1,20 @@
 # pylint: disable=no-self-use,invalid-name,protected-access
 import pytest
 
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
 
 @pytest.mark.java
-class TestWikiTablesParserPredictor(AllenNlpTestCase):
+class TestWikiTablesParserPredictor(SemparseTestCase):
     def test_uses_named_inputs(self):
         inputs = {
                 "question": "names",
                 "table": "name\tdate\nmatt\t2017\npradeep\t2018"
         }
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'wikitables' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'wikitables' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'wikitables-parser')
 
@@ -39,7 +39,7 @@ class TestWikiTablesParserPredictor(AllenNlpTestCase):
                 "table": "Name\tAge\nShallan\t16\nKaladin\t18"
         }
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'wikitables' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'wikitables' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'wikitables-parser')
 
@@ -53,7 +53,7 @@ class TestWikiTablesParserPredictor(AllenNlpTestCase):
                 "table": "Name\tAge\nShallan\t16\nKaladin\t18"
         }
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'wikitables' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'wikitables' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'wikitables-parser')
 
@@ -97,7 +97,7 @@ class TestWikiTablesParserPredictor(AllenNlpTestCase):
                 "table": "Name\tAge\nShallan\t16\nKaladin\t18"
         }]
 
-        archive_path = self.FIXTURES_ROOT / 'semantic_parsing' / 'wikitables' / 'serialization' / 'model.tar.gz'
+        archive_path = self.FIXTURES_ROOT / 'wikitables' / 'serialization' / 'model.tar.gz'
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, 'wikitables-parser')
 

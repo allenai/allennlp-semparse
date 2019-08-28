@@ -2,12 +2,12 @@
 import json
 import os
 
-from allennlp.common.testing import AllenNlpTestCase
+from .. import SemparseTestCase
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
 
-class TestNlvrParserPredictor(AllenNlpTestCase):
+class TestNlvrParserPredictor(SemparseTestCase):
     def setUp(self):
         super().setUp()
         self.inputs = {'worlds': [[[{'y_loc': 80, 'type': 'triangle', 'color': '#0099ff', 'x_loc': 80,
@@ -26,7 +26,7 @@ class TestNlvrParserPredictor(AllenNlpTestCase):
                        'sentence': 'Each grey box contains atleast one yellow object touching the edge'}
 
     def test_predictor_with_coverage_parser(self):
-        archive_dir = self.FIXTURES_ROOT / 'semantic_parsing' / 'nlvr_coverage_semantic_parser' / 'serialization'
+        archive_dir = self.FIXTURES_ROOT / 'nlvr_coverage_semantic_parser' / 'serialization'
         archive = load_archive(os.path.join(archive_dir, 'model.tar.gz'))
         predictor = Predictor.from_archive(archive, 'nlvr-parser')
 
@@ -38,7 +38,7 @@ class TestNlvrParserPredictor(AllenNlpTestCase):
         assert len(result['denotations'][0]) == 2  # Because there are two worlds in the input.
 
     def test_predictor_with_direct_parser(self):
-        archive_dir = self.FIXTURES_ROOT / 'semantic_parsing' / 'nlvr_direct_semantic_parser' / 'serialization'
+        archive_dir = self.FIXTURES_ROOT / 'nlvr_direct_semantic_parser' / 'serialization'
         archive = load_archive(os.path.join(archive_dir, 'model.tar.gz'))
         predictor = Predictor.from_archive(archive, 'nlvr-parser')
 
@@ -50,7 +50,7 @@ class TestNlvrParserPredictor(AllenNlpTestCase):
         assert len(result['denotations'][0]) == 2  # Because there are two worlds in the input.
 
     def test_predictor_with_string_input(self):
-        archive_dir = self.FIXTURES_ROOT / 'semantic_parsing' / 'nlvr_coverage_semantic_parser' / 'serialization'
+        archive_dir = self.FIXTURES_ROOT / 'nlvr_coverage_semantic_parser' / 'serialization'
         archive = load_archive(os.path.join(archive_dir, 'model.tar.gz'))
         predictor = Predictor.from_archive(archive, 'nlvr-parser')
 
@@ -63,7 +63,7 @@ class TestNlvrParserPredictor(AllenNlpTestCase):
         assert len(result['denotations'][0]) == 2  # Because there are two worlds in the input.
 
     def test_predictor_with_single_world(self):
-        archive_dir = self.FIXTURES_ROOT / 'semantic_parsing' / 'nlvr_coverage_semantic_parser' / 'serialization'
+        archive_dir = self.FIXTURES_ROOT / 'nlvr_coverage_semantic_parser' / 'serialization'
         archive = load_archive(os.path.join(archive_dir, 'model.tar.gz'))
         predictor = Predictor.from_archive(archive, 'nlvr-parser')
 
@@ -77,7 +77,7 @@ class TestNlvrParserPredictor(AllenNlpTestCase):
         assert len(result['denotations'][0]) == 1  # Because there is one world in the input.
 
     def test_predictor_with_single_world_and_string_input(self):
-        archive_dir = self.FIXTURES_ROOT / 'semantic_parsing' / 'nlvr_coverage_semantic_parser' / 'serialization'
+        archive_dir = self.FIXTURES_ROOT / 'nlvr_coverage_semantic_parser' / 'serialization'
         archive = load_archive(os.path.join(archive_dir, 'model.tar.gz'))
         predictor = Predictor.from_archive(archive, 'nlvr-parser')
 

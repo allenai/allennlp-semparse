@@ -7,17 +7,18 @@ from overrides import overrides
 import torch
 
 from allennlp.data import Vocabulary
-from allennlp.data.fields.production_rule_field import ProductionRule
 from allennlp.models.archival import load_archive, Archive
 from allennlp.models.model import Model
-from allennlp.models.semantic_parsing.wikitables.wikitables_semantic_parser import WikiTablesSemanticParser
 from allennlp.modules import Attention, FeedForward, Seq2SeqEncoder, Seq2VecEncoder, TextFieldEmbedder
-from allennlp.state_machines import BeamSearch
-from allennlp.state_machines.states import CoverageState, ChecklistStatelet
-from allennlp.state_machines.trainers import ExpectedRiskMinimization
-from allennlp.state_machines.transition_functions import LinkingCoverageTransitionFunction
 from allennlp.training.metrics import Average
-from allennlp.semparse.domain_languages import WikiTablesLanguage
+
+from allennlp_semparse.domain_languages import WikiTablesLanguage
+from allennlp_semparse.fields.production_rule_field import ProductionRule
+from allennlp_semparse.models.wikitables.wikitables_semantic_parser import WikiTablesSemanticParser
+from allennlp_semparse.state_machines import BeamSearch
+from allennlp_semparse.state_machines.states import CoverageState, ChecklistStatelet
+from allennlp_semparse.state_machines.trainers import ExpectedRiskMinimization
+from allennlp_semparse.state_machines.transition_functions import LinkingCoverageTransitionFunction
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -385,7 +386,7 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
         target_values = state.extras[batch_index]
         evaluation = False
         executor_logger = \
-                logging.getLogger('allennlp.semparse.domain_languages.wikitables_language')
+                logging.getLogger('allennlp_semparse.domain_languages.wikitables_language')
         executor_logger.setLevel(logging.ERROR)
         evaluation = world.evaluate_action_sequence(action_strings, target_values)
         if evaluation:

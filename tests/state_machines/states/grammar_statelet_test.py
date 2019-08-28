@@ -1,8 +1,9 @@
 # pylint: disable=no-self-use,invalid-name
 import pytest
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines.states import GrammarStatelet
+from ... import SemparseTestCase
+
+from allennlp_semparse.state_machines.states import GrammarStatelet
 
 def is_nonterminal(symbol: str) -> bool:
     if symbol == 'identity':
@@ -14,7 +15,7 @@ def is_nonterminal(symbol: str) -> bool:
     return True
 
 
-class TestGrammarStatelet(AllenNlpTestCase):
+class TestGrammarStatelet(SemparseTestCase):
     def test_is_finished_just_uses_nonterminal_stack(self):
         state = GrammarStatelet(['s'], {}, is_nonterminal)
         assert not state.is_finished()

@@ -8,8 +8,9 @@ from torch.nn import Parameter
 
 from allennlp.modules import Attention
 from allennlp.nn import Activation
-from allennlp.state_machines.states import CoverageState, ChecklistStatelet
-from allennlp.state_machines.transition_functions.basic_transition_function import BasicTransitionFunction
+
+from allennlp_semparse.state_machines.states import CoverageState, ChecklistStatelet
+from allennlp_semparse.state_machines.transition_functions.basic_transition_function import BasicTransitionFunction
 
 
 class CoverageTransitionFunction(BasicTransitionFunction):

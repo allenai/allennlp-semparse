@@ -1,12 +1,13 @@
 # pylint: disable=invalid-name,no-self-use,protected-access
 import torch
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.state_machines import ConstrainedBeamSearch
+from .. import SemparseTestCase
+
+from allennlp_semparse.state_machines import ConstrainedBeamSearch
 from .simple_transition_system import SimpleState, SimpleTransitionFunction
 
 
-class TestConstrainedBeamSearch(AllenNlpTestCase):
+class TestConstrainedBeamSearch(SemparseTestCase):
     def test_search(self):
         # The simple transition system starts at some number, adds one or two at each state, and
         # tries to get to 4.  The highest scoring path has the shortest length and the highest

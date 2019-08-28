@@ -7,13 +7,11 @@ from typing import Dict, List, NamedTuple, Set, Type, Tuple, Any
 import logging
 import re
 
-from allennlp.semparse.domain_languages.domain_language import (DomainLanguage, ExecutionError,
-                                                                PredicateType, predicate)
-from allennlp.semparse.contexts.table_question_context import MONTH_NUMBERS
-from allennlp.semparse.contexts import TableQuestionContext
-from allennlp.semparse.contexts.table_question_context import CellValueType
-from allennlp.semparse.common import Date
-from allennlp.tools import wikitables_evaluator as evaluator
+
+from allennlp_semparse.common import Date, ExecutionError, MONTH_NUMBERS
+from allennlp_semparse.common.wikitables import wikitables_evaluator as evaluator
+from allennlp_semparse.common.wikitables import TableQuestionContext, CellValueType
+from allennlp_semparse.domain_languages.domain_language import DomainLanguage, PredicateType, predicate
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

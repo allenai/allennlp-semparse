@@ -1,11 +1,11 @@
 import pytest
 
-from allennlp.common.testing import AllenNlpTestCase
-from allennlp.semparse import ExecutionError
-from allennlp.semparse.common import Date
+from .. import SemparseTestCase
+
+from allennlp_semparse.common import Date, ExecutionError
 
 
-class TestDate(AllenNlpTestCase):
+class TestDate(SemparseTestCase):
     # pylint: disable=no-self-use
     def test_date_comparison_works(self):
         assert Date(2013, 12, 31) > Date(2013, 12, 30)

@@ -6,21 +6,22 @@ import torch
 
 from allennlp.common.util import pad_sequence_to_length
 from allennlp.data import Vocabulary
-from allennlp.data.fields.production_rule_field import ProductionRule
 from allennlp.models.model import Model
 from allennlp.modules import Attention, TextFieldEmbedder, Seq2SeqEncoder, FeedForward, Embedding
 from allennlp.modules.seq2vec_encoders import Seq2VecEncoder
 from allennlp.modules.time_distributed import TimeDistributed
 from allennlp.nn import util
-from allennlp.semparse.type_declarations import type_declaration
-from allennlp.semparse.type_declarations.type_declaration import START_SYMBOL
-from allennlp.semparse.worlds.quarel_world import QuarelWorld
-from allennlp.semparse import ParsingError
-from allennlp.state_machines import BeamSearch
-from allennlp.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
-from allennlp.state_machines.trainers import MaximumMarginalLikelihood
-from allennlp.state_machines.transition_functions import LinkingTransitionFunction
 from allennlp.training.metrics import Average, CategoricalAccuracy
+
+from allennlp_semparse.common import ParsingError
+from allennlp_semparse.fields.production_rule_field import ProductionRule
+from allennlp_semparse.nltk_languages.type_declarations import type_declaration
+from allennlp_semparse.nltk_languages.type_declarations.type_declaration import START_SYMBOL
+from allennlp_semparse.nltk_languages.worlds.quarel_world import QuarelWorld
+from allennlp_semparse.state_machines import BeamSearch
+from allennlp_semparse.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
+from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
+from allennlp_semparse.state_machines.transition_functions import LinkingTransitionFunction
 
 
 @Model.register("quarel_parser")
