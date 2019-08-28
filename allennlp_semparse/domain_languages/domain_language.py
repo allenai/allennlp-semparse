@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 def is_callable(type_: Type) -> bool:
     if sys.version_info < (3, 7):
+        # pylint: disable=no-name-in-module
         from typing import CallableMeta  # type: ignore
         return isinstance(type_, CallableMeta)  # type: ignore
     else:
@@ -263,7 +264,7 @@ class DomainLanguage:
                  start_types: Set[Type] = None) -> None:
         self._functions: Dict[str, Callable] = {}
         self._function_types: Dict[str, List[PredicateType]] = defaultdict(list)
-        self._start_types: Set[PredicateType] = set([PredicateType.get_type(type_) for type_ in start_types])
+        self._start_types: Set[PredicateType] = {PredicateType.get_type(type_) for type_ in start_types}
         for name in dir(self):
             if isinstance(getattr(self, name), types.MethodType):
                 function = getattr(self, name)

@@ -86,7 +86,7 @@ def normalize(x):
 
 ################ Value Types ################
 
-class Value(object):
+class Value:
     __metaclass__ = ABCMeta
 
     # Should be populated with the normalized string
@@ -101,7 +101,7 @@ class Value(object):
         Returns:
             a boolean
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     @property
     def normalized(self):

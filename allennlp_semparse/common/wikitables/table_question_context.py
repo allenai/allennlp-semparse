@@ -7,7 +7,6 @@ from unidecode import unidecode
 from allennlp.data.tokenizers import Token
 
 from allennlp_semparse.common import (Date,
-                                      MONTH_NUMBERS,
                                       NUMBER_CHARACTERS,
                                       NUMBER_WORDS,
                                       ORDER_OF_MAGNITUDE_WORDS)

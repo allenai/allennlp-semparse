@@ -4,11 +4,12 @@ from overrides import overrides
 
 from allennlp.common.util import JsonDict, sanitize
 from allennlp.data import Instance
-from allennlp_semparse.dataset_readers.quarel import QuarelDatasetReader
 from allennlp.predictors.predictor import Predictor
 
+from allennlp_semparse.dataset_readers.quarel import QuarelDatasetReader
 from allennlp_semparse.nltk_languages.contexts.quarel_utils import get_explanation, from_qr_spec_string
-from allennlp_semparse.nltk_languages.contexts.quarel_utils import words_from_entity_string, from_entity_cues_string
+from allennlp_semparse.nltk_languages.contexts.quarel_utils import (words_from_entity_string,
+                                                                    from_entity_cues_string)
 
 
 @Predictor.register('quarel-parser')

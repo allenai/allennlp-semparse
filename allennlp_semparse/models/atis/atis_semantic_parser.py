@@ -22,7 +22,7 @@ from allennlp_semparse.state_machines import BeamSearch
 from allennlp_semparse.state_machines.states import GrammarBasedState
 from allennlp_semparse.state_machines.states import GrammarStatelet, RnnStatelet
 from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
-from allennlp_semparse.state_machines.transition_functions.linking_transition_function import LinkingTransitionFunction
+from allennlp_semparse.state_machines.transition_functions import LinkingTransitionFunction
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 

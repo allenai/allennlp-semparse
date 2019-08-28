@@ -122,7 +122,7 @@ class WikiTablesLanguage(DomainLanguage):
             elif column_type == 'date':
                 column = DateColumn(column_name)
                 self.add_constant(column_name, column, type_=ComparableColumn)
-            elif column_type == 'number' or column_type == "num2":
+            elif column_type in {'number', "num2"}:
                 column = NumberColumn(column_name)
                 self.add_constant(column_name, column, type_=ComparableColumn)
             self.add_constant(column_name, column, type_=Column)
@@ -825,7 +825,7 @@ class WikiTablesLanguage(DomainLanguage):
                     year = int(part)
                 else:
                     day = int(part)
-            elif part in MONTH_NUMBERS:
+            elif part in MONTH_NUMBERS:  # pylint: disable=consider-using-get
                 month = MONTH_NUMBERS[part]
         return Date(year, month, day)
 

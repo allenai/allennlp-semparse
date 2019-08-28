@@ -456,8 +456,9 @@ class DynamicTypeLogicParser(LogicParser):
                  type_signatures: Dict[str, Type] = None) -> None:
         super(DynamicTypeLogicParser, self).__init__(type_check)
         self._constant_type_prefixes = constant_type_prefixes or {}
-        self._variables_with_placeholders = set([name for name, type_ in type_signatures.items()
-                                                 if isinstance(type_, PlaceholderType)])
+        self._variables_with_placeholders = {name
+                                             for name, type_ in type_signatures.items()
+                                             if isinstance(type_, PlaceholderType)}
 
     @overrides
     def make_ApplicationExpression(self, function, argument):

@@ -9,6 +9,7 @@ from parsimonious.exceptions import ParseError
 from allennlp.common.checks import ConfigurationError
 from allennlp_semparse.common.sql.text2sql_utils import read_dataset_schema
 
+# pylint: disable=line-too-long
 from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import SqlVisitor
 from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import format_grammar_string, initialize_valid_actions
 from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import GRAMMAR_DICTIONARY
@@ -19,6 +20,7 @@ from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context im
 from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_table_values
 from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_tables
 from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_untyped_entities
+# pylint: enable=line-too-long
 
 class Text2SqlWorld:
     """

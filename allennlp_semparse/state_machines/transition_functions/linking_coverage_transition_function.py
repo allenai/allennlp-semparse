@@ -11,7 +11,9 @@ from allennlp.modules import Attention, FeedForward
 from allennlp.nn import Activation
 
 from allennlp_semparse.state_machines.states import CoverageState, ChecklistStatelet
+# pylint: disable=line-too-long
 from allennlp_semparse.state_machines.transition_functions.coverage_transition_function import CoverageTransitionFunction
+# pylint: enable=line-too-long
 
 
 class LinkingCoverageTransitionFunction(CoverageTransitionFunction):

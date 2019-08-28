@@ -1,7 +1,9 @@
 """
 Defines all the types in the QuaRel domain.
 """
-from allennlp_semparse.nltk_languages.type_declarations.type_declaration import ComplexType, NamedBasicType, NameMapper
+from allennlp_semparse.nltk_languages.type_declarations.type_declaration import (ComplexType,
+                                                                                 NamedBasicType,
+                                                                                 NameMapper)
 
 class QuarelTypeDeclaration:
     def __init__(self, syntax: str) -> None:
@@ -45,7 +47,7 @@ class QuarelTypeDeclaration:
                     infer_function_type: 3,
                     and_function_type: 2
             }
-        elif syntax == "quarel_v1_attr_entities" or syntax == "quarel_friction_attr_entities":
+        elif syntax in {"quarel_v1_attr_entities", "quarel_friction_attr_entities"}:
             # attributes: <<QDIR, <WORLD, ATTR>>
             attr_function_type = ComplexType(rdir_type,
                                              ComplexType(world_type, attr_type))

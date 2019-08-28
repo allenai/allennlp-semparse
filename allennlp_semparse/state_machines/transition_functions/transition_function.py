@@ -20,6 +20,9 @@ class TransitionFunction(torch.nn.Module, Generic[StateType]):
     computations get done at each step of decoding, and how states are scored.  This subclass then
     gets passed to a ``DecoderTrainer`` to have its parameters trained.
     """
+    def forward(self, *inputs):
+        raise RuntimeError('call .take_step() instead of .forward()')
+
     def take_step(self,
                   state: StateType,
                   max_actions: int = None,

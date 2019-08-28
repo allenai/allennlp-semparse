@@ -2,9 +2,9 @@ from typing import Any, List, Sequence
 
 import torch
 
-from allennlp_semparse.fields.production_rule_field import ProductionRule
 from allennlp.nn import util
 
+from allennlp_semparse.fields.production_rule_field import ProductionRule
 from allennlp_semparse.state_machines.states.checklist_statelet import ChecklistStatelet
 from allennlp_semparse.state_machines.states.grammar_based_state import GrammarBasedState
 from allennlp_semparse.state_machines.states.grammar_statelet import GrammarStatelet
