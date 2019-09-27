@@ -16,3 +16,5 @@ jobs:
      run: |
        docker build --tag allennlp_semparse .
        docker run --rm allennlp_semparse pytest tests
+       docker run --rm allennlp_semparse pylint allennlp_semparse/
+       docker run --rm allennlp_semparse pylint tests/
