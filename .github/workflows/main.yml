@@ -1,0 +1,20 @@
+name: CI
+on:
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - master
+jobs:
+  build:
+   runs-on: ubuntu-latest
+
+   steps:
+   - uses: actions/checkout@v1
+   - name: Build and test with Docker
+     run: |
+       docker build --tag allennlp_semparse .
+       docker run --rm allennlp_semparse pytest tests
+       docker run --rm allennlp_semparse pylint allennlp_semparse/
+       docker run --rm allennlp_semparse pylint tests/
