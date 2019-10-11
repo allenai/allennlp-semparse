@@ -7,6 +7,7 @@ WORKDIR /allennlp_semparse
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+COPY .flake8 .flake8
 COPY pytest.ini pytest.ini
 COPY pyproject.toml pyproject.toml
 COPY training_config/ training_config/
