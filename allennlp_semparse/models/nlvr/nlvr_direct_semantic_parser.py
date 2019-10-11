@@ -18,7 +18,7 @@ from allennlp_semparse.state_machines.states import GrammarBasedState
 from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
 from allennlp_semparse.state_machines.transition_functions import BasicTransitionFunction
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @Model.register("nlvr_direct_parser")
@@ -93,7 +93,6 @@ class NlvrDirectSemanticParser(NlvrSemanticParser):
         labels: torch.LongTensor = None,
         metadata: List[Dict[str, Any]] = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
         """
         Decoder logic for producing type constrained target sequences, trained to maximize marginal
         likelihod over a set of approximate logical forms.

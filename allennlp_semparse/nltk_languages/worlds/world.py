@@ -11,7 +11,7 @@ from allennlp_semparse.common.errors import ParsingError
 from allennlp_semparse.domain_languages.domain_language import nltk_tree_to_logical_form
 from allennlp_semparse.nltk_languages.type_declarations import type_declaration as types
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 class World:

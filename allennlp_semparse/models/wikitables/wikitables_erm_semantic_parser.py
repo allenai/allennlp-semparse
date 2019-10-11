@@ -27,7 +27,7 @@ from allennlp_semparse.state_machines.trainers import ExpectedRiskMinimization
 from allennlp_semparse.state_machines.transition_functions import LinkingCoverageTransitionFunction
 
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @Model.register("wikitables_erm_parser")
@@ -227,7 +227,6 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
         target_values: List[List[str]] = None,
         metadata: List[Dict[str, Any]] = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
         """
         Parameters
         ----------

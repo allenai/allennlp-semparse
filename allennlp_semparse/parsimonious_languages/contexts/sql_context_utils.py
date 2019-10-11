@@ -48,7 +48,7 @@ def initialize_valid_actions(
             valid_actions[key].add(
                 format_action(
                     key,
-                    " ".join(rhs._unicode_members()),  # pylint: disable=protected-access
+                    " ".join(rhs._unicode_members()),
                     keywords_to_uppercase=keywords_to_uppercase,
                 )
             )
@@ -56,7 +56,7 @@ def initialize_valid_actions(
         # OneOf represents a series of expressions, one of which matches the text.
         # Eg. A -> B / C
         elif isinstance(rhs, OneOf):
-            for option in rhs._unicode_members():  # pylint: disable=protected-access
+            for option in rhs._unicode_members():
                 valid_actions[key].add(
                     format_action(key, option, keywords_to_uppercase=keywords_to_uppercase)
                 )
@@ -200,7 +200,7 @@ class SqlVisitor(NodeVisitor):
                     else:
                         child_right_side_string = (
                             child.expr._as_rhs().lstrip("(").rstrip(")")
-                        )  # pylint: disable=protected-access
+                        )
                         child_right_side_list = [
                             tok for tok in WHITESPACE_REGEX.split(child_right_side_string) if tok
                         ]
@@ -231,7 +231,7 @@ class SqlVisitor(NodeVisitor):
             raise
         except self.unwrapped_exceptions:
             raise
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             # Catch any exception, and tack on a parse tree so it's easier to
             # see where it went wrong.
             exc_class, exc, traceback = exc_info()

@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,protected-access,invalid-name
 from numpy.testing import assert_almost_equal
 import torch
 
@@ -22,13 +21,11 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
         self.ensure_model_can_train_save_and_load(self.param_file)
 
     def test_ungrouped_model_can_train_save_and_load(self):
-        # pylint: disable=line-too-long
         self.ensure_model_can_train_save_and_load(
             self.FIXTURES_ROOT / "nlvr_coverage_semantic_parser" / "ungrouped_experiment.json"
         )
 
     def test_mml_initialized_model_can_train_save_and_load(self):
-        # pylint: disable=line-too-long
         self.ensure_model_can_train_save_and_load(
             self.FIXTURES_ROOT / "nlvr_coverage_semantic_parser" / "mml_init_experiment.json"
         )
@@ -71,7 +68,6 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
         original_model_weights = {
             name: parameter.data.clone().numpy() for name, parameter in original_model_parameters
         }
-        # pylint: disable=line-too-long
         mml_model_archive_file = (
             self.FIXTURES_ROOT / "nlvr_direct_semantic_parser" / "serialization" / "model.tar.gz"
         )
@@ -92,7 +88,6 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
             assert_almost_equal(archived_weight, changed_weight)
 
     def test_get_vocab_index_mapping(self):
-        # pylint: disable=line-too-long
         mml_model_archive_file = (
             self.FIXTURES_ROOT / "nlvr_direct_semantic_parser" / "serialization" / "model.tar.gz"
         )

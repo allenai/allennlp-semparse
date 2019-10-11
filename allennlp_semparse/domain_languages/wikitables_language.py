@@ -18,7 +18,7 @@ from allennlp_semparse.domain_languages.domain_language import (
     predicate,
 )
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 class Row(NamedTuple):
@@ -47,7 +47,6 @@ class NumberColumn(ComparableColumn):
 
 
 class WikiTablesLanguage(DomainLanguage):
-    # pylint: disable=too-many-public-methods,no-self-use
     """
     Implements the functions in the variable free language we use, that's inspired by the one in
     "Memory Augmented Policy Optimization for Program Synthesis with Generalization" by Liang et al.
@@ -911,7 +910,7 @@ class WikiTablesLanguage(DomainLanguage):
                     year = int(part)
                 else:
                     day = int(part)
-            elif part in MONTH_NUMBERS:  # pylint: disable=consider-using-get
+            elif part in MONTH_NUMBERS:
                 month = MONTH_NUMBERS[part]
         return Date(year, month, day)
 

@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name,no-self-use,protected-access
 from ... import ModelTestCase
 
 from allennlp_semparse.nltk_languages.contexts.quarel_utils import group_worlds, to_qr_spec_string
@@ -48,7 +47,7 @@ class QuarelSemanticParserTest(ModelTestCase):
     def test_friction_zeroshot_model_can_train_save_and_load(self):
         param_file = (
             self.FIXTURES_ROOT / "quarel" / "experiment_parser_friction_zeroshot.json"
-        )  # pylint: disable=line-too-long
+        )
         self.ensure_model_can_train_save_and_load(param_file, gradients_to_ignore=self.ignore)
 
     def test_denotation_only_model_can_train_save_and_load(self):

@@ -28,7 +28,7 @@ from allennlp_semparse.state_machines.states import GrammarStatelet, RnnStatelet
 from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
 from allennlp_semparse.state_machines.transition_functions import LinkingTransitionFunction
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @Model.register("atis_parser")
@@ -147,7 +147,6 @@ class AtisSemanticParser(Model):
         target_action_sequence: torch.LongTensor = None,
         sql_queries: List[List[str]] = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
         """
         We set up the initial state for the decoder, and pass that state off to either a DecoderTrainer,
         if we're training, or a BeamSearch for inference, if we're not.

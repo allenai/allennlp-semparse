@@ -25,7 +25,7 @@ from allennlp_semparse.state_machines.states import GrammarStatelet, RnnStatelet
 from allennlp_semparse.state_machines.trainers import MaximumMarginalLikelihood
 from allennlp_semparse.state_machines.transition_functions import BasicTransitionFunction
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @Model.register("text2sql_parser")
@@ -123,7 +123,6 @@ class Text2SqlParser(Model):
         valid_actions: List[List[ProductionRule]],
         action_sequence: torch.LongTensor = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
         """
         We set up the initial state for the decoder, and pass that state off to either a DecoderTrainer,
         if we're training, or a BeamSearch for inference, if we're not.
@@ -314,8 +313,8 @@ class Text2SqlParser(Model):
             action sequence. This is basically a soft measure of exact_match.
         """
 
-        validation_correct = self._exact_match._total_value  # pylint: disable=protected-access
-        validation_total = self._exact_match._count  # pylint: disable=protected-access
+        validation_correct = self._exact_match._total_value
+        validation_total = self._exact_match._count
         return {
             "_exact_match_count": validation_correct,
             "_example_count": validation_total,

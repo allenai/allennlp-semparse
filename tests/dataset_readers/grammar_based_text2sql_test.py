@@ -1,5 +1,3 @@
-# pylint: disable=invalid-name,line-too-long
-
 import pytest
 
 from .. import SemparseTestCase

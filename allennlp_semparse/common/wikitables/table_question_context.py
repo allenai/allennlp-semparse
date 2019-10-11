@@ -171,7 +171,7 @@ STOP_WORDS = {
     "once",
 }
 
-CellValueType = Union[str, float, Date]  # pylint: disable=invalid-name
+CellValueType = Union[str, float, Date]
 
 
 class TableQuestionContext:

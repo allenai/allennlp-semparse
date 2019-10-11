@@ -240,7 +240,7 @@ class AtisWorld:
             new_grammar[nonterminal] = OneOf(*number_literals, name=nonterminal)
 
     def _update_expression_reference(
-        self,  # pylint: disable=no-self-use
+        self,
         grammar: Grammar,
         parent_expression_nonterminal: str,
         child_expression_nonterminal: str,
@@ -257,7 +257,7 @@ class AtisWorld:
         ]
 
     def _get_sequence_with_spacing(
-        self,  # pylint: disable=no-self-use
+        self,
         new_grammar,
         expressions: List[Expression],
         name: str = "",

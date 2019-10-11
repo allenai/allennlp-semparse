@@ -71,7 +71,6 @@ class WikiTablesSemanticParser(Model):
         default used in the dataset reader, so you likely don't need to modify this.
     """
 
-    # pylint: disable=abstract-method
     def __init__(
         self,
         vocab: Vocabulary,

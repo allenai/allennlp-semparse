@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use
 from flaky import flaky
 
 from ... import ModelTestCase

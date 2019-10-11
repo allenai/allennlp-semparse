@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long
 from allennlp_semparse.dataset_readers.atis import AtisDatasetReader
 from allennlp_semparse.dataset_readers.grammar_based_text2sql import (
     GrammarBasedText2SqlDatasetReader,

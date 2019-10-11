@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use,invalid-name,line-too-long
-
 import json
 from ... import SemparseTestCase
 

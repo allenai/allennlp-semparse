@@ -193,7 +193,6 @@ class BasicTransitionFunction(TransitionFunction[GrammarBasedState]):
         predicted_action_embeddings: torch.Tensor,
     ) -> Dict[int, List[Tuple[int, Any, Any, Any, List[int]]]]:
         # We take a couple of extra arguments here because subclasses might use them.
-        # pylint: disable=unused-argument,no-self-use
 
         # In this section we take our predicted action embedding and compare it to the available
         # actions in our current state (which might be different for each group element).  For
@@ -234,7 +233,6 @@ class BasicTransitionFunction(TransitionFunction[GrammarBasedState]):
         max_actions: int,
         allowed_actions: List[Set[int]],
     ):
-        # pylint: disable=no-self-use
 
         # We'll yield a bunch of states here that all have a `group_size` of 1, so that the
         # learning algorithm can decide how many of these it wants to keep, and it can just regroup

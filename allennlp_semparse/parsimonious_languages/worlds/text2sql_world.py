@@ -9,7 +9,6 @@ from parsimonious.exceptions import ParseError
 from allennlp.common.checks import ConfigurationError
 from allennlp_semparse.common.sql.text2sql_utils import read_dataset_schema
 
-# pylint: disable=line-too-long
 from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import SqlVisitor
 from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import (
     format_grammar_string,
@@ -39,8 +38,6 @@ from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context im
 from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
     update_grammar_with_untyped_entities,
 )
-
-# pylint: enable=line-too-long
 
 
 class Text2SqlWorld:
@@ -92,7 +89,7 @@ class Text2SqlWorld:
 
     def get_action_sequence_and_all_actions(
         self, query: List[str] = None, prelinked_entities: Dict[str, Dict[str, str]] = None
-    ) -> Tuple[List[str], List[str]]:  # pylint: disable=line-too-long
+    ) -> Tuple[List[str], List[str]]:
         grammar_with_context = deepcopy(self.base_grammar_dictionary)
 
         if not self.use_prelinked_entities and prelinked_entities is not None:

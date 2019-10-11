@@ -115,7 +115,7 @@ class QuaRelLanguage(DomainLanguage):
                     * world_same
                     * direction_same
                 )
-                if is_compatible == 1:  # pylint: disable=simplifiable-if-statement
+                if is_compatible == 1:
                     return True
                 else:
                     return False

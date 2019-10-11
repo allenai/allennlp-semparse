@@ -255,7 +255,6 @@ class WikiTablesDatasetReader(DatasetReader):
         offline_search_output : ``List[str]``, optional
             List of logical forms, produced by offline search. Not required during test.
         """
-        # pylint: disable=arguments-differ
         tokenized_question = self._tokenizer.tokenize(question.lower())
         question_field = TextField(tokenized_question, self._question_token_indexers)
         metadata: Dict[str, Any] = {"question_tokens": [x.text for x in tokenized_question]}

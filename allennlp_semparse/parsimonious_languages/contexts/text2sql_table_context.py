@@ -252,7 +252,7 @@ def update_grammar_values_with_variables(
 
 
 def update_grammar_numbers_and_strings_with_variables(
-    grammar_dictionary: Dict[str, List[str]],  # pylint: disable=invalid-name
+    grammar_dictionary: Dict[str, List[str]],
     prelinked_entities: Dict[str, Dict[str, str]],
     columns: Dict[str, TableColumn],
 ) -> None:

@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,invalid-name
 from ... import SemparseTestCase
 
 from allennlp_semparse.nltk_languages.type_declarations import type_declaration as types

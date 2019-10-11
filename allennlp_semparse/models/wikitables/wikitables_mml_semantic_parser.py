@@ -139,7 +139,6 @@ class WikiTablesMmlSemanticParser(WikiTablesSemanticParser):
         target_action_sequences: torch.LongTensor = None,
         metadata: List[Dict[str, Any]] = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
         """
         In this method we encode the table entities, link them to words in the question, then
         encode the question. Then we set up the initial state for the decoder, and pass that

@@ -90,7 +90,7 @@ class QuarelSemanticParser(Model):
         use_entities: bool = False,
         denotation_only: bool = False,
         # Deprecated parameter to load older models
-        entity_encoder: Seq2VecEncoder = None,  # pylint: disable=unused-argument
+        entity_encoder: Seq2VecEncoder = None,
         entity_similarity_mode: str = "dot_product",
         rule_namespace: str = "rule_labels",
     ) -> None:
@@ -128,7 +128,7 @@ class QuarelSemanticParser(Model):
             # Center initial values around unweighted dot product
             self._entity_similarity_layer._module.weight.data += (
                 1
-            )  # pylint: disable=protected-access
+            )
         elif self._entity_similarity_mode == "dot_product":
             pass
         else:
@@ -204,8 +204,6 @@ class QuarelSemanticParser(Model):
         target_action_sequences: torch.LongTensor = None,
         metadata: List[Dict[str, Any]] = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
-        # pylint: disable=unused-argument
         """
         In this method we encode the table entities, link them to words in the question, then
         encode the question. Then we set up the initial state for the decoder, and pass that

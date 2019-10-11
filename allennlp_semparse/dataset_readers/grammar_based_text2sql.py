@@ -19,7 +19,7 @@ from allennlp_semparse.common.sql import text2sql_utils as util
 from allennlp_semparse.fields import ProductionRuleField
 from allennlp_semparse.parsimonious_languages.worlds.text2sql_world import Text2SqlWorld
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @DatasetReader.register("grammar_based_text2sql")
@@ -146,7 +146,6 @@ class GrammarBasedText2SqlDatasetReader(DatasetReader):
         prelinked_entities: Dict[str, Dict[str, str]] = None,
         sql: List[str] = None,
     ) -> Instance:
-        # pylint: disable=arguments-differ
         fields: Dict[str, Field] = {}
         tokens = TextField([Token(t) for t in query], self._token_indexers)
         fields["tokens"] = tokens

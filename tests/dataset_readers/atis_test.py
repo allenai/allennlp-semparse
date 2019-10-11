@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,invalid-name
 from allennlp.common.file_utils import cached_path
 from allennlp_semparse.dataset_readers import AtisDatasetReader
 from .. import SemparseTestCase

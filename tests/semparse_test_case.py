@@ -5,7 +5,7 @@ from allennlp.common.testing import AllenNlpTestCase, ModelTestCase as AllenNlpM
 # These imports are to get all of the items registered that we need.
 from allennlp_semparse import models, dataset_readers, predictors
 
-ROOT = (pathlib.Path(__file__).parent / "..").resolve()  # pylint: disable=no-member
+ROOT = (pathlib.Path(__file__).parent / "..").resolve()
 
 
 class SemparseTestCase(AllenNlpTestCase):

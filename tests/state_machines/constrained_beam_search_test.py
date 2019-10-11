@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name,no-self-use,protected-access
 import torch
 
 from .. import SemparseTestCase
@@ -16,7 +15,6 @@ class TestConstrainedBeamSearch(SemparseTestCase):
         # front as "allowed", and use that to test the constrained beam search implementation.
         initial_state = SimpleState([0], [[]], [torch.Tensor([0.0])], [-3])
         beam_size = 3
-        # pylint: disable=bad-whitespace
         allowed_sequences = torch.Tensor(
             [
                 [
@@ -29,7 +27,6 @@ class TestConstrainedBeamSearch(SemparseTestCase):
                 ]
             ]
         )
-        # pylint: enable=bad-whitespace
         mask = torch.Tensor(
             [
                 [

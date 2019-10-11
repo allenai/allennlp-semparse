@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,invalid-name,protected-access
 from typing import Callable, List
 
 import pytest

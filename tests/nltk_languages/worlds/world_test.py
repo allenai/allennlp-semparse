@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,invalid-name,protected-access
 from overrides import overrides
 
 from ... import SemparseTestCase
@@ -6,7 +5,6 @@ from allennlp_semparse.nltk_languages.worlds.world import World
 
 
 class FakeWorldWithoutRecursion(World):
-    # pylint: disable=abstract-method
     @overrides
     def all_possible_actions(self):
         # The logical forms this grammar allows are
@@ -24,7 +22,6 @@ class FakeWorldWithoutRecursion(World):
 
 
 class FakeWorldWithRecursion(FakeWorldWithoutRecursion):
-    # pylint: disable=abstract-method
     @overrides
     def all_possible_actions(self):
         # In addition to the forms allowed by ``FakeWorldWithoutRecursion``, this world allows

@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 from datetime import datetime
 import json
 
@@ -7,7 +6,6 @@ from parsimonious.expressions import Literal, Sequence
 from allennlp.common.file_utils import cached_path
 from ... import SemparseTestCase
 
-# pylint: disable=wildcard-import,unused-wildcard-import
 from allennlp_semparse.parsimonious_languages.contexts.atis_tables import (
     get_approximate_times,
     pm_map_match_to_query_value,
@@ -22,7 +20,7 @@ class TestAtisWorld(SemparseTestCase):
         self.data = open(test_filename).readlines()
         self.database_file = cached_path("https://allennlp.s3.amazonaws.com/datasets/atis/atis.db")
 
-    def test_atis_global_actions(self):  # pylint: disable=no-self-use
+    def test_atis_global_actions(self):
         world = AtisWorld(utterances=[])
         valid_actions = world.valid_actions
         assert set(valid_actions.keys()) == {
@@ -366,7 +364,7 @@ class TestAtisWorld(SemparseTestCase):
             'table_name -> ["state"]',
         }
 
-    def test_atis_local_actions(self):  # pylint: disable=no-self-use
+    def test_atis_local_actions(self):
         # Check if the triggers activate correcty
         world = AtisWorld(["show me the flights from denver at 12 o'clock"])
 
@@ -429,7 +427,7 @@ class TestAtisWorld(SemparseTestCase):
         }
         assert set(world.valid_actions["year_number"]) == {'year_number -> ["1991"]'}
 
-    def test_atis_simple_action_sequence(self):  # pylint: disable=no-self-use
+    def test_atis_simple_action_sequence(self):
         world = AtisWorld(
             [("give me all flights from boston to " "philadelphia next week arriving after lunch")]
         )
@@ -607,7 +605,7 @@ class TestAtisWorld(SemparseTestCase):
             "city_city_name_string -> [\"'BOSTON'\"]",
         ]
 
-    def test_atis_long_action_sequence(self):  # pylint: disable=no-self-use
+    def test_atis_long_action_sequence(self):
         world = AtisWorld(
             [
                 (
@@ -834,7 +832,7 @@ class TestAtisWorld(SemparseTestCase):
             action_sequence = world.get_action_sequence(line["interaction"][utterance_idx]["sql"])
             assert action_sequence is not None
 
-    def test_time_extraction(self):  # pylint: disable=no-self-use
+    def test_time_extraction(self):
         approximate_times = get_approximate_times([1900])
         assert approximate_times == [1830, 1930]
 
@@ -847,7 +845,7 @@ class TestAtisWorld(SemparseTestCase):
         ]
         assert pm_times == [[1200], [1300], [2030], [1230], [1315]]
 
-    def test_atis_helper_methods(self):  # pylint: disable=no-self-use
+    def test_atis_helper_methods(self):
         world = AtisWorld(
             [
                 (
@@ -860,9 +858,9 @@ class TestAtisWorld(SemparseTestCase):
         assert world._get_numeric_database_values("time_range_end") == [
             "800",
             "1200",
-        ]  # pylint: disable=protected-access
+        ]
         assert world._get_sequence_with_spacing(
-            world.grammar,  # pylint: disable=protected-access
+            world.grammar,
             [
                 world.grammar["col_ref"],
                 Literal("BETWEEN"),

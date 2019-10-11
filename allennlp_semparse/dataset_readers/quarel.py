@@ -32,7 +32,7 @@ from allennlp_semparse.nltk_languages.contexts.quarel_utils import LEXICAL_CUES,
 from allennlp_semparse.nltk_languages.worlds.quarel_world import QuarelWorld
 
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @DatasetReader.register("quarel")
@@ -290,7 +290,6 @@ class QuarelDatasetReader(DatasetReader):
         dynamic_entities_override: Dict[str, str] = None,
     ) -> Instance:
 
-        # pylint: disable=arguments-differ
         tokenized_question = tokenized_question or self._tokenizer.tokenize(question.lower())
         additional_metadata = additional_metadata or dict()
         additional_metadata["question_tokens"] = [token.text for token in tokenized_question]
@@ -478,7 +477,7 @@ class QuarelDatasetReader(DatasetReader):
         res = []
         # Hackily access last two feature extractors for table field (span overlaps which don't
         # depend on the actual table information)
-        features = table_field._feature_extractors[8:]  # pylint: disable=protected-access
+        features = table_field._feature_extractors[8:]
         for i, token in enumerate(tokenized_question):
             tag_best = 0
             score_max = 0.0

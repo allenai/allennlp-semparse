@@ -31,7 +31,7 @@ class NlvrParserPredictor(Predictor):
         return instance
 
     @overrides
-    def dump_line(self, outputs: JsonDict) -> str:  # pylint: disable=no-self-use
+    def dump_line(self, outputs: JsonDict) -> str:
         if "identifier" in outputs:
             # Returning CSV lines for official evaluation
             identifier = outputs["identifier"]

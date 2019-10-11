@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use
-
 from allennlp.common import Params
 from .. import SemparseTestCase
 

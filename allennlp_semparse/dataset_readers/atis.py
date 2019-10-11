@@ -111,12 +111,11 @@ class AtisDatasetReader(DatasetReader):
                     yield instance
 
     @overrides
-    def text_to_instance(
-        self,  # type: ignore
+    def text_to_instance(  # type: ignore
+        self,
         utterances: List[str],
         sql_query_labels: List[str] = None,
     ) -> Instance:
-        # pylint: disable=arguments-differ
         """
         Parameters
         ----------

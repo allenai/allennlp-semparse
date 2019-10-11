@@ -87,7 +87,6 @@ class Shape(NamedTuple):
 
 
 class NlvrLanguage(DomainLanguage):
-    # pylint: disable=no-self-use,too-many-public-methods
     def __init__(self, boxes: Set[Box]) -> None:
         self.boxes = boxes
         self.objects: Set[Object] = set()

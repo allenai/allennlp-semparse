@@ -15,7 +15,7 @@ from allennlp_semparse.domain_languages import NlvrLanguage, START_SYMBOL
 from allennlp_semparse.fields.production_rule_field import ProductionRule
 from allennlp_semparse.state_machines.states import GrammarBasedState, GrammarStatelet, RnnStatelet
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 class NlvrSemanticParser(Model):
@@ -78,7 +78,6 @@ class NlvrSemanticParser(Model):
 
     @overrides
     def forward(self):  # type: ignore
-        # pylint: disable=arguments-differ
         # Sub-classes should define their own logic here.
         raise NotImplementedError
 

@@ -30,4 +30,4 @@ class Text2SqlParserTest(ModelTestCase):
         )
         for action in action_sequence:
             grammar_state = grammar_state.take_action(action)
-        assert grammar_state._nonterminal_stack == []  # pylint: disable=protected-access
+        assert grammar_state._nonterminal_stack == []

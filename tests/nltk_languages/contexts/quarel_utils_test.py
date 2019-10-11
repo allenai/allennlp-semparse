@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,invalid-name
 from ... import SemparseTestCase
 
 from allennlp_semparse.common.knowledge_graph import KnowledgeGraph

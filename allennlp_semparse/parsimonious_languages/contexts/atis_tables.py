@@ -194,7 +194,7 @@ def get_numbers_from_utterance(
 
 
 def get_time_range_start_from_utterance(
-    utterance: str, tokenized_utterance: List[Token]  # pylint: disable=unused-argument
+    utterance: str, tokenized_utterance: List[Token]
 ) -> Dict[str, List[int]]:
     late_indices = {
         index for index, token in enumerate(tokenized_utterance) if token.text == "late"
@@ -215,7 +215,7 @@ def get_time_range_start_from_utterance(
 
 
 def get_time_range_end_from_utterance(
-    utterance: str, tokenized_utterance: List[Token]  # pylint: disable=unused-argument
+    utterance: str, tokenized_utterance: List[Token]
 ) -> Dict[str, List[int]]:
     early_indices = {
         index for index, token in enumerate(tokenized_utterance) if token.text == "early"
@@ -236,7 +236,7 @@ def get_time_range_end_from_utterance(
 
 
 def get_costs_from_utterance(
-    utterance: str, tokenized_utterance: List[Token]  # pylint: disable=unused-argument
+    utterance: str, tokenized_utterance: List[Token]
 ) -> Dict[str, List[int]]:
     dollars_indices = {
         index
@@ -252,7 +252,7 @@ def get_costs_from_utterance(
 
 
 def get_flight_numbers_from_utterance(
-    utterance: str, tokenized_utterance: List[Token]  # pylint: disable=unused-argument
+    utterance: str, tokenized_utterance: List[Token]
 ) -> Dict[str, List[int]]:
     indices_words_preceding_flight_number = {
         index

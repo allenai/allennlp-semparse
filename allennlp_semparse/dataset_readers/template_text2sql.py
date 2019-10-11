@@ -16,7 +16,7 @@ from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
 from allennlp_semparse.common.sql import text2sql_utils
 
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @DatasetReader.register("template_text2sql")
@@ -88,7 +88,6 @@ class TemplateText2SqlDatasetReader(DatasetReader):
         slot_tags: List[str] = None,
         sql_template: str = None,
     ) -> Instance:
-        # pylint: disable=arguments-differ
         fields: Dict[str, Field] = {}
         tokens = TextField([Token(t) for t in query], self._token_indexers)
         fields["tokens"] = tokens

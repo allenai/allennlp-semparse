@@ -20,7 +20,7 @@ from allennlp.nn import util as nn_util
 
 from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
 
-TokenList = List[TokenType]  # pylint: disable=invalid-name
+TokenList = List[TokenType]
 
 
 class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
@@ -289,7 +289,6 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
 
     @overrides
     def batch_tensors(self, tensor_list: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
-        # pylint: disable=no-self-use
         batched_text = nn_util.batch_tensor_dicts(
             tensor["text"] for tensor in tensor_list
         )  # type: ignore
@@ -298,7 +297,6 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
 
     # Below here we have feature extractor functions.  To keep a consistent API for easy logic
     # above, some of these functions have unused arguments.
-    # pylint: disable=unused-argument,no-self-use
 
     # These feature extractors are generally pretty specific to the logical form language and
     # problem setting in WikiTableQuestions.  This whole notion of feature extraction should
@@ -483,4 +481,3 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
             token_index_left -= 1
         return len(seen_entity_lemmas) / len(entity_lemmas)
 
-    # pylint: enable=unused-argument,no-self-use

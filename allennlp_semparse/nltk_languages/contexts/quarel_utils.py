@@ -181,7 +181,7 @@ def get_explanation(
     a_attr = answers[answer_index][0]
     qr_dir = world._get_qr_coeff(
         strip_entity_type(s_attr), strip_entity_type(a_attr)
-    )  # pylint: disable=protected-access
+    )
     a_dir = s_dir * qr_dir
     a_world = nl_world[answers[answer_index][2]]
 
@@ -355,13 +355,13 @@ class WorldTaggerExtractor:
         # TODO: Fix protected access
         tokenized_question = tokenized_question or self._tagger._dataset_reader._tokenizer.tokenize(
             question.lower()
-        )  # pylint: disable=protected-access
+        )
         instance = self._tagger._dataset_reader.text_to_instance(
-            question, tokenized_question=tokenized_question  # pylint: disable=protected-access
+            question, tokenized_question=tokenized_question
         )
         output = self._tagger._model.forward_on_instance(
             instance
-        )  # pylint: disable=protected-access
+        )
         tokens_text = [t.text for t in tokenized_question]
         res = group_worlds(output["tags"], tokens_text)
         return res

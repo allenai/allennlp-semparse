@@ -5,7 +5,6 @@ are all pytorch `Modules`` that have trainable parameters.  The :class:`BasicTra
 simply an LSTM decoder with attention over an input utterance, and the other classes typically
 subclass this and add functionality to it.
 """
-# pylint: disable=line-too-long
 from allennlp_semparse.state_machines.transition_functions.basic_transition_function import (
     BasicTransitionFunction,
 )

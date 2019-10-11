@@ -9,7 +9,7 @@ from allennlp_semparse.state_machines.states import State
 from allennlp_semparse.state_machines.trainers.decoder_trainer import DecoderTrainer
 from allennlp_semparse.state_machines.transition_functions import TransitionFunction
 
-StateType = TypeVar("StateType", bound=State)  # pylint: disable=invalid-name
+StateType = TypeVar("StateType", bound=State)
 
 
 class ExpectedRiskMinimization(DecoderTrainer[Callable[[StateType], torch.Tensor]]):

@@ -1,4 +1,3 @@
-# pylint: disable=no-self-use,invalid-name,protected-access,too-many-public-methods
 from ... import SemparseTestCase
 from allennlp.data.tokenizers import WordTokenizer
 from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter

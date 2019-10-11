@@ -383,7 +383,6 @@ class BinaryOpType(PlaceholderType):
 
 
 class TypedConstantExpression(ConstantExpression):
-    # pylint: disable=abstract-method
     """
     NLTK assumes all constants are of type ``EntityType`` (e) by default. We define this new class
     where we can pass a default type to the constructor and use that in the ``_set_type`` method.
@@ -457,10 +456,8 @@ class DynamicTypeApplicationExpression(ApplicationExpression):
         super(DynamicTypeApplicationExpression, self)._set_type(other_type, signature)
         # TODO(pradeep): Assuming the mapping of "var" function is "V". Do something better.
         if isinstance(self.argument, ApplicationExpression) and str(self.argument.function) == "V":
-            # pylint: disable=protected-access
             self.argument.argument._set_type(self.function.type.first)
         if str(self.argument) == "X" and str(self.function) != "V":
-            # pylint: disable=protected-access
             self.argument._set_type(self.function.type.first)
 
 

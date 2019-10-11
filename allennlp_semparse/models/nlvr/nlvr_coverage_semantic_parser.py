@@ -21,7 +21,7 @@ from allennlp_semparse.state_machines.states import CoverageState, ChecklistStat
 from allennlp_semparse.state_machines.trainers import DecoderTrainer, ExpectedRiskMinimization
 from allennlp_semparse.state_machines.transition_functions import CoverageTransitionFunction
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 @Model.register("nlvr_coverage_parser")
@@ -210,7 +210,6 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
         epoch_num: List[int] = None,
         metadata: List[Dict[str, Any]] = None,
     ) -> Dict[str, torch.Tensor]:
-        # pylint: disable=arguments-differ
         """
         Decoder logic for producing type constrained target sequences that maximize coverage of
         their respective agendas, and minimize a denotation based loss.
