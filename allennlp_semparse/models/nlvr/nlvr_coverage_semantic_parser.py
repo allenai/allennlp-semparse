@@ -272,8 +272,8 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
             initial_state.debug_info = [[] for _ in range(batch_size)]
 
         agenda_data = [agenda_[:, 0].cpu().data for agenda_ in agenda_list]
-        outputs = self._decoder_trainer.decode(
-            initial_state,  # type: ignore
+        outputs = self._decoder_trainer.decode(  # type: ignore
+            initial_state,
             self._decoder_step,
             partial(self._get_state_cost, worlds),
         )

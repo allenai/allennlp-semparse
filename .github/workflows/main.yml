@@ -18,3 +18,4 @@ jobs:
        docker run --rm allennlp_semparse pytest tests
        docker run --rm allennlp_semparse flake8 -v
        docker run --rm allennlp_semparse black -v --check .
+       docker run --rm allennlp_semparse mypy allennlp_semparse --ignore-missing-imports

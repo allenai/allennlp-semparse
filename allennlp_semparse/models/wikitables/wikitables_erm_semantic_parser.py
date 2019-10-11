@@ -301,8 +301,8 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
 
         if target_values is not None:
             logger.warning(f"TARGET VALUES: {target_values}")
-            trainer_outputs = self._decoder_trainer.decode(
-                initial_state,  # type: ignore
+            trainer_outputs = self._decoder_trainer.decode(  # type: ignore
+                initial_state,
                 self._decoder_step,
                 partial(self._get_state_cost, world),
             )

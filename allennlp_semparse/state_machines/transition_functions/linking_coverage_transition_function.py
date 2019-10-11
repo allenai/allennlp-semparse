@@ -79,8 +79,8 @@ class LinkingCoverageTransitionFunction(CoverageTransitionFunction):
             )
 
     @overrides
-    def _compute_action_probabilities(
-        self,  # type: ignore
+    def _compute_action_probabilities(  # type: ignore
+        self,
         state: CoverageState,
         hidden_state: torch.Tensor,
         attention_weights: torch.Tensor,

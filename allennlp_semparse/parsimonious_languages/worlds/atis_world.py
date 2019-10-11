@@ -440,7 +440,7 @@ class AtisWorld:
         # Add string linking dict.
         string_linking_dict: Dict[str, List[int]] = {}
         for tokenized_utterance in self.tokenized_utterances:
-            string_linking_dict = atis_tables.get_strings_from_utterance(tokenized_utterance)
+            string_linking_dict = get_strings_from_utterance(tokenized_utterance)
         strings_list = AtisWorld.sql_table_context.strings_list
         strings_list.append(("flight_airline_code_string -> [\"'EA'\"]", "EA"))
         strings_list.append(("airline_airline_name_string-> [\"'EA'\"]", "EA"))
