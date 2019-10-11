@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Iterable, List, Tuple
 
 import difflib
 import sqlparse
@@ -490,7 +490,7 @@ class AtisSemanticParser(Model):
 
         valid_actions = world.valid_actions
         entity_map = {}
-        entities = world.entities
+        entities: Iterable[str] = world.entities
 
         for entity_index, entity in enumerate(entities):
             entity_map[entity] = entity_index
