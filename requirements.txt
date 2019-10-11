@@ -6,8 +6,3 @@ parsimonious>=0.8.0
 
 # Used to format and postprocess SQL
 sqlparse>=0.2.4
-
-# For code style
-flake8
-black
-mypy
