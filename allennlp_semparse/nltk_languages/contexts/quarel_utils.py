@@ -179,9 +179,7 @@ def get_explanation(
     s_dir = world.qr_size[setup_core[1]]
     s_world = nl_world[setup_core[2]]
     a_attr = answers[answer_index][0]
-    qr_dir = world._get_qr_coeff(
-        strip_entity_type(s_attr), strip_entity_type(a_attr)
-    )
+    qr_dir = world._get_qr_coeff(strip_entity_type(s_attr), strip_entity_type(a_attr))
     a_dir = s_dir * qr_dir
     a_world = nl_world[answers[answer_index][2]]
 
@@ -359,9 +357,7 @@ class WorldTaggerExtractor:
         instance = self._tagger._dataset_reader.text_to_instance(
             question, tokenized_question=tokenized_question
         )
-        output = self._tagger._model.forward_on_instance(
-            instance
-        )
+        output = self._tagger._model.forward_on_instance(instance)
         tokens_text = [t.text for t in tokenized_question]
         res = group_worlds(output["tags"], tokens_text)
         return res

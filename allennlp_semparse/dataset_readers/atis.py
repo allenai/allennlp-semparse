@@ -112,9 +112,7 @@ class AtisDatasetReader(DatasetReader):
 
     @overrides
     def text_to_instance(  # type: ignore
-        self,
-        utterances: List[str],
-        sql_query_labels: List[str] = None,
+        self, utterances: List[str], sql_query_labels: List[str] = None
     ) -> Instance:
         """
         Parameters

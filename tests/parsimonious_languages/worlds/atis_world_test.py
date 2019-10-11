@@ -855,10 +855,7 @@ class TestAtisWorld(SemparseTestCase):
             ]
         )
         assert world.dates == [datetime(1993, 6, 4, 0, 0)]
-        assert world._get_numeric_database_values("time_range_end") == [
-            "800",
-            "1200",
-        ]
+        assert world._get_numeric_database_values("time_range_end") == ["800", "1200"]
         assert world._get_sequence_with_spacing(
             world.grammar,
             [

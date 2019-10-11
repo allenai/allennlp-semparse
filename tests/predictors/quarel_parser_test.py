@@ -16,9 +16,7 @@ class TestQuarelParserPredictor(SemparseTestCase):
             "entitycues": "smoothness: smoother\nspeed:faster",
         }
 
-        archive_path = (
-            self.FIXTURES_ROOT / "quarel" / "zeroshot" / "serialization" / "model.tar.gz"
-        )
+        archive_path = self.FIXTURES_ROOT / "quarel" / "zeroshot" / "serialization" / "model.tar.gz"
         archive = load_archive(archive_path)
         predictor = Predictor.from_archive(archive, "quarel-parser")
 

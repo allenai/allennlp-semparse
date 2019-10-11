@@ -273,9 +273,7 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
 
         agenda_data = [agenda_[:, 0].cpu().data for agenda_ in agenda_list]
         outputs = self._decoder_trainer.decode(  # type: ignore
-            initial_state,
-            self._decoder_step,
-            partial(self._get_state_cost, worlds),
+            initial_state, self._decoder_step, partial(self._get_state_cost, worlds)
         )
         if identifier is not None:
             outputs["identifier"] = identifier

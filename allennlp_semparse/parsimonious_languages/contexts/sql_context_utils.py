@@ -198,9 +198,7 @@ class SqlVisitor(NodeVisitor):
                     if child.expr.name != "":
                         child_strings.append(child.expr.name)
                     else:
-                        child_right_side_string = (
-                            child.expr._as_rhs().lstrip("(").rstrip(")")
-                        )
+                        child_right_side_string = child.expr._as_rhs().lstrip("(").rstrip(")")
                         child_right_side_list = [
                             tok for tok in WHITESPACE_REGEX.split(child_right_side_string) if tok
                         ]

@@ -45,9 +45,7 @@ class QuarelSemanticParserTest(ModelTestCase):
         self.ensure_model_can_train_save_and_load(param_file, gradients_to_ignore=self.ignore)
 
     def test_friction_zeroshot_model_can_train_save_and_load(self):
-        param_file = (
-            self.FIXTURES_ROOT / "quarel" / "experiment_parser_friction_zeroshot.json"
-        )
+        param_file = self.FIXTURES_ROOT / "quarel" / "experiment_parser_friction_zeroshot.json"
         self.ensure_model_can_train_save_and_load(param_file, gradients_to_ignore=self.ignore)
 
     def test_denotation_only_model_can_train_save_and_load(self):

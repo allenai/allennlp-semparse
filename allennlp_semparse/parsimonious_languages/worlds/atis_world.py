@@ -257,10 +257,7 @@ class AtisWorld:
         ]
 
     def _get_sequence_with_spacing(
-        self,
-        new_grammar,
-        expressions: List[Expression],
-        name: str = "",
+        self, new_grammar, expressions: List[Expression], name: str = ""
     ) -> Sequence:
         """
         This is a helper method for generating sequences, since we often want a list of expressions
