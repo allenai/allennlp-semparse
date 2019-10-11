@@ -5,7 +5,6 @@ from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
 
-@pytest.mark.java
 class TestWikiTablesParserPredictor(SemparseTestCase):
     def test_uses_named_inputs(self):
         inputs = {"question": "names", "table": "name\tdate\nmatt\t2017\npradeep\t2018"}

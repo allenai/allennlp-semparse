@@ -1,5 +1,5 @@
 from typing import List, Dict, Tuple, Set, Callable
-from colections import defaultdict
+from collections import defaultdict
 from copy import copy
 
 import numpy
