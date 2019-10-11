@@ -10,3 +10,4 @@ sqlparse>=0.2.4
 # For code style
 flake8
 black
+mypy
