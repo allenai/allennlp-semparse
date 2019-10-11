@@ -480,4 +480,3 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
             seen_entity_lemmas.add(tokens[token_index_left].lemma_)
             token_index_left -= 1
         return len(seen_entity_lemmas) / len(entity_lemmas)
-
