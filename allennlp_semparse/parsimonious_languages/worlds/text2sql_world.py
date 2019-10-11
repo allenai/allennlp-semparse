@@ -11,16 +11,37 @@ from allennlp_semparse.common.sql.text2sql_utils import read_dataset_schema
 
 # pylint: disable=line-too-long
 from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import SqlVisitor
-from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import format_grammar_string, initialize_valid_actions
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import GRAMMAR_DICTIONARY
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_numbers_and_strings_with_variables
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_to_be_variable_free
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_values_with_variables
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_global_values
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_table_values
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_tables
-from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import update_grammar_with_untyped_entities
+from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import (
+    format_grammar_string,
+    initialize_valid_actions,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    GRAMMAR_DICTIONARY,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_numbers_and_strings_with_variables,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_to_be_variable_free,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_values_with_variables,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_with_global_values,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_with_table_values,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_with_tables,
+)
+from allennlp_semparse.parsimonious_languages.contexts.text2sql_table_context import (
+    update_grammar_with_untyped_entities,
+)
+
 # pylint: enable=line-too-long
+
 
 class Text2SqlWorld:
     """
@@ -47,12 +68,15 @@ class Text2SqlWorld:
         Whether or not to try to infer the types of prelinked variables.
         If not, they are added as untyped values to the grammar instead.
     """
-    def __init__(self,
-                 schema_path: str,
-                 cursor: Cursor = None,
-                 use_prelinked_entities: bool = True,
-                 variable_free: bool = True,
-                 use_untyped_entities: bool = False) -> None:
+
+    def __init__(
+        self,
+        schema_path: str,
+        cursor: Cursor = None,
+        use_prelinked_entities: bool = True,
+        variable_free: bool = True,
+        use_untyped_entities: bool = False,
+    ) -> None:
         self.cursor = cursor
         self.schema = read_dataset_schema(schema_path)
         self.columns = {column.name: column for table in self.schema.values() for column in table}
@@ -62,24 +86,28 @@ class Text2SqlWorld:
         self.use_untyped_entities = use_untyped_entities
 
         # NOTE: This base dictionary should not be modified.
-        self.base_grammar_dictionary = self._initialize_grammar_dictionary(deepcopy(GRAMMAR_DICTIONARY))
+        self.base_grammar_dictionary = self._initialize_grammar_dictionary(
+            deepcopy(GRAMMAR_DICTIONARY)
+        )
 
-    def get_action_sequence_and_all_actions(self,
-                                            query: List[str] = None,
-                                            prelinked_entities: Dict[str, Dict[str, str]] = None) -> Tuple[List[str], List[str]]: # pylint: disable=line-too-long
+    def get_action_sequence_and_all_actions(
+        self, query: List[str] = None, prelinked_entities: Dict[str, Dict[str, str]] = None
+    ) -> Tuple[List[str], List[str]]:  # pylint: disable=line-too-long
         grammar_with_context = deepcopy(self.base_grammar_dictionary)
 
         if not self.use_prelinked_entities and prelinked_entities is not None:
-            raise ConfigurationError("The Text2SqlWorld was specified to not use prelinked "
-                                     "entities, but prelinked entities were passed.")
+            raise ConfigurationError(
+                "The Text2SqlWorld was specified to not use prelinked "
+                "entities, but prelinked entities were passed."
+            )
         prelinked_entities = prelinked_entities or {}
 
         if self.use_untyped_entities:
             update_grammar_values_with_variables(grammar_with_context, prelinked_entities)
         else:
-            update_grammar_numbers_and_strings_with_variables(grammar_with_context,
-                                                              prelinked_entities,
-                                                              self.columns)
+            update_grammar_numbers_and_strings_with_variables(
+                grammar_with_context, prelinked_entities, self.columns
+            )
 
         grammar = Grammar(format_grammar_string(grammar_with_context))
 
@@ -97,7 +125,9 @@ class Text2SqlWorld:
 
         return action_sequence, sorted_actions
 
-    def _initialize_grammar_dictionary(self, grammar_dictionary: Dict[str, List[str]]) -> Dict[str, List[str]]:
+    def _initialize_grammar_dictionary(
+        self, grammar_dictionary: Dict[str, List[str]]
+    ) -> Dict[str, List[str]]:
         # Add all the table and column names to the grammar.
         update_grammar_with_tables(grammar_dictionary, self.schema)
 

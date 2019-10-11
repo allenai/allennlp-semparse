@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 # We use "Number" in a bunch of places throughout to try to generalize ints and floats.
 # Unfortunately, mypy doesn't like this very much, so we have to "type: ignore" a bunch of things.
 # But it makes for a nicer induced grammar, so it's worth it.
@@ -11,7 +12,11 @@ import re
 from allennlp_semparse.common import Date, ExecutionError, MONTH_NUMBERS
 from allennlp_semparse.common.wikitables import wikitables_evaluator as evaluator
 from allennlp_semparse.common.wikitables import TableQuestionContext, CellValueType
-from allennlp_semparse.domain_languages.domain_language import DomainLanguage, PredicateType, predicate
+from allennlp_semparse.domain_languages.domain_language import (
+    DomainLanguage,
+    PredicateType,
+    predicate,
+)
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -51,6 +56,7 @@ class WikiTablesLanguage(DomainLanguage):
     use the ``@predicate`` decorator for all of the language functions.  Instead, we add them to
     the language using ``add_predicate`` if, e.g., there is a column with dates in it.
     """
+
     def __init__(self, table_context: TableQuestionContext) -> None:
         super().__init__(start_types=self._get_start_types_in_context(table_context))
         self.table_context = table_context
@@ -61,40 +67,40 @@ class WikiTablesLanguage(DomainLanguage):
         self._table_has_date_columns = False
         self._table_has_number_columns = False
         if "string" in column_types:
-            self.add_predicate('filter_in', self.filter_in)
-            self.add_predicate('filter_not_in', self.filter_not_in)
+            self.add_predicate("filter_in", self.filter_in)
+            self.add_predicate("filter_not_in", self.filter_not_in)
             self._table_has_string_columns = True
         if "date" in column_types:
-            self.add_predicate('filter_date_greater', self.filter_date_greater)
-            self.add_predicate('filter_date_greater_equals', self.filter_date_greater_equals)
-            self.add_predicate('filter_date_lesser', self.filter_date_lesser)
-            self.add_predicate('filter_date_lesser_equals', self.filter_date_lesser_equals)
-            self.add_predicate('filter_date_equals', self.filter_date_equals)
-            self.add_predicate('filter_date_not_equals', self.filter_date_not_equals)
-            self.add_predicate('max_date', self.max_date)
-            self.add_predicate('min_date', self.min_date)
+            self.add_predicate("filter_date_greater", self.filter_date_greater)
+            self.add_predicate("filter_date_greater_equals", self.filter_date_greater_equals)
+            self.add_predicate("filter_date_lesser", self.filter_date_lesser)
+            self.add_predicate("filter_date_lesser_equals", self.filter_date_lesser_equals)
+            self.add_predicate("filter_date_equals", self.filter_date_equals)
+            self.add_predicate("filter_date_not_equals", self.filter_date_not_equals)
+            self.add_predicate("max_date", self.max_date)
+            self.add_predicate("min_date", self.min_date)
             # Adding -1 to mapping because we need it for dates where not all three fields are
             # specified. We want to do this only when the table has a date column. This is because
             # the knowledge graph is also constructed in such a way that -1 is an entity with date
             # columns as the neighbors only if any date columns exist in the table.
-            self.add_constant('-1', -1, type_=Number)
+            self.add_constant("-1", -1, type_=Number)
             self._table_has_date_columns = True
         if "number" in column_types or "num2" in column_types:
-            self.add_predicate('filter_number_greater', self.filter_number_greater)
-            self.add_predicate('filter_number_greater_equals', self.filter_number_greater_equals)
-            self.add_predicate('filter_number_lesser', self.filter_number_lesser)
-            self.add_predicate('filter_number_lesser_equals', self.filter_number_lesser_equals)
-            self.add_predicate('filter_number_equals', self.filter_number_equals)
-            self.add_predicate('filter_number_not_equals', self.filter_number_not_equals)
-            self.add_predicate('max_number', self.max_number)
-            self.add_predicate('min_number', self.min_number)
-            self.add_predicate('average', self.average)
-            self.add_predicate('sum', self.sum)
-            self.add_predicate('diff', self.diff)
+            self.add_predicate("filter_number_greater", self.filter_number_greater)
+            self.add_predicate("filter_number_greater_equals", self.filter_number_greater_equals)
+            self.add_predicate("filter_number_lesser", self.filter_number_lesser)
+            self.add_predicate("filter_number_lesser_equals", self.filter_number_lesser_equals)
+            self.add_predicate("filter_number_equals", self.filter_number_equals)
+            self.add_predicate("filter_number_not_equals", self.filter_number_not_equals)
+            self.add_predicate("max_number", self.max_number)
+            self.add_predicate("min_number", self.min_number)
+            self.add_predicate("average", self.average)
+            self.add_predicate("sum", self.sum)
+            self.add_predicate("diff", self.diff)
             self._table_has_number_columns = True
         if "date" in column_types or "number" in column_types or "num2" in column_types:
-            self.add_predicate('argmax', self.argmax)
-            self.add_predicate('argmin', self.argmin)
+            self.add_predicate("argmax", self.argmax)
+            self.add_predicate("argmin", self.argmin)
 
         self.table_graph = table_context.get_table_knowledge_graph()
 
@@ -117,18 +123,20 @@ class WikiTablesLanguage(DomainLanguage):
         for column_name in table_context.column_names:
             column_type = column_name.split(":")[0].replace("_column", "")
             column: Column = None
-            if column_type == 'string':
+            if column_type == "string":
                 column = StringColumn(column_name)
-            elif column_type == 'date':
+            elif column_type == "date":
                 column = DateColumn(column_name)
                 self.add_constant(column_name, column, type_=ComparableColumn)
-            elif column_type in {'number', "num2"}:
+            elif column_type in {"number", "num2"}:
                 column = NumberColumn(column_name)
                 self.add_constant(column_name, column, type_=ComparableColumn)
             self.add_constant(column_name, column, type_=Column)
             self.add_constant(column_name, column)
             column_type_name = str(PredicateType.get_type(type(column)))
-            self._column_productions_for_agenda[column_name] = f"{column_type_name} -> {column_name}"
+            self._column_productions_for_agenda[
+                column_name
+            ] = f"{column_type_name} -> {column_name}"
 
         # Mapping from terminal strings to productions that produce them.  We use this in the
         # agenda-related methods, and some models that use this language look at this field to know
@@ -147,8 +155,7 @@ class WikiTablesLanguage(DomainLanguage):
             start_types.add(Date)
         return start_types
 
-    def get_agenda(self,
-                   conservative: bool = False):
+    def get_agenda(self, conservative: bool = False):
         """
         Returns an agenda that can be used guide search.
 
@@ -199,24 +206,35 @@ class WikiTablesLanguage(DomainLanguage):
                 # "total" does not always map to an actual summing operation.
                 if token == "total" and not conservative:
                     agenda_items.append("sum")
-                if token == "difference" or "how many more" in question or "how much more" in question:
+                if (
+                    token == "difference"
+                    or "how many more" in question
+                    or "how much more" in question
+                ):
                     agenda_items.append("diff")
                 if token == "average":
                     agenda_items.append("average")
-                if token in ["least", "smallest", "shortest", "lowest"] and "at least" not in question:
+                if (
+                    token in ["least", "smallest", "shortest", "lowest"]
+                    and "at least" not in question
+                ):
                     # This condition is too brittle. But for most logical forms with "min", there are
                     # semantically equivalent ones with "argmin". The exceptions are rare.
                     if "what is the least" not in question:
                         agenda_items.append("argmin")
-                if token in ["most", "largest", "highest", "longest", "greatest"] and "at most" not in question:
+                if (
+                    token in ["most", "largest", "highest", "longest", "greatest"]
+                    and "at most" not in question
+                ):
                     # This condition is too brittle. But for most logical forms with "max", there are
                     # semantically equivalent ones with "argmax". The exceptions are rare.
                     if "what is the most" not in question:
                         agenda_items.append("argmax")
 
             if self._table_has_date_columns:
-                if token in MONTH_NUMBERS or (token.isdigit() and len(token) == 4 and
-                                              int(token) < 2100 and int(token) > 1100):
+                if token in MONTH_NUMBERS or (
+                    token.isdigit() and len(token) == 4 and int(token) < 2100 and int(token) > 1100
+                ):
                     # Token is either a month or an year. We'll add date functions.
                     if not added_number_filters or not conservative:
                         if "after" in question_tokens:
@@ -239,7 +257,6 @@ class WikiTablesLanguage(DomainLanguage):
                     agenda_items.append("min_date")
                 else:
                     agenda_items.append("select_date")
-
 
         if "how many" in question:
             if "sum" not in agenda_items and "average" not in agenda_items:
@@ -265,18 +282,24 @@ class WikiTablesLanguage(DomainLanguage):
             for column_name, signature in self._column_productions_for_agenda.items():
                 column_type, name = column_name.split(":")
                 if column_type == "string_column":
-                    if f"number_column:{name}" not in self._column_productions_for_agenda and \
-                       f"date_column:{name}" not in self._column_productions_for_agenda:
+                    if (
+                        f"number_column:{name}" not in self._column_productions_for_agenda
+                        and f"date_column:{name}" not in self._column_productions_for_agenda
+                    ):
                         refined_column_productions[column_name] = signature
 
                 elif column_type == "number_column":
-                    if f"string_column:{name}" not in self._column_productions_for_agenda and \
-                       f"date_column:{name}" not in self._column_productions_for_agenda:
+                    if (
+                        f"string_column:{name}" not in self._column_productions_for_agenda
+                        and f"date_column:{name}" not in self._column_productions_for_agenda
+                    ):
                         refined_column_productions[column_name] = signature
 
                 else:
-                    if f"string_column:{name}" not in self._column_productions_for_agenda and \
-                       f"number_column:{name}" not in self._column_productions_for_agenda:
+                    if (
+                        f"string_column:{name}" not in self._column_productions_for_agenda
+                        and f"number_column:{name}" not in self._column_productions_for_agenda
+                    ):
                         refined_column_productions[column_name] = signature
             # Similarly, we do not want the same spans in the question to be added to the agenda as
             # both string and number productions.
@@ -349,7 +372,7 @@ class WikiTablesLanguage(DomainLanguage):
         try:
             denotation = self.execute(logical_form)
         except ExecutionError as error:
-            logger.warning(f'Failed to execute: {logical_form}. Error: {error}')
+            logger.warning(f"Failed to execute: {logical_form}. Error: {error}")
             return False
         return self.evaluate_denotation(denotation, target_list)
 
@@ -362,7 +385,7 @@ class WikiTablesLanguage(DomainLanguage):
         try:
             denotation = self.execute_action_sequence(action_sequence)
         except ExecutionError:
-            logger.warning(f'Failed to execute action sequence: {action_sequence}')
+            logger.warning(f"Failed to execute action sequence: {action_sequence}")
             return False
         return self.evaluate_denotation(denotation, target_list)
 
@@ -371,8 +394,9 @@ class WikiTablesLanguage(DomainLanguage):
         Compares denotation with a target list and returns whether they are both the same according to the official
         evaluator.
         """
-        normalized_target_list = [TableQuestionContext.normalize_string(value) for value in
-                                  target_list]
+        normalized_target_list = [
+            TableQuestionContext.normalize_string(value) for value in target_list
+        ]
         target_value_list = evaluator.to_value_list(normalized_target_list)
         if isinstance(denotation, list):
             denotation_list = [str(denotation_item) for denotation_item in denotation]
@@ -558,7 +582,9 @@ class WikiTablesLanguage(DomainLanguage):
         """
         if not rows:
             return []
-        value_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
+        value_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
         if not value_row_pairs:
             return []
         # Returns a list containing the row with the max cell value.
@@ -573,7 +599,9 @@ class WikiTablesLanguage(DomainLanguage):
         """
         if not rows:
             return []
-        value_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
+        value_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
         if not value_row_pairs:
             return []
         # Returns a list containing the row with the max cell value.
@@ -583,40 +611,72 @@ class WikiTablesLanguage(DomainLanguage):
     # rows where the value in that column is [comparator] than the given value.  They only get
     # added to the language if we see a number column in the table.
 
-    def filter_number_greater(self, rows: List[Row], column: NumberColumn, filter_value: Number) -> List[Row]:
-        cell_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
-        return [row for cell_value, row in cell_row_pairs if cell_value > filter_value]  # type: ignore
+    def filter_number_greater(
+        self, rows: List[Row], column: NumberColumn, filter_value: Number
+    ) -> List[Row]:
+        cell_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
+        return [
+            row for cell_value, row in cell_row_pairs if cell_value > filter_value
+        ]  # type: ignore
 
-    def filter_number_greater_equals(self,
-                                     rows: List[Row],
-                                     column: NumberColumn,
-                                     filter_value: Number) -> List[Row]:
-        cell_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
-        return [row for cell_value, row in cell_row_pairs if cell_value >= filter_value]  # type: ignore
+    def filter_number_greater_equals(
+        self, rows: List[Row], column: NumberColumn, filter_value: Number
+    ) -> List[Row]:
+        cell_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
+        return [
+            row for cell_value, row in cell_row_pairs if cell_value >= filter_value
+        ]  # type: ignore
 
-    def filter_number_lesser(self, rows: List[Row], column: NumberColumn, filter_value: Number) -> List[Row]:
-        cell_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
-        return [row for cell_value, row in cell_row_pairs if cell_value < filter_value]  # type: ignore
+    def filter_number_lesser(
+        self, rows: List[Row], column: NumberColumn, filter_value: Number
+    ) -> List[Row]:
+        cell_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
+        return [
+            row for cell_value, row in cell_row_pairs if cell_value < filter_value
+        ]  # type: ignore
 
-    def filter_number_lesser_equals(self,
-                                    rows: List[Row],
-                                    column: NumberColumn,
-                                    filter_value: Number) -> List[Row]:
-        cell_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
-        return [row for cell_value, row in cell_row_pairs if cell_value <= filter_value]  # type: ignore
+    def filter_number_lesser_equals(
+        self, rows: List[Row], column: NumberColumn, filter_value: Number
+    ) -> List[Row]:
+        cell_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
+        return [
+            row for cell_value, row in cell_row_pairs if cell_value <= filter_value
+        ]  # type: ignore
 
-    def filter_number_equals(self, rows: List[Row], column: NumberColumn, filter_value: Number) -> List[Row]:
-        cell_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
-        return [row for cell_value, row in cell_row_pairs if cell_value == filter_value]  # type: ignore
+    def filter_number_equals(
+        self, rows: List[Row], column: NumberColumn, filter_value: Number
+    ) -> List[Row]:
+        cell_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
+        return [
+            row for cell_value, row in cell_row_pairs if cell_value == filter_value
+        ]  # type: ignore
 
-    def filter_number_not_equals(self, rows: List[Row], column: NumberColumn, filter_value: Number) -> List[Row]:
-        cell_row_pairs = [(row.values[column.name], row) for row in rows if row.values[column.name] is not None]
-        return [row for cell_value, row in cell_row_pairs if cell_value != filter_value]  # type: ignore
+    def filter_number_not_equals(
+        self, rows: List[Row], column: NumberColumn, filter_value: Number
+    ) -> List[Row]:
+        cell_row_pairs = [
+            (row.values[column.name], row) for row in rows if row.values[column.name] is not None
+        ]
+        return [
+            row for cell_value, row in cell_row_pairs if cell_value != filter_value
+        ]  # type: ignore
 
     # These six methods are the same as the six above, but for dates.  They only get added to the
     # language if we see a date column in the table.
 
-    def filter_date_greater(self, rows: List[Row], column: DateColumn, filter_value: Date) -> List[Row]:
+    def filter_date_greater(
+        self, rows: List[Row], column: DateColumn, filter_value: Date
+    ) -> List[Row]:
         cell_row_pairs: List[Tuple[Date, Row]] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -625,7 +685,9 @@ class WikiTablesLanguage(DomainLanguage):
 
         return [row for cell_value, row in cell_row_pairs if cell_value > filter_value]
 
-    def filter_date_greater_equals(self, rows: List[Row], column: DateColumn, filter_value: Date) -> List[Row]:
+    def filter_date_greater_equals(
+        self, rows: List[Row], column: DateColumn, filter_value: Date
+    ) -> List[Row]:
         cell_row_pairs: List[Tuple[Date, Row]] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -633,7 +695,9 @@ class WikiTablesLanguage(DomainLanguage):
                 cell_row_pairs.append((cell_value, row))
         return [row for cell_value, row in cell_row_pairs if cell_value >= filter_value]
 
-    def filter_date_lesser(self, rows: List[Row], column: DateColumn, filter_value: Date) -> List[Row]:
+    def filter_date_lesser(
+        self, rows: List[Row], column: DateColumn, filter_value: Date
+    ) -> List[Row]:
         cell_row_pairs: List[Tuple[Date, Row]] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -641,7 +705,9 @@ class WikiTablesLanguage(DomainLanguage):
                 cell_row_pairs.append((cell_value, row))
         return [row for cell_value, row in cell_row_pairs if cell_value < filter_value]
 
-    def filter_date_lesser_equals(self, rows: List[Row], column: DateColumn, filter_value: Date) -> List[Row]:
+    def filter_date_lesser_equals(
+        self, rows: List[Row], column: DateColumn, filter_value: Date
+    ) -> List[Row]:
         cell_row_pairs: List[Tuple[Date, Row]] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -649,7 +715,9 @@ class WikiTablesLanguage(DomainLanguage):
                 cell_row_pairs.append((cell_value, row))
         return [row for cell_value, row in cell_row_pairs if cell_value <= filter_value]
 
-    def filter_date_equals(self, rows: List[Row], column: DateColumn, filter_value: Date) -> List[Row]:
+    def filter_date_equals(
+        self, rows: List[Row], column: DateColumn, filter_value: Date
+    ) -> List[Row]:
         cell_row_pairs: List[Tuple[Date, Row]] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -657,7 +725,9 @@ class WikiTablesLanguage(DomainLanguage):
                 cell_row_pairs.append((cell_value, row))
         return [row for cell_value, row in cell_row_pairs if cell_value == filter_value]
 
-    def filter_date_not_equals(self, rows: List[Row], column: DateColumn, filter_value: Date) -> List[Row]:
+    def filter_date_not_equals(
+        self, rows: List[Row], column: DateColumn, filter_value: Date
+    ) -> List[Row]:
         cell_row_pairs: List[Tuple[Date, Row]] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -670,7 +740,9 @@ class WikiTablesLanguage(DomainLanguage):
     # in the cell or not, instead of using a numerical / date comparator.  We only add them to the
     # language if we see a string column in the table (which is basically always).
 
-    def filter_in(self, rows: List[Row], column: StringColumn, filter_values: List[str]) -> List[Row]:
+    def filter_in(
+        self, rows: List[Row], column: StringColumn, filter_values: List[str]
+    ) -> List[Row]:
         # We accept a list of filter values instead of a single string to allow the outputs of select like
         # operations to be passed in as filter values.
         # Assuming filter value has underscores for spaces. The cell values also have underscores
@@ -685,7 +757,7 @@ class WikiTablesLanguage(DomainLanguage):
         else:
             raise ExecutionError(f"Unexpected filter value: {filter_values}")
         # Also, we need to remove the "string:" that was prepended to the entity name in the language.
-        filter_value = filter_value.lstrip('string:')
+        filter_value = filter_value.lstrip("string:")
         filtered_rows: List[Row] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -693,7 +765,9 @@ class WikiTablesLanguage(DomainLanguage):
                 filtered_rows.append(row)
         return filtered_rows
 
-    def filter_not_in(self, rows: List[Row], column: StringColumn, filter_values: List[str]) -> List[Row]:
+    def filter_not_in(
+        self, rows: List[Row], column: StringColumn, filter_values: List[str]
+    ) -> List[Row]:
         # We accept a list of filter values instead of a single string to allow the outputs of select like
         # operations to be passed in as filter values.
         # Assuming filter value has underscores for spaces. The cell values also have underscores
@@ -708,7 +782,7 @@ class WikiTablesLanguage(DomainLanguage):
         else:
             raise ExecutionError(f"Unexpected filter value: {filter_values}")
         # Also, we need to remove the "string:" that was prepended to the entity name in the language.
-        filter_value = filter_value.lstrip('string:')
+        filter_value = filter_value.lstrip("string:")
         filtered_rows: List[Row] = []
         for row in rows:
             cell_value = row.values[column.name]
@@ -723,7 +797,9 @@ class WikiTablesLanguage(DomainLanguage):
         Takes a list of rows and a column and returns the max of the values under that column in
         those rows.
         """
-        cell_values = [row.values[column.name] for row in rows if row.values[column.name] is not None]
+        cell_values = [
+            row.values[column.name] for row in rows if row.values[column.name] is not None
+        ]
         if not cell_values:
             return Date(-1, -1, -1)
         if not all([isinstance(value, Date) for value in cell_values]):
@@ -735,7 +811,9 @@ class WikiTablesLanguage(DomainLanguage):
         Takes a list of rows and a column and returns the min of the values under that column in
         those rows.
         """
-        cell_values = [row.values[column.name] for row in rows if row.values[column.name] is not None]
+        cell_values = [
+            row.values[column.name] for row in rows if row.values[column.name] is not None
+        ]
         if not cell_values:
             return Date(-1, -1, -1)
         if not all([isinstance(value, Date) for value in cell_values]):
@@ -750,7 +828,9 @@ class WikiTablesLanguage(DomainLanguage):
         Takes a list of rows and a column and returns the max of the values under that column in
         those rows.
         """
-        cell_values = [row.values[column.name] for row in rows if row.values[column.name] is not None]
+        cell_values = [
+            row.values[column.name] for row in rows if row.values[column.name] is not None
+        ]
         if not cell_values:
             return 0.0  # type: ignore
         if not all([isinstance(value, Number) for value in cell_values]):
@@ -762,7 +842,9 @@ class WikiTablesLanguage(DomainLanguage):
         Takes a list of rows and a column and returns the min of the values under that column in
         those rows.
         """
-        cell_values = [row.values[column.name] for row in rows if row.values[column.name] is not None]
+        cell_values = [
+            row.values[column.name] for row in rows if row.values[column.name] is not None
+        ]
         if not cell_values:
             return 0.0  # type: ignore
         if not all([isinstance(value, Number) for value in cell_values]):
@@ -774,7 +856,9 @@ class WikiTablesLanguage(DomainLanguage):
         Takes a list of rows and a column and returns the sum of the values under that column in
         those rows.
         """
-        cell_values = [row.values[column.name] for row in rows if row.values[column.name] is not None]
+        cell_values = [
+            row.values[column.name] for row in rows if row.values[column.name] is not None
+        ]
         if not cell_values:
             return 0.0  # type: ignore
         return sum(cell_values)  # type: ignore
@@ -784,7 +868,9 @@ class WikiTablesLanguage(DomainLanguage):
         Takes a list of rows and a column and returns the mean of the values under that column in
         those rows.
         """
-        cell_values = [row.values[column.name] for row in rows if row.values[column.name] is not None]
+        cell_values = [
+            row.values[column.name] for row in rows if row.values[column.name] is not None
+        ]
         if not cell_values:
             return 0.0  # type: ignore
         return sum(cell_values) / len(cell_values)  # type: ignore

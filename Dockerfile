@@ -8,6 +8,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY pytest.ini pytest.ini
+COPY pyproject.toml pyproject.toml
 COPY training_config/ training_config/
 COPY tests tests/
 COPY test_fixtures test_fixtures/

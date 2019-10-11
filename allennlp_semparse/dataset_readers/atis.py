@@ -16,20 +16,23 @@ from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 
 from allennlp_semparse.fields import ProductionRuleField
 from allennlp_semparse.parsimonious_languages.worlds.atis_world import AtisWorld
-from allennlp_semparse.parsimonious_languages.contexts.atis_sql_table_context import NUMERIC_NONTERMINALS
+from allennlp_semparse.parsimonious_languages.contexts.atis_sql_table_context import (
+    NUMERIC_NONTERMINALS,
+)
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 END_OF_UTTERANCE_TOKEN = "@@EOU@@"
+
 
 def _lazy_parse(text: str):
     for interaction in text.split("\n"):
         if interaction:
             yield json.loads(interaction)
 
+
 @DatasetReader.register("atis")
 class AtisDatasetReader(DatasetReader):
-    # pylint: disable=line-too-long
     """
     This ``DatasetReader`` takes json files and converts them into ``Instances`` for the
     ``AtisSemanticParser``.
@@ -68,17 +71,20 @@ class AtisDatasetReader(DatasetReader):
         that are allowed.
     num_turns_to_concatenate: ``str``, optional
         The number of utterances to concatenate as the conversation context.
-    """
-    def __init__(self,
-                 token_indexers: Dict[str, TokenIndexer] = None,
-                 keep_if_unparseable: bool = False,
-                 lazy: bool = False,
-                 tokenizer: Tokenizer = None,
-                 database_file: str = None,
-                 num_turns_to_concatenate: int = 1) -> None:
+    """  # noqa
+
+    def __init__(
+        self,
+        token_indexers: Dict[str, TokenIndexer] = None,
+        keep_if_unparseable: bool = False,
+        lazy: bool = False,
+        tokenizer: Tokenizer = None,
+        database_file: str = None,
+        num_turns_to_concatenate: int = 1,
+    ) -> None:
         super().__init__(lazy)
         self._keep_if_unparseable = keep_if_unparseable
-        self._token_indexers = token_indexers or {'tokens': SingleIdTokenIndexer()}
+        self._token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
         self._tokenizer = tokenizer or WordTokenizer(SpacyWordSplitter())
         self._database_file = database_file
         self._num_turns_to_concatenate = num_turns_to_concatenate
@@ -92,20 +98,24 @@ class AtisDatasetReader(DatasetReader):
             logger.info("Reading ATIS instances from dataset at : %s", file_path)
             for line in _lazy_parse(atis_file.read()):
                 utterances = []
-                for current_interaction in line['interaction']:
-                    if not current_interaction['utterance'] or not current_interaction['sql']:
+                for current_interaction in line["interaction"]:
+                    if not current_interaction["utterance"] or not current_interaction["sql"]:
                         continue
-                    utterances.append(current_interaction['utterance'])
-                    sql_query_labels = [query for query in current_interaction['sql'].split('\n') if query]
+                    utterances.append(current_interaction["utterance"])
+                    sql_query_labels = [
+                        query for query in current_interaction["sql"].split("\n") if query
+                    ]
                     instance = self.text_to_instance(deepcopy(utterances), sql_query_labels)
                     if not instance:
                         continue
                     yield instance
 
     @overrides
-    def text_to_instance(self,  # type: ignore
-                         utterances: List[str],
-                         sql_query_labels: List[str] = None) -> Instance:
+    def text_to_instance(
+        self,  # type: ignore
+        utterances: List[str],
+        sql_query_labels: List[str] = None,
+    ) -> Instance:
         # pylint: disable=arguments-differ
         """
         Parameters
@@ -116,7 +126,9 @@ class AtisDatasetReader(DatasetReader):
             The SQL queries that are given as labels during training or validation.
         """
         if self._num_turns_to_concatenate:
-            utterances[-1] = f' {END_OF_UTTERANCE_TOKEN} '.join(utterances[-self._num_turns_to_concatenate:])
+            utterances[-1] = f" {END_OF_UTTERANCE_TOKEN} ".join(
+                utterances[-self._num_turns_to_concatenate :]
+            )
 
         utterance = utterances[-1]
         action_sequence: List[str] = []
@@ -134,7 +146,7 @@ class AtisDatasetReader(DatasetReader):
                 action_sequence = world.get_action_sequence(sql_query)
             except ParseError:
                 action_sequence = []
-                logger.debug(f'Parsing error')
+                logger.debug(f"Parsing error")
 
         tokenized_utterance = self._tokenizer.tokenize(utterance.lower())
         utterance_field = TextField(tokenized_utterance, self._token_indexers)
@@ -142,31 +154,37 @@ class AtisDatasetReader(DatasetReader):
         production_rule_fields: List[Field] = []
 
         for production_rule in world.all_possible_actions():
-            nonterminal, _ = production_rule.split(' ->')
+            nonterminal, _ = production_rule.split(" ->")
             # The whitespaces are not semantically meaningful, so we filter them out.
-            production_rule = ' '.join([token for token in production_rule.split(' ') if token != 'ws'])
+            production_rule = " ".join(
+                [token for token in production_rule.split(" ") if token != "ws"]
+            )
             field = ProductionRuleField(production_rule, self._is_global_rule(nonterminal))
             production_rule_fields.append(field)
 
         action_field = ListField(production_rule_fields)
-        action_map = {action.rule: i # type: ignore
-                      for i, action in enumerate(action_field.field_list)}
+        action_map = {
+            action.rule: i  # type: ignore
+            for i, action in enumerate(action_field.field_list)
+        }
         index_fields: List[Field] = []
         world_field = MetadataField(world)
-        fields = {'utterance' : utterance_field,
-                  'actions' : action_field,
-                  'world' : world_field,
-                  'linking_scores' : ArrayField(world.linking_scores)}
+        fields = {
+            "utterance": utterance_field,
+            "actions": action_field,
+            "world": world_field,
+            "linking_scores": ArrayField(world.linking_scores),
+        }
 
         if sql_query_labels is not None:
-            fields['sql_queries'] = MetadataField(sql_query_labels)
+            fields["sql_queries"] = MetadataField(sql_query_labels)
             if self._keep_if_unparseable or action_sequence:
                 for production_rule in action_sequence:
                     index_fields.append(IndexField(action_map[production_rule], action_field))
                 if not action_sequence:
                     index_fields = [IndexField(-1, action_field)]
                 action_sequence_field = ListField(index_fields)
-                fields['target_action_sequence'] = action_sequence_field
+                fields["target_action_sequence"] = action_sequence_field
             else:
                 # If we are given a SQL query, but we are unable to parse it, and we do not specify explicitly
                 # to keep it, then we will skip the it.
@@ -178,6 +196,6 @@ class AtisDatasetReader(DatasetReader):
     def _is_global_rule(nonterminal: str) -> bool:
         if nonterminal in NUMERIC_NONTERMINALS:
             return False
-        elif nonterminal.endswith('string'):
+        elif nonterminal.endswith("string"):
             return False
         return True

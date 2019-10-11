@@ -6,8 +6,18 @@ simply an LSTM decoder with attention over an input utterance, and the other cla
 subclass this and add functionality to it.
 """
 # pylint: disable=line-too-long
-from allennlp_semparse.state_machines.transition_functions.basic_transition_function import BasicTransitionFunction
-from allennlp_semparse.state_machines.transition_functions.coverage_transition_function import CoverageTransitionFunction
-from allennlp_semparse.state_machines.transition_functions.linking_coverage_transition_function import LinkingCoverageTransitionFunction
-from allennlp_semparse.state_machines.transition_functions.linking_transition_function import LinkingTransitionFunction
-from allennlp_semparse.state_machines.transition_functions.transition_function import TransitionFunction
+from allennlp_semparse.state_machines.transition_functions.basic_transition_function import (
+    BasicTransitionFunction,
+)
+from allennlp_semparse.state_machines.transition_functions.coverage_transition_function import (
+    CoverageTransitionFunction,
+)
+from allennlp_semparse.state_machines.transition_functions.linking_coverage_transition_function import (
+    LinkingCoverageTransitionFunction,
+)
+from allennlp_semparse.state_machines.transition_functions.linking_transition_function import (
+    LinkingTransitionFunction,
+)
+from allennlp_semparse.state_machines.transition_functions.transition_function import (
+    TransitionFunction,
+)
