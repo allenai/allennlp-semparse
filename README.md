@@ -1,5 +1,5 @@
 # allennlp-semparse
-https://github.com/allenai/allennlp-semparse/workflows/CI/badge.svg
+[![Build status](https://github.com/allenai/allennlp-semparse/workflows/CI/badge.svg)](https://github.com/allenai/allennlp-semparse/actions?workflow=CI)
 
 A framework for building semantic parsers (including neural module networks) with AllenNLP, built by the authors of AllenNLP
 
