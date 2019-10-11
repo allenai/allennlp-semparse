@@ -1,4 +1,5 @@
-allennlp>=0.8.4
+# To be changed to allennlp>=1.0 once that's released.
+git+git://github.com/allenai/allennlp@93024e53c1445cb4630ee5c07926abff8943715f
 
 # Used to create grammars for parsing SQL
 parsimonious>=0.8.0
