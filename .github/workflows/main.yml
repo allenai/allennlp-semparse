@@ -8,14 +8,28 @@ on:
     - master
 jobs:
   build:
-   runs-on: ubuntu-latest
-
-   steps:
-   - uses: actions/checkout@v1
-   - name: Build and test with Docker
-     run: |
-       docker build --tag allennlp_semparse .
-       docker run --rm allennlp_semparse pytest tests
-       docker run --rm allennlp_semparse flake8 -v
-       docker run --rm allennlp_semparse black -v --check .
-       docker run --rm allennlp_semparse mypy allennlp_semparse --ignore-missing-imports --no-strict-optional --no-site-packages
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        version: 3.7
+    - name: Install requirements
+      run: |
+        pip install requirements.txt
+        pip install pytest pytest-cov flake8 black mypy
+    - name: Run tests
+      run: |
+        pytest --cov=./ --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1.0.2
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+    - name: Lint
+      run: |
+        flake8 -v
+        black -v --check .
+    - name: Type check
+      run: |
+        mypy allennlp_semparse --ignore-missing-imports --no-strict-optional --no-site-packages
