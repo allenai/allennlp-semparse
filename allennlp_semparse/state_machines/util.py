@@ -6,7 +6,7 @@ import torch
 
 def construct_prefix_tree(
     targets: Union[torch.Tensor, List[List[List[int]]]],
-    target_mask: Optional[Union[torch.Tensor, List[List[List[int]]]]] = None
+    target_mask: Optional[Union[torch.Tensor, List[List[List[int]]]]] = None,
 ) -> List[Dict[Tuple[int, ...], Set[int]]]:
     """
     Takes a list of valid target action sequences and creates a mapping from all possible
