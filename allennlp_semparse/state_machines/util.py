@@ -5,7 +5,8 @@ import torch
 
 
 def construct_prefix_tree(
-    targets: Union[torch.Tensor, List[List[List[int]]]], target_mask: Optional[torch.Tensor] = None
+    targets: Union[torch.Tensor, List[List[List[int]]]],
+    target_mask: Optional[Union[torch.Tensor, List[List[List[int]]]]] = None,
 ) -> List[Dict[Tuple[int, ...], Set[int]]]:
     """
     Takes a list of valid target action sequences and creates a mapping from all possible
@@ -31,7 +32,8 @@ def construct_prefix_tree(
         assert targets.dim() == 3, "targets tensor needs to be batched!"
         targets = targets.detach().cpu().numpy().tolist()
     if target_mask is not None:
-        target_mask = target_mask.detach().cpu().numpy().tolist()
+        if not isinstance(target_mask, list):
+            target_mask = target_mask.detach().cpu().numpy().tolist()
     else:
         target_mask = [None for _ in targets]
 
