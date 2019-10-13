@@ -20,5 +20,8 @@ per-file-ignores =
     #  F401: unused imports
     tests/**:E731,F401
 
+    # E402: module level import not at top of file
+    scripts/**:E402
+
     # E266: too many leading '#' for block comment
     allennlp_semparse/common/wikitables/wikitables_evaluator.py:E266
