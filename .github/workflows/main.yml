@@ -25,7 +25,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1.0.2
       with:
-        token: ${{secrets.CODECOV_TOKEN}}
+        token: 72a3fbab-4667-4dc3-b309-86200f868d33
     - name: Lint
       run: |
         flake8 -v
