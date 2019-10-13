@@ -124,30 +124,33 @@ def main(
         total_non_aliases = 0
         total_as_count = 0
         total_queries_with_weird_as = 0
+        total_filtered_errors = 0
         total = 0
         for json_file in data_files:
             print(f"\tParsing split at {json_file}")
             file_path = os.path.join(directory, json_file)
-            num_parsed, num_queries, filtered_errors, non_basic_as_aliases, as_count, queries_with_weird_as = parse_dataset(
-                file_path, filter_by, verbose
-            )
+            stats = parse_dataset(file_path, filter_by, verbose)
 
-            parsed += num_parsed
-            total += num_queries
-            total_non_aliases += non_basic_as_aliases
-            total_as_count += as_count
-            total_queries_with_weird_as += queries_with_weird_as
+            parsed += stats[0]
+            total += stats[1]
+            total_filtered_errors += stats[2]
+            total_non_aliases += stats[3]
+            total_as_count += stats[4]
+            total_queries_with_weird_as += stats[5]
 
         print(f"\tParsed {parsed} out of {total} queries, coverage {parsed/total}")
         print(
-            f"\tFound {total_non_aliases} out of {total_as_count} non simple AS aliases. percentage: {total_non_aliases/total_as_count}"
+            f"\tFound {total_non_aliases} out of {total_as_count} non simple AS aliases. "
+            f"percentage: {total_non_aliases/total_as_count}"
         )
         print(
-            f"\tFound {total_queries_with_weird_as} out of {total} queries with > 1 weird AS. percentage: {total_queries_with_weird_as/total}"
+            f"\tFound {total_queries_with_weird_as} out of {total} queries with > 1 weird AS. "
+            f"percentage: {total_queries_with_weird_as/total}"
         )
         if filter_by is not None:
             print(
-                f"\tOf {total - parsed} errors, {filtered_errors/ (total - parsed + 1e-13)} contain {filter_by}"
+                f"\tOf {total - parsed} errors, {total_filtered_errors / (total - parsed + 1e-13)} "
+                f"contain {filter_by}"
             )
 
 
