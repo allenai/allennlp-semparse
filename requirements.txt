@@ -1,4 +1,7 @@
 # To be changed to allennlp>=1.0 once that's released.
+# TODO: When this occurs, modify setup.py to 1) not exclude this line, 2)
+# conditionally filter the standard allenlp version instead, and 3) stop adding
+# the git url for allennlp to install_requirements.
 git+git://github.com/allenai/allennlp@93024e53c1445cb4630ee5c07926abff8943715f
 
 # Used to create grammars for parsing SQL
