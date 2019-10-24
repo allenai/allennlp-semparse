@@ -28,7 +28,7 @@ with open("requirements.txt") as requirements_file:
     install_requirements = [
         r for r in install_requirements if "git+git://github.com/allenai/allennlp" not in r
     ]
-    if os.environ.get("EXCLUDE_ALLENNLP_IN_SETUP"):
+    if not os.environ.get("EXCLUDE_ALLENNLP_IN_SETUP"):
         # Warning: This will not give you the desired version if you've already
         # installed allennlp! See https://github.com/pypa/pip/issues/5898.
         #
