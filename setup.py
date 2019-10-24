@@ -55,8 +55,10 @@ setup_requirements = [
 setup(
     name="allennlp_semparse",
     version=VERSION["VERSION"],
-    description=("A framework for building semantic parsers (including neural "
-    "module networks) with AllenNLP, built by the authors of AllenNLP"),
+    description=(
+        "A framework for building semantic parsers (including neural "
+        "module networks) with AllenNLP, built by the authors of AllenNLP"
+    ),
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     classifiers=[
