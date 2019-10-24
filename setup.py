@@ -29,10 +29,18 @@ with open("requirements.txt") as requirements_file:
         r for r in install_requirements if "git+git://github.com/allenai/allennlp" not in r
     ]
     if "EXCLUDE_ALLENNLP_IN_SETUP" not in os.environ:
-        #dependency_links=["http://github.com/allenai/allennlp/tarball/93024e53c1445cb4630ee5c07926abff8943715f#egg={FAKE_VERSION}"],
-        #requirement = "allennlp @ git+ssh://git@github.com/allenai/allennlp@v1.1#egg=some-pkg"
-        requirement = "allennlp @ git+ssh://git@github.com/allenai/allennlp@93024e53c1445cb4630ee5c07926abff8943715f#egg=allennlp"
-        requirement = "allennlp @ git+ssh://git@github.com/allenai/allennlp@457a85bde57ba58289d32e4e1d07df1f94c813b0#egg=allennlp"
+        # Warning: This will not give you the desired version if you've already
+        # installed allennlp! See https://github.com/pypa/pip/issues/5898.
+        #
+        # There used to be an alternative to this using `dependency_links`
+        # (https://stackoverflow.com/questions/3472430), but pip decided to
+        # remove this in version 19 breaking numerous projects in the process.
+        # See https://github.com/pypa/pip/issues/6162.
+        #
+        # As a mitigation, run `pip uninstall allennlp` before installing this
+        # package.
+        sha = "93024e53c1445cb4630ee5c07926abff8943715f"
+        requirement = f"allennlp @ git+ssh://git@github.com/allenai/allennlp@{sha}#egg=allennlp"
         install_requirements.append(requirement)
 
 # make pytest-runner a conditional requirement,
