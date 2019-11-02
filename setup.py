@@ -28,7 +28,7 @@ with open("requirements.txt") as requirements_file:
     install_requirements = [
         r for r in install_requirements if "git+git://github.com/allenai/allennlp" not in r
     ]
-    if os.environ.get("EXCLUDE_ALLENNLP_IN_SETUP"):
+    if not os.environ.get("EXCLUDE_ALLENNLP_IN_SETUP"):
         # Warning: This will not give you the desired version if you've already
         # installed allennlp! See https://github.com/pypa/pip/issues/5898.
         #
@@ -55,7 +55,10 @@ setup_requirements = [
 setup(
     name="allennlp_semparse",
     version=VERSION["VERSION"],
-    description="A framework for building semantic parsers (including neural module networks) with AllenNLP, built by the authors of AllenNLP",
+    description=(
+        "A framework for building semantic parsers (including neural "
+        "module networks) with AllenNLP, built by the authors of AllenNLP"
+    ),
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     classifiers=[
