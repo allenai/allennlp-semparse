@@ -4,6 +4,8 @@
 # the git url for allennlp to install_requirements.
 git+git://github.com/allenai/allennlp@93024e53c1445cb4630ee5c07926abff8943715f
 
+nltk
+
 # Used to create grammars for parsing SQL
 parsimonious>=0.8.0
 

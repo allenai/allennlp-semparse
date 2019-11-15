@@ -11,8 +11,7 @@ from allennlp.data import DatasetReader
 from allennlp.data.fields import Field, ArrayField, ListField, IndexField, TextField, MetadataField
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenIndexer
-from allennlp.data.tokenizers import Tokenizer, WordTokenizer
-from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
+from allennlp.data.tokenizers import Tokenizer, SpacyTokenizer
 
 from allennlp_semparse.fields import ProductionRuleField
 from allennlp_semparse.parsimonious_languages.worlds.atis_world import AtisWorld
@@ -64,7 +63,7 @@ class AtisDatasetReader(DatasetReader):
         Passed to ``DatasetReader``.  If this is ``True``, training will start sooner, but will
         take longer per batch.
     tokenizer : ``Tokenizer``, optional
-        Tokenizer to use for the utterances. Will default to ``WordTokenizer()`` with Spacy's tagger
+        Tokenizer to use for the utterances. Will default to ``SpacyTokenizer()`` with Spacy's tagger
         enabled.
     database_file: ``str``, optional
         The directory to find the sqlite database file. We query the sqlite database to find the strings
@@ -85,7 +84,7 @@ class AtisDatasetReader(DatasetReader):
         super().__init__(lazy)
         self._keep_if_unparseable = keep_if_unparseable
         self._token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
-        self._tokenizer = tokenizer or WordTokenizer(SpacyWordSplitter())
+        self._tokenizer = tokenizer or SpacyTokenizer()
         self._database_file = database_file
         self._num_turns_to_concatenate = num_turns_to_concatenate
 

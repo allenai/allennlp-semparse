@@ -12,9 +12,8 @@ from allennlp.common import util
 from allennlp.common.checks import ConfigurationError
 from allennlp.data.fields.field import Field
 from allennlp.data.token_indexers.token_indexer import TokenIndexer, TokenType
-from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 from allennlp.data.tokenizers.token import Token
-from allennlp.data.tokenizers import Tokenizer, WordTokenizer
+from allennlp.data.tokenizers import Tokenizer, SpacyTokenizer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.nn import util as nn_util
 
@@ -54,7 +53,7 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
     utterance_tokens : ``List[Token]``
         The tokens in some utterance that is paired with the ``KnowledgeGraph``.  We compute a set
         of features for linking tokens in the utterance to entities in the graph.
-    tokenizer : ``Tokenizer``, optional (default=``WordTokenizer()``)
+    tokenizer : ``Tokenizer``, optional (default=``SpacyTokenizer()``)
         We'll use this ``Tokenizer`` to tokenize the text representation of each entity.
     token_indexers : ``Dict[str, TokenIndexer]``
         Token indexers that convert entities into arrays, similar to how text tokens are treated in
@@ -100,7 +99,7 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
     ) -> None:
 
         self.knowledge_graph = knowledge_graph
-        self._tokenizer = tokenizer or WordTokenizer(word_splitter=SpacyWordSplitter(pos_tags=True))
+        self._tokenizer = tokenizer or SpacyTokenizer(pos_tags=True)
         if not entity_tokens:
             entity_texts = [
                 knowledge_graph.entity_text[entity].lower() for entity in knowledge_graph.entities
