@@ -15,7 +15,7 @@ from allennlp_semparse.fields import KnowledgeGraphField
 
 class KnowledgeGraphFieldTest(SemparseTestCase):
     def setUp(self):
-        self.tokenizer = SpacyTokenizer()
+        self.tokenizer = SpacyTokenizer(pos_tags=True)
         self.utterance = self.tokenizer.tokenize("where is mersin?")
         self.token_indexers = {"tokens": SingleIdTokenIndexer("tokens")}
 
