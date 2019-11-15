@@ -7,8 +7,7 @@ import torch
 from .. import SemparseTestCase
 from allennlp.data import Vocabulary
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenCharactersIndexer
-from allennlp.data.tokenizers import WordTokenizer
-from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
+from allennlp.data.tokenizers import SpacyTokenizer
 
 from allennlp_semparse.common.wikitables import TableQuestionContext
 from allennlp_semparse.fields import KnowledgeGraphField
@@ -16,7 +15,7 @@ from allennlp_semparse.fields import KnowledgeGraphField
 
 class KnowledgeGraphFieldTest(SemparseTestCase):
     def setUp(self):
-        self.tokenizer = WordTokenizer(SpacyWordSplitter(pos_tags=True))
+        self.tokenizer = SpacyTokenizer()
         self.utterance = self.tokenizer.tokenize("where is mersin?")
         self.token_indexers = {"tokens": SingleIdTokenIndexer("tokens")}
 

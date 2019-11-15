@@ -4,7 +4,7 @@ import pytest
 
 from .. import SemparseTestCase
 from allennlp.data.tokenizers import Token
-from allennlp.data.tokenizers import WordTokenizer
+from allennlp.data.tokenizers import SpacyTokenizer
 
 from allennlp_semparse.common import Date, ExecutionError
 from allennlp_semparse.common.wikitables import TableQuestionContext
@@ -404,7 +404,7 @@ class TestWikiTablesLanguage(SemparseTestCase):
     def test_number_comparison_works(self):
         # TableQuestionContext normlaizes all strings according to some rules. We want to ensure
         # that the original numerical values of number cells is being correctly processed here.
-        tokens = WordTokenizer().tokenize("when was the attendance the highest?")
+        tokens = SpacyTokenizer().tokenize("when was the attendance the highest?")
         tagged_file = self.FIXTURES_ROOT / "data" / "corenlp_processed_tables" / "TEST-2.table"
         language = self._get_world_with_question_tokens_and_table_file(tokens, tagged_file)
         result = language.execute(
