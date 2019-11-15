@@ -2,8 +2,9 @@
 # TODO: When this occurs, modify setup.py to 1) not exclude this line, 2)
 # conditionally filter the standard allenlp version instead, and 3) stop adding
 # the git url for allennlp to install_requirements.
-git+git://github.com/allenai/allennlp@93024e53c1445cb4630ee5c07926abff8943715f
+git+git://github.com/allenai/allennlp@88fe0075c28babb20f076c43f932b77d80ce81a3
 
+# For PorterStemmer
 nltk
 
 # Used to create grammars for parsing SQL
