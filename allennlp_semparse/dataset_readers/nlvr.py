@@ -9,7 +9,7 @@ from allennlp.data import DatasetReader
 from allennlp.data.fields import Field, TextField, ListField, IndexField, LabelField, MetadataField
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.tokenizers import Tokenizer, WordTokenizer
+from allennlp.data.tokenizers import Tokenizer, SpacyTokenizer
 
 from allennlp_semparse.domain_languages import NlvrLanguage
 from allennlp_semparse.domain_languages.nlvr_language import Box
@@ -64,7 +64,7 @@ class NlvrDatasetReader(DatasetReader):
         Passed to ``DatasetReader``.  If this is ``True``, training will start sooner, but will
         take longer per batch.
     tokenizer : ``Tokenizer`` (optional)
-        The tokenizer used for sentences in NLVR. Default is ``WordTokenizer``
+        The tokenizer used for sentences in NLVR. Default is ``SpacyTokenizer``
     sentence_token_indexers : ``Dict[str, TokenIndexer]`` (optional)
         Token indexers for tokens in input sentences.
         Default is ``{"tokens": SingleIdTokenIndexer()}``
@@ -91,7 +91,7 @@ class NlvrDatasetReader(DatasetReader):
         output_agendas: bool = True,
     ) -> None:
         super().__init__(lazy)
-        self._tokenizer = tokenizer or WordTokenizer()
+        self._tokenizer = tokenizer or SpacyTokenizer()
         self._sentence_token_indexers = sentence_token_indexers or {
             "tokens": SingleIdTokenIndexer()
         }

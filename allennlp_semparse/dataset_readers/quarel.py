@@ -2,14 +2,13 @@
 Reader for QuaRel dataset
 """
 
+from nltk.stem import PorterStemmer as NltkPorterStemmer
+from overrides import overrides
 from typing import Any, Dict, List, Optional, Tuple, Union
 import json
 import logging
-import re
-
 import numpy as np
-from overrides import overrides
-
+import re
 import tqdm
 
 from allennlp.common.file_utils import cached_path
@@ -19,8 +18,7 @@ from allennlp.data.fields import ArrayField, Field, TextField, LabelField
 from allennlp.data.fields import IndexField, ListField, MetadataField, SequenceLabelField
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
-from allennlp.data.tokenizers import Token, Tokenizer, WordTokenizer
-from allennlp.data.tokenizers.word_stemmer import PorterStemmer
+from allennlp.data.tokenizers import Token, Tokenizer, SpacyTokenizer
 
 from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
 from allennlp_semparse.fields import KnowledgeGraphField, ProductionRuleField
@@ -89,7 +87,7 @@ class QuarelDatasetReader(DatasetReader):
         question_token_indexers: Dict[str, TokenIndexer] = None,
     ) -> None:
         super().__init__(lazy=lazy)
-        self._tokenizer = tokenizer or WordTokenizer()
+        self._tokenizer = tokenizer or SpacyTokenizer()
         self._question_token_indexers = question_token_indexers or {
             "tokens": SingleIdTokenIndexer()
         }
@@ -162,7 +160,7 @@ class QuarelDatasetReader(DatasetReader):
             )
             self._world = QuarelWorld(self._knowledge_graph, self._lf_syntax)
 
-        self._stemmer = PorterStemmer().stemmer
+        self._stemmer = NltkPorterStemmer()
 
         self._world_tagger_extractor = None
         self._extract_worlds = False

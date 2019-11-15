@@ -7,7 +7,7 @@ from nltk import ngrams, bigrams
 from parsimonious.grammar import Grammar
 from parsimonious.expressions import Expression, OneOf, Sequence, Literal
 
-from allennlp.data.tokenizers import Token, Tokenizer, WordTokenizer
+from allennlp.data.tokenizers import Token, Tokenizer, SpacyTokenizer
 
 from allennlp_semparse.parsimonious_languages.contexts import atis_tables
 from allennlp_semparse.parsimonious_languages.contexts.atis_sql_table_context import (
@@ -59,7 +59,7 @@ class AtisWorld:
     utterances: ``List[str]``
         A list of utterances in the interaction, the last element in this list is the
         current utterance that we are interested in.
-    tokenizer: ``Tokenizer``, optional (default=``WordTokenizer()``)
+    tokenizer: ``Tokenizer``, optional (default=``SpacyTokenizer()``)
         We use this tokenizer to tokenize the utterances.
     """
 
@@ -72,7 +72,7 @@ class AtisWorld:
                 atis_tables.ALL_TABLES, atis_tables.TABLES_WITH_STRINGS, AtisWorld.database_file
             )
         self.utterances: List[str] = utterances
-        self.tokenizer = tokenizer if tokenizer else WordTokenizer()
+        self.tokenizer = tokenizer if tokenizer else SpacyTokenizer()
         self.tokenized_utterances = [
             self.tokenizer.tokenize(utterance) for utterance in self.utterances
         ]

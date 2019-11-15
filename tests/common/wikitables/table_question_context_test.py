@@ -1,6 +1,5 @@
 from ... import SemparseTestCase
-from allennlp.data.tokenizers import WordTokenizer
-from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
+from allennlp.data.tokenizers import SpacyTokenizer
 
 from allennlp_semparse.common import Date
 from allennlp_semparse.common.wikitables import TableQuestionContext
@@ -9,7 +8,7 @@ from allennlp_semparse.common.wikitables import TableQuestionContext
 class TestTableQuestionContext(SemparseTestCase):
     def setUp(self):
         super().setUp()
-        self.tokenizer = WordTokenizer(SpacyWordSplitter(pos_tags=True))
+        self.tokenizer = SpacyTokenizer(pos_tags=True)
 
     def test_table_data(self):
         question = "what was the attendance when usl a league played?"

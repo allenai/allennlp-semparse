@@ -15,9 +15,8 @@ from allennlp.data.fields import Field, TextField, MetadataField, ListField, Ind
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.token_indexers.token_indexer import TokenIndexer
-from allennlp.data.tokenizers import WordTokenizer
+from allennlp.data.tokenizers import SpacyTokenizer
 from allennlp.data.tokenizers.tokenizer import Tokenizer
-from allennlp.data.tokenizers.word_splitter import SpacyWordSplitter
 
 from allennlp_semparse.common import ParsingError
 from allennlp_semparse.common.wikitables import TableQuestionContext
@@ -102,7 +101,7 @@ class WikiTablesDatasetReader(DatasetReader):
         Otherwise, your accuracy numbers will only reflect the subset of the data that has offline search
         output.
     tokenizer : ``Tokenizer``, optional
-        Tokenizer to use for the questions. Will default to ``WordTokenizer()`` with Spacy's tagger
+        Tokenizer to use for the questions. Will default to ``SpacyTokenizer()`` with Spacy's tagger
         enabled, as we use lemma matches as features for entity linking.
     question_token_indexers : ``Dict[str, TokenIndexer]``, optional
         Token indexers for questions. Will default to ``{"tokens": SingleIdTokenIndexer()}``.
@@ -143,7 +142,7 @@ class WikiTablesDatasetReader(DatasetReader):
         self._offline_logical_forms_directory = offline_logical_forms_directory
         self._max_offline_logical_forms = max_offline_logical_forms
         self._keep_if_no_logical_forms = keep_if_no_logical_forms
-        self._tokenizer = tokenizer or WordTokenizer(SpacyWordSplitter(pos_tags=True))
+        self._tokenizer = tokenizer or SpacyTokenizer(pos_tags=True)
         self._question_token_indexers = question_token_indexers or {
             "tokens": SingleIdTokenIndexer()
         }
