@@ -10,16 +10,13 @@ import torch
 
 from allennlp.common import util
 from allennlp.common.checks import ConfigurationError
-from allennlp.data.fields.field import Field
-from allennlp.data.token_indexers.token_indexer import TokenIndexer, TokenType
-from allennlp.data.tokenizers.token import Token
-from allennlp.data.tokenizers import Tokenizer, SpacyTokenizer
+from allennlp.data.fields import Field, ListField, TextField
+from allennlp.data.token_indexers.token_indexer import TokenIndexer, IndexedTokenList
+from allennlp.data.tokenizers import Token, Tokenizer, SpacyTokenizer
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.nn import util as nn_util
 
 from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
-
-TokenList = List[TokenType]
 
 
 class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
@@ -100,6 +97,7 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
 
         self.knowledge_graph = knowledge_graph
         self._tokenizer = tokenizer or SpacyTokenizer(pos_tags=True)
+        self._token_indexers = token_indexers
         if not entity_tokens:
             entity_texts = [
                 knowledge_graph.entity_text[entity].lower() for entity in knowledge_graph.entities
@@ -113,11 +111,27 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
             self.entity_texts = self._tokenizer.batch_tokenize(entity_texts)
         else:
             self.entity_texts = entity_tokens
+        entity_text_fields = []
+        max_entity_tokens = None
+        if max_table_tokens:
+            num_entities = len(self.entity_texts)
+            num_entity_tokens = max(len(entity_text) for entity_text in self.entity_texts)
+            # This truncates the number of entity tokens used, enabling larger tables (either in
+            # the number of entities in the table, or the number of tokens per entity) to fit in
+            # memory, particularly when using ELMo.
+            if num_entities * num_entity_tokens > max_table_tokens:
+                max_entity_tokens = int(max_table_tokens / num_entities)
+        for entity_text in self.entity_texts:
+            if max_entity_tokens:
+                entity_text = entity_text[:max_entity_tokens]
+            entity_text_fields.append(TextField(entity_text, token_indexers))
+        if self.entity_texts:
+            self._entity_text_field = ListField(entity_text_fields)
+        else:
+            empty_text_field = TextField([], self._token_indexers).empty_field()
+            self._entity_text_field = ListField([empty_text_field]).empty_field()
         self.utterance_tokens = utterance_tokens
-        self._token_indexers: Dict[str, TokenIndexer] = token_indexers
         self._include_in_vocab = include_in_vocab
-        self._indexed_entity_texts: Dict[str, TokenList] = None
-        self._max_table_tokens = max_table_tokens
 
         feature_extractors = (
             feature_extractors
@@ -167,91 +181,26 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
     @overrides
     def count_vocab_items(self, counter: Dict[str, Dict[str, int]]):
         if self._include_in_vocab:
-            for indexer in self._token_indexers.values():
-                for entity_text in self.entity_texts:
-                    for token in entity_text:
-                        indexer.count_vocab_items(token, counter)
+            self._entity_text_field.count_vocab_items(counter)
 
     @overrides
     def index(self, vocab: Vocabulary):
-        self._indexed_entity_texts = {}
-        for indexer_name, indexer in self._token_indexers.items():
-            indexer_arrays: Dict[str, List] = defaultdict(list)
-
-            for entity_text in self.entity_texts:
-                for index_name, indexed in indexer.tokens_to_indices(
-                    entity_text, vocab, indexer_name
-                ).items():
-                    indexer_arrays[index_name].append(indexed)
-
-            self._indexed_entity_texts.update(indexer_arrays)
+        self._entity_text_field.index(vocab)
 
     @overrides
     def get_padding_lengths(self) -> Dict[str, int]:
-        num_entities = len(self.entity_texts)
-        num_entity_tokens = max(len(entity_text) for entity_text in self.entity_texts)
-
-        if self._max_table_tokens:
-            # This truncates the number of entity tokens used, enabling larger tables (either in
-            # the number of entities in the table, or the number of tokens per entity) to fit in
-            # memory, particularly when using ELMo.
-            if num_entities * num_entity_tokens > self._max_table_tokens:
-                num_entity_tokens = int(self._max_table_tokens / num_entities)
-
         padding_lengths = {
-            "num_entities": num_entities,
+            "num_entities": len(self.entity_texts),
             "num_utterance_tokens": len(self.utterance_tokens),
         }
-        padding_lengths["num_entity_tokens"] = num_entity_tokens
-        lengths = []
-        assert self._indexed_entity_texts is not None, (
-            "This field is not indexed yet. Call "
-            ".index(vocab) before determining padding "
-            "lengths."
-        )
-        for indexer_name, indexer in self._token_indexers.items():
-            indexer_lengths = {}
-
-            # This is a list of dicts, one for each token in the field.
-            entity_lengths = [
-                indexer.get_padding_lengths(token)
-                for entity_text in self._indexed_entity_texts[indexer_name]
-                for token in entity_text
-            ]
-            # Iterate over the keys in the first element of the list.  This is fine as for a given
-            # indexer, all entities will return the same keys, so we can just use the first one.
-            for key in entity_lengths[0].keys():
-                indexer_lengths[key] = max(x.get(key, 0) for x in entity_lengths)
-            lengths.append(indexer_lengths)
-
-        # Get all the keys which have been used for padding.
-        padding_keys = {key for d in lengths for key in d.keys()}
-        for padding_key in padding_keys:
-            padding_lengths[padding_key] = max(x.get(padding_key, 0) for x in lengths)
+        padding_lengths.update(self._entity_text_field.get_padding_lengths())
         return padding_lengths
 
     @overrides
     def as_tensor(self, padding_lengths: Dict[str, int]) -> Dict[str, torch.Tensor]:
-        tensors = {}
-        desired_num_entities = padding_lengths["num_entities"]
-        desired_num_entity_tokens = padding_lengths["num_entity_tokens"]
-        desired_num_utterance_tokens = padding_lengths["num_utterance_tokens"]
-        for indexer_name, indexer in self._token_indexers.items():
-            padded_entities = util.pad_sequence_to_length(
-                self._indexed_entity_texts[indexer_name],
-                desired_num_entities,
-                default_value=lambda: [],
-            )
-            padded_tensors = []
-            for padded_entity in padded_entities:
-                padded_tensor = indexer.as_padded_tensor(
-                    {"key": padded_entity}, {"key": desired_num_entity_tokens}, padding_lengths
-                )["key"]
-                padded_tensors.append(padded_tensor)
-            tensor = torch.stack(padded_tensors)
-            tensors[indexer_name] = tensor
+        text_tensors = self._entity_text_field.as_tensor(padding_lengths)
         padded_linking_features = util.pad_sequence_to_length(
-            self.linking_features, desired_num_entities, default_value=lambda: []
+            self.linking_features, padding_lengths["num_entities"], default_value=lambda: []
         )
         padded_linking_arrays = []
 
@@ -260,11 +209,13 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
 
         for linking_features in padded_linking_features:
             padded_features = util.pad_sequence_to_length(
-                linking_features, desired_num_utterance_tokens, default_value=default_feature_value
+                linking_features,
+                padding_lengths["num_utterance_tokens"],
+                default_value=default_feature_value,
             )
             padded_linking_arrays.append(padded_features)
         linking_features_tensor = torch.FloatTensor(padded_linking_arrays)
-        return {"text": tensors, "linking": linking_features_tensor}
+        return {"text": text_tensors, "linking": linking_features_tensor}
 
     def _compute_linking_features(self) -> List[List[List[float]]]:
         linking_features = []
@@ -288,9 +239,8 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
 
     @overrides
     def batch_tensors(self, tensor_list: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
-        batched_text = nn_util.batch_tensor_dicts(
-            tensor["text"] for tensor in tensor_list
-        )  # type: ignore
+        text_tensors = [tensor["text"] for tensor in tensor_list]
+        batched_text = self._entity_text_field.batch_tensors(text_tensors)
         batched_linking = torch.stack([tensor["linking"] for tensor in tensor_list])
         return {"text": batched_text, "linking": batched_linking}
 

@@ -200,7 +200,7 @@ class WikiTablesSemanticParser(Model):
             )
 
             neighbor_mask = util.get_text_field_mask(
-                {"ignored": neighbor_indices + 1}, num_wrapping_dims=1
+                {"ignored": {"ignored": neighbor_indices + 1}}, num_wrapping_dims=1
             ).float()
 
             # Encoder initialized to easily obtain a masked average.

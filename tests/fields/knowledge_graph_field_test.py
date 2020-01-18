@@ -5,6 +5,7 @@ from numpy.testing import assert_almost_equal
 import torch
 
 from .. import SemparseTestCase
+from allennlp.common.checks import ConfigurationError
 from allennlp.data import Vocabulary
 from allennlp.data.token_indexers import SingleIdTokenIndexer, TokenCharactersIndexer
 from allennlp.data.tokenizers import SpacyTokenizer
@@ -50,28 +51,17 @@ class KnowledgeGraphFieldTest(SemparseTestCase):
             "mersin": 1,
         }
 
-    def test_index_converts_field_correctly(self):
-        self.field.index(self.vocab)
-        assert self.field._indexed_entity_texts.keys() == {"tokens"}
-        # Note that these are sorted by their _identifiers_, not their cell text, so the
-        # `fb:row.rows` show up after the `fb:cells`.
-        expected_array = [
-            [self.mersin_index],
-            [self.location_index, self.in_index, self.english_index],
-            [self.name_index, self.in_index, self.english_index],
-        ]
-        assert self.field._indexed_entity_texts["tokens"] == expected_array
-
     def test_get_padding_lengths_raises_if_not_indexed(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ConfigurationError):
             self.field.get_padding_lengths()
 
     def test_padding_lengths_are_computed_correctly(self):
         self.field.index(self.vocab)
         assert self.field.get_padding_lengths() == {
             "num_entities": 3,
-            "num_entity_tokens": 3,
             "num_utterance_tokens": 4,
+            "num_fields": 3,
+            "list_tokens___tokens": 3,
         }
         self.field._token_indexers["token_characters"] = TokenCharactersIndexer(
             min_padding_length=1
@@ -79,9 +69,11 @@ class KnowledgeGraphFieldTest(SemparseTestCase):
         self.field.index(self.vocab)
         assert self.field.get_padding_lengths() == {
             "num_entities": 3,
-            "num_entity_tokens": 3,
             "num_utterance_tokens": 4,
-            "num_token_characters": 8,
+            "num_fields": 3,
+            "list_tokens___tokens": 3,
+            "list_token_characters___token_characters": 3,
+            "list_token_characters___num_token_characters": 8,
         }
 
     def test_as_tensor_produces_correct_output(self):
@@ -89,6 +81,7 @@ class KnowledgeGraphFieldTest(SemparseTestCase):
         padding_lengths = self.field.get_padding_lengths()
         padding_lengths["num_utterance_tokens"] += 1
         padding_lengths["num_entities"] += 1
+        padding_lengths["num_fields"] += 1
         tensor_dict = self.field.as_tensor(padding_lengths)
         assert tensor_dict.keys() == {"text", "linking"}
         expected_text_tensor = [
@@ -98,7 +91,7 @@ class KnowledgeGraphFieldTest(SemparseTestCase):
             [0, 0, 0],
         ]
         assert_almost_equal(
-            tensor_dict["text"]["tokens"].detach().cpu().numpy(), expected_text_tensor
+            tensor_dict["text"]["tokens"]["tokens"].detach().cpu().numpy(), expected_text_tensor
         )
 
         linking_tensor = tensor_dict["linking"].detach().cpu().numpy()
@@ -175,7 +168,8 @@ class KnowledgeGraphFieldTest(SemparseTestCase):
         ]
         expected_batched_tensor = [expected_single_tensor, expected_single_tensor]
         assert_almost_equal(
-            batched_tensor_dict["text"]["tokens"].detach().cpu().numpy(), expected_batched_tensor
+            batched_tensor_dict["text"]["tokens"]["tokens"].detach().cpu().numpy(),
+            expected_batched_tensor,
         )
         expected_linking_tensor = torch.stack([tensor_dict1["linking"], tensor_dict2["linking"]])
         assert_almost_equal(

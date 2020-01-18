@@ -2,7 +2,6 @@
 Reader for QuaRel dataset
 """
 
-from nltk.stem import PorterStemmer as NltkPorterStemmer
 from overrides import overrides
 from typing import Any, Dict, List, Optional, Tuple, Union
 import json
@@ -160,7 +159,8 @@ class QuarelDatasetReader(DatasetReader):
             )
             self._world = QuarelWorld(self._knowledge_graph, self._lf_syntax)
 
-        self._stemmer = NltkPorterStemmer()
+        from nltk.stem import PorterStemmer
+        self._stemmer = PorterStemmer()
 
         self._world_tagger_extractor = None
         self._extract_worlds = False

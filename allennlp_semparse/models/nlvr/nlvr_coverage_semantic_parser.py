@@ -232,7 +232,7 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
 
         initial_rnn_state = self._get_initial_rnn_state(sentence)
         initial_score_list = [
-            next(iter(sentence.values())).new_zeros(1, dtype=torch.float) for i in range(batch_size)
+            agenda.new_zeros(1, dtype=torch.float) for i in range(batch_size)
         ]
         # TODO (pradeep): Assuming all worlds give the same set of valid actions.
         initial_grammar_state = [

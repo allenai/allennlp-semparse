@@ -255,9 +255,8 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
         metadata : ``List[Dict[str, Any]]``, optional (default = None)
             Metadata containing the original tokenized question within a 'question_tokens' field.
         """
-        batch_size = list(question.values())[0].size(0)
         # Each instance's agenda is of size (agenda_size, 1)
-        agenda_list = [agenda[i] for i in range(batch_size)]
+        agenda_list = [a for a in agenda]
         checklist_states = []
         all_terminal_productions = [
             set(instance_world.terminal_productions.values()) for instance_world in world

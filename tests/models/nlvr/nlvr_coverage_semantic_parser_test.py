@@ -54,7 +54,7 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
         model = Model.from_params(vocab=self.vocab, params=params["model"])
         # Initial cost weight, before forward is called.
         assert model._checklist_cost_weight == 0.8
-        iterator = BucketIterator(sorting_keys=[["sentence", "num_tokens"]], track_epoch=True)
+        iterator = BucketIterator(track_epoch=True)
         cost_weights = []
         for epoch_data in iterator(self.dataset, num_epochs=4):
             model.forward(**epoch_data)
