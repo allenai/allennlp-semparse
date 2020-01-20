@@ -2,7 +2,6 @@
 ``KnowledgeGraphField`` is a ``Field`` which stores a knowledge graph representation.
 """
 from typing import Callable, Dict, List, Set
-from collections import defaultdict
 
 import editdistance
 from overrides import overrides
@@ -11,10 +10,9 @@ import torch
 from allennlp.common import util
 from allennlp.common.checks import ConfigurationError
 from allennlp.data.fields import Field, ListField, TextField
-from allennlp.data.token_indexers.token_indexer import TokenIndexer, IndexedTokenList
+from allennlp.data.token_indexers.token_indexer import TokenIndexer
 from allennlp.data.tokenizers import Token, Tokenizer, SpacyTokenizer
 from allennlp.data.vocabulary import Vocabulary
-from allennlp.nn import util as nn_util
 
 from allennlp_semparse.common.knowledge_graph import KnowledgeGraph
 
