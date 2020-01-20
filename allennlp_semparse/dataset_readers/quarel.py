@@ -160,6 +160,7 @@ class QuarelDatasetReader(DatasetReader):
             self._world = QuarelWorld(self._knowledge_graph, self._lf_syntax)
 
         from nltk.stem import PorterStemmer
+
         self._stemmer = PorterStemmer()
 
         self._world_tagger_extractor = None

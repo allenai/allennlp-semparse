@@ -101,9 +101,7 @@ class NlvrDirectSemanticParser(NlvrSemanticParser):
 
         initial_rnn_state = self._get_initial_rnn_state(sentence)
         token_ids = util.get_token_ids_from_text_field_tensors(sentence)
-        initial_score_list = [
-            token_ids.new_zeros(1, dtype=torch.float) for i in range(batch_size)
-        ]
+        initial_score_list = [token_ids.new_zeros(1, dtype=torch.float) for i in range(batch_size)]
         label_strings = self._get_label_strings(labels) if labels is not None else None
         # TODO (pradeep): Assuming all worlds give the same set of valid actions.
         initial_grammar_state = [
