@@ -12,3 +12,6 @@ unidecode
 
 # Used in KnowledgeGraphField
 editdistance
+
+# Used for the type system for some languages
+nltk
