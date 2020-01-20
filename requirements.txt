@@ -6,3 +6,9 @@ parsimonious>=0.8.0
 
 # Used to format and postprocess SQL
 sqlparse>=0.2.4
+
+# Used to process tables in WikiTableQuestions
+unidecode
+
+# Used in KnowledgeGraphField
+editdistance
