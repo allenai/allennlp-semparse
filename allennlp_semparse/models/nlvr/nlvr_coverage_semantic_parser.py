@@ -231,9 +231,7 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
         batch_size = len(worlds)
 
         initial_rnn_state = self._get_initial_rnn_state(sentence)
-        initial_score_list = [
-            next(iter(sentence.values())).new_zeros(1, dtype=torch.float) for i in range(batch_size)
-        ]
+        initial_score_list = [agenda.new_zeros(1, dtype=torch.float) for i in range(batch_size)]
         # TODO (pradeep): Assuming all worlds give the same set of valid actions.
         initial_grammar_state = [
             self._create_grammar_state(worlds[i][0], actions[i]) for i in range(batch_size)

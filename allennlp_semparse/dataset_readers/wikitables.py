@@ -15,8 +15,7 @@ from allennlp.data.fields import Field, TextField, MetadataField, ListField, Ind
 from allennlp.data.instance import Instance
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.token_indexers.token_indexer import TokenIndexer
-from allennlp.data.tokenizers import SpacyTokenizer
-from allennlp.data.tokenizers.tokenizer import Tokenizer
+from allennlp.data.tokenizers import Tokenizer, SpacyTokenizer
 
 from allennlp_semparse.common import ParsingError
 from allennlp_semparse.common.wikitables import TableQuestionContext

@@ -8,7 +8,7 @@ import torch
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models.model import Model
 from allennlp.modules import Attention, TextFieldEmbedder, Seq2SeqEncoder
-from allennlp.nn import Activation
+from allennlp.nn import Activation, util
 
 from allennlp_semparse.domain_languages import NlvrLanguage
 from allennlp_semparse.fields.production_rule_field import ProductionRule
@@ -100,9 +100,8 @@ class NlvrDirectSemanticParser(NlvrSemanticParser):
         batch_size = len(worlds)
 
         initial_rnn_state = self._get_initial_rnn_state(sentence)
-        initial_score_list = [
-            next(iter(sentence.values())).new_zeros(1, dtype=torch.float) for i in range(batch_size)
-        ]
+        token_ids = util.get_token_ids_from_text_field_tensors(sentence)
+        initial_score_list = [token_ids.new_zeros(1, dtype=torch.float) for i in range(batch_size)]
         label_strings = self._get_label_strings(labels) if labels is not None else None
         # TODO (pradeep): Assuming all worlds give the same set of valid actions.
         initial_grammar_state = [

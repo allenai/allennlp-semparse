@@ -1,14 +1,17 @@
 # To be changed to allennlp>=1.0 once that's released.
-# TODO: When this occurs, modify setup.py to 1) not exclude this line, 2)
-# conditionally filter the standard allenlp version instead, and 3) stop adding
-# the git url for allennlp to install_requirements.
-git+git://github.com/allenai/allennlp@88fe0075c28babb20f076c43f932b77d80ce81a3
-
-# For PorterStemmer
-nltk
+git+git://github.com/allenai/allennlp@2e811b2796f77e9e796fc3a91f6618fdac68973b
 
 # Used to create grammars for parsing SQL
 parsimonious>=0.8.0
 
 # Used to format and postprocess SQL
 sqlparse>=0.2.4
+
+# Used to process tables in WikiTableQuestions
+unidecode
+
+# Used in KnowledgeGraphField
+editdistance
+
+# Used for the type system for some languages
+nltk
