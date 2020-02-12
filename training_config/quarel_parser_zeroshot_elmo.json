@@ -53,7 +53,7 @@
       "token_embedders": {
         "tokens": {
           "type": "embedding",
-          "pretrained_file": "/inputs/glove/glove.6B.100d.txt.gz",
+          "pretrained_file": "https://allennlp.s3.amazonaws.com/datasets/glove/glove.6B.100d.txt.gz",
           "embedding_dim": 100,
           "trainable": false
         },
