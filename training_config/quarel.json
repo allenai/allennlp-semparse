@@ -1,0 +1,112 @@
+{
+    "dataset_reader": {
+        "type": "quarel",
+        "align_world_extractions": true,
+        "lazy": false,
+        "lexical_cues": [
+            "synonyms",
+            "values"
+        ],
+        "lf_syntax": "quarel_v1_attr_entities",
+        "question_token_indexers": {
+            "elmo": {
+                "type": "elmo_characters"
+            },
+            "tokens": {
+                "type": "single_id",
+                "lowercase_tokens": true
+            }
+        },
+        "replace_world_entities": true,
+        "sample": -1,
+        "world_extraction_model": "https://s3-us-west-2.amazonaws.com/allennlp/models/quarel-tagger-2020.02.10.tar.gz"
+    },
+    "iterator": {
+        "type": "basic",
+        "batch_size": 5
+    },
+    "model": {
+        "type": "quarel_parser",
+        "action_embedding_dim": 50,
+        "attention": {
+            "type": "dot_product"
+        },
+        "decoder_beam_search": {
+            "beam_size": 5
+        },
+        "dropout": 0.2,
+        "encoder": {
+            "type": "lstm",
+            "bidirectional": false,
+            "hidden_size": 50,
+            "input_size": 1124,
+            "num_layers": 1
+        },
+        "entity_similarity_mode": "weighted_dot_product",
+        "max_decoding_steps": 30,
+        "num_linking_features": 0,
+        "question_embedder": {
+          "token_embedders": {
+            "elmo": {
+                "type": "elmo_token_embedder",
+                "do_layer_norm": false,
+                "dropout": 0.5
+            },
+            "tokens": {
+                "type": "embedding",
+                "embedding_dim": 100,
+                "pretrained_file": "https://allennlp.s3.amazonaws.com/datasets/glove/glove.6B.100d.txt.gz",
+                "trainable": false
+            }
+          }
+        },
+        "use_entities": true
+    },
+    "train_data_path": "/Users/dirkg/Downloads/quarel-dataset-v1/quarel-v1-train.jsonl",
+    "validation_data_path": "/Users/dirkg/Downloads/quarel-dataset-v1/quarel-v1-dev.jsonl",
+    "trainer": {
+        "cuda_device": 0,
+        "learning_rate_scheduler": {
+            "type": "reduce_on_plateau",
+            "factor": 0.5,
+            "mode": "max",
+            "patience": 10
+        },
+        "num_epochs": 100,
+        "checkpointer": {
+            "num_serialized_models_to_keep": 2
+        },
+        "optimizer": {
+            "type": "adam"
+        },
+        "patience": 40,
+        "validation_metric": "+parse_acc"
+    },
+    "vocabulary": {
+        "non_padded_namespaces": [
+            "actions"
+        ]
+    },
+    "validation_dataset_reader": {
+        "type": "quarel",
+        "align_world_extractions": false,
+        "lazy": false,
+        "lexical_cues": [
+            "synonyms",
+            "values"
+        ],
+        "lf_syntax": "quarel_v1_attr_entities",
+        "question_token_indexers": {
+            "elmo": {
+                "type": "elmo_characters"
+            },
+            "tokens": {
+                "type": "single_id",
+                "lowercase_tokens": true
+            }
+        },
+        "replace_world_entities": true,
+        "sample": -1,
+        "world_extraction_model": "https://s3-us-west-2.amazonaws.com/allennlp/models/quarel-tagger-2020.02.10.tar.gz"
+    }
+}
