@@ -98,7 +98,7 @@
     "checkpointer": {
       "num_serialized_models_to_keep": 2
     },
-    "cuda_device": -1,
+    "cuda_device": 0,
     "optimizer": {
       "type": "adam"
     }
