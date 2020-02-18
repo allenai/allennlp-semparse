@@ -10,7 +10,6 @@ A framework for building semantic parsers (including neural module networks) wit
 - ATIS
 - Text2SQL
 - NLVR
-- Quarel
 - WikiTableQuestions
 
 ## Supported models
