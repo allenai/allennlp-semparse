@@ -122,7 +122,7 @@ class AtisSemanticParser(Model):
 
         self._num_entity_types = 2  # TODO(kevin): get this in a more principled way somehow?
         self._entity_type_decoder_embedding = Embedding(
-            self._num_entity_types, action_embedding_dim
+            num_embeddings=self._num_entity_types, embedding_dim=action_embedding_dim
         )
         self._decoder_num_layers = decoder_num_layers
 
