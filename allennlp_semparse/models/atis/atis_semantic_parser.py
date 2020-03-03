@@ -280,7 +280,7 @@ class AtisSemanticParser(Model):
         linking_scores: torch.Tensor,
     ) -> GrammarBasedState:
         embedded_utterance = self._utterance_embedder(utterance)
-        utterance_mask = util.get_text_field_mask(utterance).float()
+        utterance_mask = util.get_text_field_mask(utterance)
 
         batch_size = embedded_utterance.size(0)
         num_entities = max([len(world.entities) for world in worlds])

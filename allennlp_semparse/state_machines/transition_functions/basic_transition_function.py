@@ -339,7 +339,10 @@ class BasicTransitionFunction(TransitionFunction[GrammarBasedState]):
         return new_states
 
     def attend_on_question(
-        self, query: torch.Tensor, encoder_outputs: torch.Tensor, encoder_output_mask: torch.Tensor
+        self,
+        query: torch.Tensor,
+        encoder_outputs: torch.Tensor,
+        encoder_output_mask: torch.BoolTensor,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Given a query (which is typically the decoder hidden state), compute an attention over the

@@ -344,9 +344,9 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
         target_checklist = agenda.new_tensor(target_checklist_list, dtype=torch.float)
         if self._penalize_non_agenda_actions:
             # All terminal actions are relevant
-            checklist_mask = torch.ones_like(target_checklist)
+            checklist_mask = torch.ones_like(target_checklist, dtype=torch.bool)
         else:
-            checklist_mask = (target_checklist != 0).float()
+            checklist_mask = target_checklist != 0
         return target_checklist, terminal_actions, checklist_mask
 
     def _update_metrics(

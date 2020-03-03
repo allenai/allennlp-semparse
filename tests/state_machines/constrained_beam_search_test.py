@@ -27,15 +27,15 @@ class TestConstrainedBeamSearch(SemparseTestCase):
                 ]
             ]
         )
-        mask = torch.Tensor(
+        mask = torch.tensor(
             [
                 [
-                    [1, 1, 1, 1, 1, 1, 1],
-                    [1, 1, 1, 1, 0, 0, 0],
-                    [1, 1, 1, 1, 0, 0, 0],
-                    [1, 1, 1, 1, 1, 1, 0],
-                    [1, 1, 1, 1, 1, 1, 0],
-                    [1, 1, 1, 1, 1, 0, 0],
+                    [True, True, True, True, True, True, True],
+                    [True, True, True, True, False, False, False],
+                    [True, True, True, True, False, False, False],
+                    [True, True, True, True, True, True, False],
+                    [True, True, True, True, True, True, False],
+                    [True, True, True, True, True, False, False],
                 ]
             ]
         )

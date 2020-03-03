@@ -59,7 +59,7 @@ class BasicTransitionFunctionTest(SemparseTestCase):
         self.encoder_outputs = torch.FloatTensor(
             [[[1, 2], [3, 4], [5, 6]], [[10, 11], [12, 13], [14, 15]]]
         )
-        self.encoder_output_mask = torch.FloatTensor([[1, 1, 1], [1, 1, 0]])
+        self.encoder_output_mask = torch.tensor([[True, True, True], [True, True, False]])
         self.possible_actions = [
             [
                 ("e -> f", False, None),

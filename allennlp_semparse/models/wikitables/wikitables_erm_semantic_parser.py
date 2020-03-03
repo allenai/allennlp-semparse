@@ -395,7 +395,7 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
         terminal_actions = agenda.new_tensor(terminal_indices)
         # (max_num_terminals, 1)
         target_checklist = agenda.new_tensor(target_checklist_list, dtype=torch.float)
-        checklist_mask = (target_checklist != 0).float()
+        checklist_mask = target_checklist != 0
         return target_checklist, terminal_actions, checklist_mask
 
     def _get_state_cost(

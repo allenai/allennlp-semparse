@@ -143,7 +143,7 @@ class Text2SqlParser(Model):
             trailing dimension.
         """
         embedded_utterance = self._utterance_embedder(tokens)
-        mask = util.get_text_field_mask(tokens).float()
+        mask = util.get_text_field_mask(tokens)
         batch_size = embedded_utterance.size(0)
 
         # (batch_size, num_tokens, encoder_output_dim)
@@ -227,7 +227,10 @@ class Text2SqlParser(Model):
         return outputs
 
     def _get_initial_state(
-        self, encoder_outputs: torch.Tensor, mask: torch.Tensor, actions: List[List[ProductionRule]]
+        self,
+        encoder_outputs: torch.Tensor,
+        mask: torch.BoolTensor,
+        actions: List[List[ProductionRule]]
     ) -> GrammarBasedState:
 
         batch_size = encoder_outputs.size(0)

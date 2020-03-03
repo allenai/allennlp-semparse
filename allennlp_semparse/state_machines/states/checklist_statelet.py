@@ -23,7 +23,7 @@ class ChecklistStatelet:
         ideally be. It is the same size as ``terminal_actions``, and it contains 1 for each corresponding
         action in the list that we want to see in the final logical form, and 0 for each corresponding
         action that we do not.
-    checklist_mask : ``torch.Tensor``
+    checklist_mask : ``torch.BoolTensor``
         Mask corresponding to ``terminal_actions``, indicating which of those actions are relevant
         for checklist computation. For example, if the parser is penalizing non-agenda terminal
         actions, all the terminal actions are relevant.
@@ -39,7 +39,7 @@ class ChecklistStatelet:
         self,
         terminal_actions: torch.Tensor,
         checklist_target: torch.Tensor,
-        checklist_mask: torch.Tensor,
+        checklist_mask: torch.BoolTensor,
         checklist: torch.Tensor,
         terminal_indices_dict: Dict[int, int] = None,
     ) -> None:

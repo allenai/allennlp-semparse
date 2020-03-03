@@ -46,7 +46,7 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
         target_checklist, terminal_actions, checklist_mask = checklist_info
         assert_almost_equal(target_checklist.data.numpy(), [[1], [0], [1]])
         assert_almost_equal(terminal_actions.data.numpy(), [[0], [2], [4]])
-        assert_almost_equal(checklist_mask.data.numpy(), [[1], [1], [1]])
+        assert_almost_equal(checklist_mask.long().data.numpy(), [[1], [1], [1]])
 
     def test_forward_with_epoch_num_changes_cost_weight(self):
         # Redefining model. We do not want this to change the state of ``self.model``.
