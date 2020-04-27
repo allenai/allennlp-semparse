@@ -5,7 +5,6 @@ import torch
 
 from allennlp.common import Params
 from ... import ModelTestCase
-from allennlp.data.iterators import DataIterator
 
 
 class WikiTablesMmlSemanticParserTest(ModelTestCase):

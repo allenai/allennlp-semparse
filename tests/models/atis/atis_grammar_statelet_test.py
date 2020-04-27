@@ -2,7 +2,6 @@ from numpy.testing import assert_almost_equal
 import torch
 
 from allennlp.common import Params
-from allennlp.modules import SimilarityFunction
 
 from allennlp_semparse.models.atis.atis_semantic_parser import AtisSemanticParser
 from allennlp_semparse.parsimonious_languages.worlds import AtisWorld

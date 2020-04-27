@@ -3,8 +3,7 @@ import torch
 
 from allennlp.common import Params
 from ... import ModelTestCase
-from allennlp.data import Vocabulary
-from allennlp.data.iterators import BucketIterator
+from allennlp.data import Vocabulary, DataLoader
 from allennlp.models import Model
 from allennlp.models.archival import load_archive
 
