@@ -143,7 +143,7 @@ class Text2SqlParser(Model):
             trailing dimension.
         """
         embedded_utterance = self._utterance_embedder(tokens)
-        mask = util.get_text_field_mask(tokens).float()
+        mask = util.get_text_field_mask(tokens)
         batch_size = embedded_utterance.size(0)
 
         # (batch_size, num_tokens, encoder_output_dim)
