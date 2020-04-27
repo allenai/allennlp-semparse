@@ -581,3 +581,5 @@ class AtisSemanticParser(Model):
             batch_action_info.append(instance_action_info)
         output_dict["predicted_actions"] = batch_action_info
         return output_dict
+
+    default_predictor = "atis-parser"
