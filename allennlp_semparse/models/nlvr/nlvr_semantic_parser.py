@@ -84,7 +84,7 @@ class NlvrSemanticParser(Model):
     def _get_initial_rnn_state(self, sentence: Dict[str, torch.LongTensor]):
         embedded_input = self._sentence_embedder(sentence)
         # (batch_size, sentence_length)
-        sentence_mask = util.get_text_field_mask(sentence).float()
+        sentence_mask = util.get_text_field_mask(sentence)
 
         batch_size = embedded_input.size(0)
 
