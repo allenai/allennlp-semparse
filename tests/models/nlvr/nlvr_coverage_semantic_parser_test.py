@@ -1,5 +1,6 @@
 from numpy.testing import assert_almost_equal
 import torch
+import pytest
 
 from allennlp.common import Params
 from ... import ModelTestCase
@@ -10,7 +11,7 @@ from allennlp.models.archival import load_archive
 
 class TestNlvrCoverageSemanticParser(ModelTestCase):
     def setup_method(self):
-        super(NlvrCoverageSemanticParserTest, self).setup_method()
+        super().setup_method()
         self.set_up_model(
             self.FIXTURES_ROOT / "nlvr_coverage_semantic_parser" / "experiment.json",
             self.FIXTURES_ROOT / "data" / "nlvr" / "sample_grouped_data.jsonl",
@@ -65,7 +66,7 @@ class TestNlvrCoverageSemanticParser(ModelTestCase):
             changed_weight = changed_model_parameters[name].data.numpy()
             # We want to make sure that the weights in the original model have indeed been changed
             # after a call to ``_initialize_weights_from_archive``.
-            with self.assertRaises(AssertionError, msg=f"{name} has not changed"):
+            with pytest.raises(AssertionError, match="Arrays are not almost equal"):
                 assert_almost_equal(original_weight, changed_weight)
             # This also includes the sentence token embedder. Those weights will be the same
             # because the two models have the same vocabulary.

@@ -37,7 +37,7 @@ class TestKnowledgeGraphField(SemparseTestCase):
             self.graph, self.utterance, self.token_indexers, self.tokenizer
         )
 
-        super(KnowledgeGraphFieldTest, self).setup_method()
+        super().setup_method()
 
     def test_count_vocab_items(self):
         namespace_token_counts = defaultdict(lambda: defaultdict(int))

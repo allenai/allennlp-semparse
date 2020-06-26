@@ -9,7 +9,7 @@ from ... import ModelTestCase
 
 class TestWikiTablesMmlSemanticParser(ModelTestCase):
     def setup_method(self):
-        super(WikiTablesMmlSemanticParserTest, self).setup_method()
+        super().setup_method()
         print(self.FIXTURES_ROOT)
         config_path = self.FIXTURES_ROOT / "wikitables" / "experiment.json"
         data_path = self.FIXTURES_ROOT / "data" / "wikitables" / "sample_data.examples"
@@ -20,7 +20,7 @@ class TestWikiTablesMmlSemanticParser(ModelTestCase):
         self.ensure_model_can_train_save_and_load(self.param_file)
 
     def test_make_output_human_readable(self):
-        model_batch = next(self.dataset)
+        model_batch = self.dataset.as_tensor_dict(self.dataset.get_padding_lengths())
         self.model.training = False
         forward_output = self.model(**model_batch)
         decode_output = self.model.make_output_human_readable(forward_output)

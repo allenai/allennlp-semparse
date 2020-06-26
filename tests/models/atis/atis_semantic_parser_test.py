@@ -8,7 +8,7 @@ from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import 
 
 class TestAtisSemanticParser(ModelTestCase):
     def setup_method(self):
-        super(AtisSemanticParserTest, self).setup_method()
+        super().setup_method()
         self.set_up_model(
             str(self.FIXTURES_ROOT / "atis" / "experiment.json"),
             str(self.FIXTURES_ROOT / "data" / "atis" / "sample.json"),

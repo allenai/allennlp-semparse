@@ -40,7 +40,6 @@
   "data_loader": {
     "batch_sampler": {
       "type": "bucket",
-      "track_epoch": true,
       "padding_noise": 0.0,
       "batch_size": 2
     }

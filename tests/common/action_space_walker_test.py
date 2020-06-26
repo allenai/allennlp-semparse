@@ -33,7 +33,7 @@ class FakeLanguageWithAssertions(DomainLanguage):
 
 class TestActionSpaceWalker(SemparseTestCase):
     def setup_method(self):
-        super(ActionSpaceWalkerTest, self).setup_method()
+        super().setup_method()
         self.world = FakeLanguageWithAssertions(start_types={bool})
         self.walker = ActionSpaceWalker(self.world, max_path_length=10)
 
@@ -120,77 +120,57 @@ class TestActionSpaceWalker(SemparseTestCase):
             ]
         )
 
-    def test_get_logical_forms_with_empty_agenda_returns_all_logical_forms(self):
-        with self.assertLogs("allennlp_semparse.common.action_space_walker") as log:
-            empty_agenda_logical_forms = self.walker.get_logical_forms_with_agenda(
-                [], allow_partial_match=True
-            )
-            first_four_logical_forms = empty_agenda_logical_forms[:4]
-            assert set(first_four_logical_forms) == {
-                "(object_exists all_objects)",
-                "(object_exists (black all_objects))",
-                "(object_exists (touch_wall all_objects))",
-                "(object_exists (triangle all_objects))",
-            }
-        self.assertEqual(
-            log.output,
-            [
-                "WARNING:allennlp_semparse.common.action_space_walker:"
-                "Agenda is empty! Returning all paths instead."
-            ],
+    def test_get_logical_forms_with_empty_agenda_returns_all_logical_forms(self, caplog):
+        empty_agenda_logical_forms = self.walker.get_logical_forms_with_agenda(
+            [], allow_partial_match=True
         )
+        first_four_logical_forms = empty_agenda_logical_forms[:4]
+        assert set(first_four_logical_forms) == {
+            "(object_exists all_objects)",
+            "(object_exists (black all_objects))",
+            "(object_exists (touch_wall all_objects))",
+            "(object_exists (triangle all_objects))",
+        }
+        assert "Agenda is empty! Returning all paths instead." in caplog.text
 
-    def test_get_logical_forms_with_unmatched_agenda_returns_all_logical_forms(self):
+    def test_get_logical_forms_with_unmatched_agenda_returns_all_logical_forms(self, caplog):
         agenda = ["<Set[Object]:Set[Object]> -> purple"]
-        with self.assertLogs("allennlp_semparse.common.action_space_walker") as log:
-            empty_agenda_logical_forms = self.walker.get_logical_forms_with_agenda(
-                agenda, allow_partial_match=True
-            )
-            first_four_logical_forms = empty_agenda_logical_forms[:4]
-            assert set(first_four_logical_forms) == {
-                "(object_exists all_objects)",
-                "(object_exists (black all_objects))",
-                "(object_exists (touch_wall all_objects))",
-                "(object_exists (triangle all_objects))",
-            }
-        self.assertEqual(
-            log.output,
-            [
-                "WARNING:allennlp_semparse.common.action_space_walker:"
-                "Agenda items not in any of the paths found. Returning all paths."
-            ],
+        empty_agenda_logical_forms = self.walker.get_logical_forms_with_agenda(
+            agenda, allow_partial_match=True
         )
+        first_four_logical_forms = empty_agenda_logical_forms[:4]
+        assert set(first_four_logical_forms) == {
+            "(object_exists all_objects)",
+            "(object_exists (black all_objects))",
+            "(object_exists (touch_wall all_objects))",
+            "(object_exists (triangle all_objects))",
+        }
+        assert "Agenda items not in any of the paths found. Returning all paths." in caplog.text
         empty_set = self.walker.get_logical_forms_with_agenda(agenda, allow_partial_match=False)
         assert empty_set == []
 
-    def test_get_logical_forms_with_agenda_ignores_null_set_item(self):
-        with self.assertLogs("allennlp_semparse.common.action_space_walker") as log:
-            agenda = [
-                "<Set[Object]:Set[Object]> -> yellow",
-                "<Set[Object]:Set[Object]> -> black",
-                "<Set[Object]:Set[Object]> -> triangle",
-                "<Set[Object]:Set[Object]> -> touch_wall",
-            ]
-            yellow_black_triangle_touch_forms = self.walker.get_logical_forms_with_agenda(agenda)
-            # Permutations of the three functions, after ignoring yellow. There will not be repetitions
-            # of any functions because we limit the length of paths to 10 above.
-            assert set(yellow_black_triangle_touch_forms) == set(
-                [
-                    "(object_exists (black (triangle (touch_wall all_objects))))",
-                    "(object_exists (black (touch_wall (triangle all_objects))))",
-                    "(object_exists (triangle (black (touch_wall all_objects))))",
-                    "(object_exists (triangle (touch_wall (black all_objects))))",
-                    "(object_exists (touch_wall (black (triangle all_objects))))",
-                    "(object_exists (touch_wall (triangle (black all_objects))))",
-                ]
-            )
-        self.assertEqual(
-            log.output,
+    def test_get_logical_forms_with_agenda_ignores_null_set_item(self, caplog):
+        agenda = [
+            "<Set[Object]:Set[Object]> -> yellow",
+            "<Set[Object]:Set[Object]> -> black",
+            "<Set[Object]:Set[Object]> -> triangle",
+            "<Set[Object]:Set[Object]> -> touch_wall",
+        ]
+        yellow_black_triangle_touch_forms = self.walker.get_logical_forms_with_agenda(agenda)
+        # Permutations of the three functions, after ignoring yellow. There will not be repetitions
+        # of any functions because we limit the length of paths to 10 above.
+        assert set(yellow_black_triangle_touch_forms) == set(
             [
-                "WARNING:allennlp_semparse.common.action_space_walker:"
-                "<Set[Object]:Set[Object]> -> yellow is not in any of the paths found! Ignoring it."
-            ],
+                "(object_exists (black (triangle (touch_wall all_objects))))",
+                "(object_exists (black (touch_wall (triangle all_objects))))",
+                "(object_exists (triangle (black (touch_wall all_objects))))",
+                "(object_exists (triangle (touch_wall (black all_objects))))",
+                "(object_exists (touch_wall (black (triangle all_objects))))",
+                "(object_exists (touch_wall (triangle (black all_objects))))",
+            ]
         )
+        log = "<Set[Object]:Set[Object]> -> yellow is not in any of the paths found! Ignoring it."
+        assert log in caplog.text
 
     def test_get_all_logical_forms(self):
         # get_all_logical_forms should sort logical forms by length.

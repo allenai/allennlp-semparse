@@ -185,6 +185,9 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
     def index(self, vocab: Vocabulary):
         self._entity_text_field.index(vocab)
 
+    def __len__(self) -> int:
+        return len(self.utterance_tokens)
+
     @overrides
     def get_padding_lengths(self) -> Dict[str, int]:
         padding_lengths = {

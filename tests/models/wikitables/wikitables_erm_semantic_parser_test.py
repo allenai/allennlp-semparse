@@ -5,7 +5,7 @@ from ... import ModelTestCase
 
 class TestWikiTablesVariableFreeErm(ModelTestCase):
     def setup_method(self):
-        super(WikiTablesVariableFreeErmTest, self).setup_method()
+        super().setup_method()
         config_path = self.FIXTURES_ROOT / "wikitables" / "experiment-erm.json"
         data_path = self.FIXTURES_ROOT / "data" / "wikitables" / "sample_data.examples"
         self.set_up_model(config_path, data_path)
