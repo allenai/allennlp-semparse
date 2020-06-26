@@ -142,7 +142,7 @@ class AtisDatasetReader(DatasetReader):
                 action_sequence = world.get_action_sequence(sql_query)
             except ParseError:
                 action_sequence = []
-                logger.debug(f"Parsing error")
+                logger.debug("Parsing error")
 
         tokenized_utterance = self._tokenizer.tokenize(utterance.lower())
         utterance_field = TextField(tokenized_utterance, self._token_indexers)

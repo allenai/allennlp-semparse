@@ -169,10 +169,10 @@ class WikiTablesSemanticParser(Model):
         table_text = table["text"]
         # (batch_size, question_length, embedding_dim)
         embedded_question = self._question_embedder(question)
-        question_mask = util.get_text_field_mask(question).float()
+        question_mask = util.get_text_field_mask(question)
         # (batch_size, num_entities, num_entity_tokens, embedding_dim)
         embedded_table = self._question_embedder(table_text, num_wrapping_dims=1)
-        table_mask = util.get_text_field_mask(table_text, num_wrapping_dims=1).float()
+        table_mask = util.get_text_field_mask(table_text, num_wrapping_dims=1)
 
         batch_size, num_entities, num_entity_tokens, _ = embedded_table.size()
         num_question_tokens = embedded_question.size(1)
@@ -740,7 +740,9 @@ class WikiTablesSemanticParser(Model):
             outputs["question_tokens"] = [x["question_tokens"] for x in metadata]
 
     @overrides
-    def decode(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def make_output_human_readable(
+        self, output_dict: Dict[str, torch.Tensor]
+    ) -> Dict[str, torch.Tensor]:
         """
         This method overrides ``Model.decode``, which gets called after ``Model.forward``, at test
         time, to finalize predictions.  This is (confusingly) a separate notion from the "decoder"

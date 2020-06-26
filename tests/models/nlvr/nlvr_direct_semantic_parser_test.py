@@ -1,9 +1,9 @@
 from ... import ModelTestCase
 
 
-class NlvrDirectSemanticParserTest(ModelTestCase):
-    def setUp(self):
-        super(NlvrDirectSemanticParserTest, self).setUp()
+class TestNlvrDirectSemanticParser(ModelTestCase):
+    def setup_method(self):
+        super().setup_method()
         self.set_up_model(
             self.FIXTURES_ROOT / "nlvr_direct_semantic_parser" / "experiment.json",
             self.FIXTURES_ROOT / "data" / "nlvr" / "sample_processed_data.jsonl",

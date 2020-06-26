@@ -1,6 +1,7 @@
 import sqlite3
 
 from parsimonious import Grammar, ParseError
+import pytest
 
 from ... import SemparseTestCase
 
@@ -12,8 +13,8 @@ from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import 
 
 
 class TestText2SqlWorld(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.schema = str(self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants-schema.csv")
         self.database_path = str(self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants.db")
 
@@ -106,7 +107,7 @@ class TestText2SqlWorld(SemparseTestCase):
         grammar = Grammar(format_grammar_string(world.base_grammar_dictionary))
         sql_visitor = SqlVisitor(grammar)
 
-        with self.assertRaises(ParseError):
+        with pytest.raises(ParseError):
             sql_visitor.parse(" ".join(sql_with_as))
 
         sql = [

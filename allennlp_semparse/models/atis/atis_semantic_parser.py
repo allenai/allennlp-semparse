@@ -280,7 +280,7 @@ class AtisSemanticParser(Model):
         linking_scores: torch.Tensor,
     ) -> GrammarBasedState:
         embedded_utterance = self._utterance_embedder(utterance)
-        utterance_mask = util.get_text_field_mask(utterance).float()
+        utterance_mask = util.get_text_field_mask(utterance)
 
         batch_size = embedded_utterance.size(0)
         num_entities = max([len(world.entities) for world in worlds])
@@ -546,7 +546,9 @@ class AtisSemanticParser(Model):
         return GrammarStatelet(["statement"], translated_valid_actions, self.is_nonterminal)
 
     @overrides
-    def decode(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def make_output_human_readable(
+        self, output_dict: Dict[str, torch.Tensor]
+    ) -> Dict[str, torch.Tensor]:
         """
         This method overrides ``Model.decode``, which gets called after ``Model.forward``, at test
         time, to finalize predictions.  This is (confusingly) a separate notion from the "decoder"
@@ -581,3 +583,6 @@ class AtisSemanticParser(Model):
             batch_action_info.append(instance_action_info)
         output_dict["predicted_actions"] = batch_action_info
         return output_dict
+
+
+default_predictor = "atis-parser"

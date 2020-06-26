@@ -14,8 +14,8 @@ from allennlp_semparse.parsimonious_languages.worlds.atis_world import AtisWorld
 
 
 class TestAtisWorld(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         test_filename = self.FIXTURES_ROOT / "data" / "atis" / "sample.json"
         self.data = open(test_filename).readlines()
         self.database_file = cached_path("https://allennlp.s3.amazonaws.com/datasets/atis/atis.db")
@@ -862,7 +862,7 @@ class TestAtisWorld(SemparseTestCase):
                 world.grammar["col_ref"],
                 Literal("BETWEEN"),
                 world.grammar["time_range_start"],
-                Literal(f"AND"),
+                Literal("AND"),
                 world.grammar["time_range_end"],
             ],
         ) == Sequence(
@@ -872,7 +872,7 @@ class TestAtisWorld(SemparseTestCase):
             world.grammar["ws"],
             world.grammar["time_range_start"],
             world.grammar["ws"],
-            Literal(f"AND"),
+            Literal("AND"),
             world.grammar["ws"],
             world.grammar["time_range_end"],
             world.grammar["ws"],

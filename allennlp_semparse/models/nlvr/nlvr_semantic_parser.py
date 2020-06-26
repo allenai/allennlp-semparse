@@ -84,7 +84,7 @@ class NlvrSemanticParser(Model):
     def _get_initial_rnn_state(self, sentence: Dict[str, torch.LongTensor]):
         embedded_input = self._sentence_embedder(sentence)
         # (batch_size, sentence_length)
-        sentence_mask = util.get_text_field_mask(sentence).float()
+        sentence_mask = util.get_text_field_mask(sentence)
 
         batch_size = embedded_input.size(0)
 
@@ -217,7 +217,9 @@ class NlvrSemanticParser(Model):
         return GrammarStatelet([START_SYMBOL], translated_valid_actions, world.is_nonterminal)
 
     @overrides
-    def decode(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def make_output_human_readable(
+        self, output_dict: Dict[str, torch.Tensor]
+    ) -> Dict[str, torch.Tensor]:
         """
         This method overrides ``Model.decode``, which gets called after ``Model.forward``, at test
         time, to finalize predictions. We only transform the action string sequences into logical

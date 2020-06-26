@@ -7,8 +7,8 @@ from allennlp_semparse.domain_languages.nlvr_language import Box
 
 
 class TestNlvrLanguage(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         test_filename = self.FIXTURES_ROOT / "data" / "nlvr" / "sample_ungrouped_data.jsonl"
         data = [json.loads(line)["structured_rep"] for line in open(test_filename).readlines()]
         box_lists = [
