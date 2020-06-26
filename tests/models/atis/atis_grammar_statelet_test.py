@@ -9,7 +9,7 @@ from allennlp_semparse.state_machines.states import GrammarStatelet
 from ... import SemparseTestCase
 
 
-class AtisGrammarStateletTest(SemparseTestCase):
+class TestAtisGrammarStatelet(SemparseTestCase):
     def test_atis_grammar_statelet(self):
         world = AtisWorld(
             [("give me all flights from boston to " "philadelphia next week arriving after lunch")]

@@ -1,7 +1,7 @@
 from ... import ModelTestCase
 
 
-class NlvrDirectSemanticParserTest(ModelTestCase):
+class TestNlvrDirectSemanticParser(ModelTestCase):
     def setup_method(self):
         super(NlvrDirectSemanticParserTest, self).setup_method()
         self.set_up_model(

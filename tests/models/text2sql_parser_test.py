@@ -5,7 +5,7 @@ from allennlp_semparse.models.text2sql_parser import Text2SqlParser
 from allennlp_semparse.parsimonious_languages.worlds.text2sql_world import Text2SqlWorld
 
 
-class Text2SqlParserTest(ModelTestCase):
+class TestText2SqlParser(ModelTestCase):
     def setup_method(self):
         super().setup_method()
 

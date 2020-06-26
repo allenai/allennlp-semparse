@@ -7,7 +7,7 @@ from allennlp.common import Params
 from ... import ModelTestCase
 
 
-class WikiTablesMmlSemanticParserTest(ModelTestCase):
+class TestWikiTablesMmlSemanticParser(ModelTestCase):
     def setup_method(self):
         super(WikiTablesMmlSemanticParserTest, self).setup_method()
         print(self.FIXTURES_ROOT)

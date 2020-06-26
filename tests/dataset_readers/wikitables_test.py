@@ -79,7 +79,7 @@ def assert_dataset_correct(dataset):
     ]
 
 
-class WikiTablesDatasetReaderTest(SemparseTestCase):
+class TestWikiTablesDatasetReader(SemparseTestCase):
     def test_reader_reads(self):
         offline_search_directory = (
             self.FIXTURES_ROOT / "data" / "wikitables" / "action_space_walker_output"

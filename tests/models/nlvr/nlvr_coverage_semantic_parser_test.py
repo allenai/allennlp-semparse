@@ -8,7 +8,7 @@ from allennlp.models import Model
 from allennlp.models.archival import load_archive
 
 
-class NlvrCoverageSemanticParserTest(ModelTestCase):
+class TestNlvrCoverageSemanticParser(ModelTestCase):
     def setup_method(self):
         super(NlvrCoverageSemanticParserTest, self).setup_method()
         self.set_up_model(

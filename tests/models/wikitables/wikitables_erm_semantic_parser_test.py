@@ -3,7 +3,7 @@ from flaky import flaky
 from ... import ModelTestCase
 
 
-class WikiTablesVariableFreeErmTest(ModelTestCase):
+class TestWikiTablesVariableFreeErm(ModelTestCase):
     def setup_method(self):
         super(WikiTablesVariableFreeErmTest, self).setup_method()
         config_path = self.FIXTURES_ROOT / "wikitables" / "experiment-erm.json"

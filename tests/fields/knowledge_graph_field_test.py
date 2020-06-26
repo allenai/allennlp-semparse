@@ -14,7 +14,7 @@ from allennlp_semparse.common.wikitables import TableQuestionContext
 from allennlp_semparse.fields import KnowledgeGraphField
 
 
-class KnowledgeGraphFieldTest(SemparseTestCase):
+class TestKnowledgeGraphField(SemparseTestCase):
     def setup_method(self):
         self.tokenizer = SpacyTokenizer(pos_tags=True)
         self.utterance = self.tokenizer.tokenize("where is mersin?")

@@ -9,7 +9,7 @@ from allennlp_semparse.state_machines.states import GrammarBasedState, GrammarSt
 from allennlp_semparse.state_machines.transition_functions import BasicTransitionFunction
 
 
-class BasicTransitionFunctionTest(SemparseTestCase):
+class TestBasicTransitionFunction(SemparseTestCase):
     def setup_method(self):
         super().setup_method()
         self.decoder_step = BasicTransitionFunction(

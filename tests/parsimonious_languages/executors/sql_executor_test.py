@@ -3,7 +3,7 @@ from ... import SemparseTestCase
 from allennlp_semparse.parsimonious_languages.executors import SqlExecutor
 
 
-class SqlExecutorTest(SemparseTestCase):
+class TestSqlExecutor(SemparseTestCase):
     def setup_method(self):
         super().setup_method()
         self._database_file = "https://allennlp.s3.amazonaws.com/datasets/atis/atis.db"

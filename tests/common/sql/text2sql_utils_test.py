@@ -4,7 +4,7 @@ from ... import SemparseTestCase
 from allennlp_semparse.common.sql import text2sql_utils
 
 
-class Text2SqlUtilsTest(SemparseTestCase):
+class TestText2SqlUtils(SemparseTestCase):
     def setup_method(self):
         super().setup_method()
         self.data = self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants_tiny.json"

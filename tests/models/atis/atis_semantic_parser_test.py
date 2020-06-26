@@ -6,7 +6,7 @@ from allennlp_semparse.parsimonious_languages.contexts.sql_context_utils import 
 )
 
 
-class AtisSemanticParserTest(ModelTestCase):
+class TestAtisSemanticParser(ModelTestCase):
     def setup_method(self):
         super(AtisSemanticParserTest, self).setup_method()
         self.set_up_model(
