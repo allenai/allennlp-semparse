@@ -38,8 +38,7 @@
     "dropout": 0.5,
     "database_file": "https://allennlp.s3.amazonaws.com/datasets/atis/atis.db"
   },
-  "iterator": {
-    "type": "basic",
+  "data_loader": {
     "batch_size" : 4
   },
   "trainer": {

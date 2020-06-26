@@ -33,10 +33,12 @@
     "attention": {"type": "dot_product"},
     "dropout": 0.2
   },
-  "iterator": {
-    "type": "bucket",
-    "padding_noise": 0.0,
-    "batch_size" : 2
+  "data_loader": {
+    "batch_sampler": {
+      "type": "bucket",
+      "padding_noise": 0.0,
+      "batch_size": 2
+    }
   },
   "trainer": {
     "num_epochs": 1,
