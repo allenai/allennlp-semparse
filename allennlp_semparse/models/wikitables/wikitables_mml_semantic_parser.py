@@ -234,4 +234,5 @@ class WikiTablesMmlSemanticParser(WikiTablesSemanticParser):
             )
             return outputs
 
+
 default_predictor = "wikitables-parser"

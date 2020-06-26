@@ -4,8 +4,8 @@ from allennlp_semparse.parsimonious_languages.executors import SqlExecutor
 
 
 class SqlExecutorTest(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self._database_file = "https://allennlp.s3.amazonaws.com/datasets/atis/atis.db"
 
     def test_sql_accuracy_is_scored_correctly(self):

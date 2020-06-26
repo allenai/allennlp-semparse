@@ -6,8 +6,8 @@ from allennlp_semparse.parsimonious_languages.worlds.text2sql_world import Text2
 
 
 class Text2SqlParserTest(ModelTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
 
         self.set_up_model(
             str(self.FIXTURES_ROOT / "text2sql" / "experiment.json"),

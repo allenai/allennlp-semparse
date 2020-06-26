@@ -15,7 +15,7 @@ from allennlp_semparse.fields import KnowledgeGraphField
 
 
 class KnowledgeGraphFieldTest(SemparseTestCase):
-    def setUp(self):
+    def setup_method(self):
         self.tokenizer = SpacyTokenizer(pos_tags=True)
         self.utterance = self.tokenizer.tokenize("where is mersin?")
         self.token_indexers = {"tokens": SingleIdTokenIndexer("tokens")}
@@ -37,7 +37,7 @@ class KnowledgeGraphFieldTest(SemparseTestCase):
             self.graph, self.utterance, self.token_indexers, self.tokenizer
         )
 
-        super(KnowledgeGraphFieldTest, self).setUp()
+        super(KnowledgeGraphFieldTest, self).setup_method()
 
     def test_count_vocab_items(self):
         namespace_token_counts = defaultdict(lambda: defaultdict(int))

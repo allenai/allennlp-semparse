@@ -14,8 +14,8 @@ from allennlp_semparse.parsimonious_languages.worlds.atis_world import AtisWorld
 
 
 class TestAtisWorld(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         test_filename = self.FIXTURES_ROOT / "data" / "atis" / "sample.json"
         self.data = open(test_filename).readlines()
         self.database_file = cached_path("https://allennlp.s3.amazonaws.com/datasets/atis/atis.db")

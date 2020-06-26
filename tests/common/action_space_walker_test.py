@@ -32,8 +32,8 @@ class FakeLanguageWithAssertions(DomainLanguage):
 
 
 class ActionSpaceWalkerTest(SemparseTestCase):
-    def setUp(self):
-        super(ActionSpaceWalkerTest, self).setUp()
+    def setup_method(self):
+        super(ActionSpaceWalkerTest, self).setup_method()
         self.world = FakeLanguageWithAssertions(start_types={bool})
         self.walker = ActionSpaceWalker(self.world, max_path_length=10)
 

@@ -10,8 +10,8 @@ from allennlp_semparse.state_machines.transition_functions import BasicTransitio
 
 
 class BasicTransitionFunctionTest(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.decoder_step = BasicTransitionFunction(
             encoder_output_dim=2,
             action_embedding_dim=2,
@@ -130,8 +130,8 @@ class BasicTransitionFunctionTest(SemparseTestCase):
         # For batch instance 1, we should have selected action 0 from group index 1 - there was
         # only one allowed action.
         assert new_state.batch_indices == [1]
-        # These two have values taken from what's defined in setUp() - the prior action history
-        # ([3, 4]) and the nonterminals corresponding to the action we picked ('q').
+        # These two have values taken from what's defined in setup_method() - the prior action
+        # history ([3, 4]) and the nonterminals corresponding to the action we picked ('q').
         assert new_state.action_history == [[3, 4, 0]]
         assert new_state.grammar_state[0]._nonterminal_stack == ["q"]
         # And these should just be copied from the prior state.

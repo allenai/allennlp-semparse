@@ -9,8 +9,8 @@ from allennlp_semparse.dataset_readers.grammar_based_text2sql import (
 
 @pytest.mark.skip(reason="Mark will fix in a nearby PR.")
 class TestGrammarBasedText2SqlDatasetReader(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.data_path = str(self.FIXTURES_ROOT / "data" / "text2sql" / "*.json")
         self.schema = str(self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants-schema.csv")
         self.database = str(self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants.db")

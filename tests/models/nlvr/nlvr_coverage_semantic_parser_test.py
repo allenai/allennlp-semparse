@@ -4,14 +4,13 @@ import torch
 from allennlp.common import Params
 from ... import ModelTestCase
 from allennlp.data import Vocabulary
-from allennlp.data.iterators import BucketIterator
 from allennlp.models import Model
 from allennlp.models.archival import load_archive
 
 
 class NlvrCoverageSemanticParserTest(ModelTestCase):
-    def setUp(self):
-        super(NlvrCoverageSemanticParserTest, self).setUp()
+    def setup_method(self):
+        super(NlvrCoverageSemanticParserTest, self).setup_method()
         self.set_up_model(
             self.FIXTURES_ROOT / "nlvr_coverage_semantic_parser" / "experiment.json",
             self.FIXTURES_ROOT / "data" / "nlvr" / "sample_grouped_data.jsonl",
@@ -47,21 +46,6 @@ class NlvrCoverageSemanticParserTest(ModelTestCase):
         assert_almost_equal(target_checklist.data.numpy(), [[1], [0], [1]])
         assert_almost_equal(terminal_actions.data.numpy(), [[0], [2], [4]])
         assert_almost_equal(checklist_mask.data.numpy(), [[1], [1], [1]])
-
-    def test_forward_with_epoch_num_changes_cost_weight(self):
-        # Redefining model. We do not want this to change the state of ``self.model``.
-        params = Params.from_file(self.param_file)
-        model = Model.from_params(vocab=self.vocab, params=params["model"])
-        # Initial cost weight, before forward is called.
-        assert model._checklist_cost_weight == 0.8
-        iterator = BucketIterator(track_epoch=True)
-        cost_weights = []
-        for epoch_data in iterator(self.dataset, num_epochs=4):
-            model.forward(**epoch_data)
-            cost_weights.append(model._checklist_cost_weight)
-        # The config file has ``wait_num_epochs`` set to 0, so the model starts decreasing the cost
-        # weight at epoch 0 itself.
-        assert_almost_equal(cost_weights, [0.72, 0.648, 0.5832, 0.52488])
 
     def test_initialize_weights_from_archive(self):
         original_model_parameters = self.model.named_parameters()

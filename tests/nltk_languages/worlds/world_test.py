@@ -33,8 +33,8 @@ class FakeWorldWithRecursion(FakeWorldWithoutRecursion):
 
 
 class TestWorld(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.world_without_recursion = FakeWorldWithoutRecursion()
         self.world_with_recursion = FakeWorldWithRecursion()
 

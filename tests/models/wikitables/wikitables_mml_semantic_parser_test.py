@@ -5,12 +5,11 @@ import torch
 
 from allennlp.common import Params
 from ... import ModelTestCase
-from allennlp.data.iterators import DataIterator
 
 
 class WikiTablesMmlSemanticParserTest(ModelTestCase):
-    def setUp(self):
-        super(WikiTablesMmlSemanticParserTest, self).setUp()
+    def setup_method(self):
+        super(WikiTablesMmlSemanticParserTest, self).setup_method()
         print(self.FIXTURES_ROOT)
         config_path = self.FIXTURES_ROOT / "wikitables" / "experiment.json"
         data_path = self.FIXTURES_ROOT / "data" / "wikitables" / "sample_data.examples"
@@ -20,15 +19,13 @@ class WikiTablesMmlSemanticParserTest(ModelTestCase):
     def test_model_can_train_save_and_load(self):
         self.ensure_model_can_train_save_and_load(self.param_file)
 
-    def test_model_decode(self):
+    def test_make_output_human_readable(self):
         params = Params.from_file(self.param_file)
         iterator_params = params["iterator"]
-        iterator = DataIterator.from_params(iterator_params)
-        iterator.index_with(self.model.vocab)
-        model_batch = next(iterator(self.dataset, shuffle=False))
+        model_batch = next(self.dataset)
         self.model.training = False
         forward_output = self.model(**model_batch)
-        decode_output = self.model.decode(forward_output)
+        decode_output = self.model.make_output_human_readable(forward_output)
         assert "predicted_actions" in decode_output
 
     def test_get_neighbor_indices(self):

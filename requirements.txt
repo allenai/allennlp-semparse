@@ -14,3 +14,6 @@ editdistance
 
 # Used for the type system for some languages
 nltk
+
+# Used for some tests
+flaky
