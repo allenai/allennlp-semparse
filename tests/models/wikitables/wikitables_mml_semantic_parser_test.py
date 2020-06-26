@@ -20,7 +20,6 @@ class WikiTablesMmlSemanticParserTest(ModelTestCase):
         self.ensure_model_can_train_save_and_load(self.param_file)
 
     def test_make_output_human_readable(self):
-        params = Params.from_file(self.param_file)
         model_batch = next(self.dataset)
         self.model.training = False
         forward_output = self.model(**model_batch)
