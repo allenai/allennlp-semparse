@@ -21,7 +21,6 @@ class WikiTablesMmlSemanticParserTest(ModelTestCase):
 
     def test_make_output_human_readable(self):
         params = Params.from_file(self.param_file)
-        iterator_params = params["iterator"]
         model_batch = next(self.dataset)
         self.model.training = False
         forward_output = self.model(**model_batch)

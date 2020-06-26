@@ -862,7 +862,7 @@ class TestAtisWorld(SemparseTestCase):
                 world.grammar["col_ref"],
                 Literal("BETWEEN"),
                 world.grammar["time_range_start"],
-                Literal(f"AND"),
+                Literal("AND"),
                 world.grammar["time_range_end"],
             ],
         ) == Sequence(
@@ -872,7 +872,7 @@ class TestAtisWorld(SemparseTestCase):
             world.grammar["ws"],
             world.grammar["time_range_start"],
             world.grammar["ws"],
-            Literal(f"AND"),
+            Literal("AND"),
             world.grammar["ws"],
             world.grammar["time_range_end"],
             world.grammar["ws"],

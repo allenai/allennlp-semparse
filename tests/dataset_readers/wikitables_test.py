@@ -62,7 +62,7 @@ def assert_dataset_correct(dataset):
     # first one in the file, or the shortest logical form by _string length_.  It's also a totally
     # made up logical form, just to demonstrate that we're sorting things correctly.
     action_sequence = instance.fields["target_action_sequences"].field_list[0]
-    action_indices = [l.sequence_index for l in action_sequence.field_list]
+    action_indices = [action.sequence_index for action in action_sequence.field_list]
     actions = [actions[i] for i in action_indices]
     assert actions == [
         "@start@ -> Number",
