@@ -10,8 +10,8 @@ from allennlp_semparse.fields import ProductionRuleField
 
 
 class TestProductionRuleField(SemparseTestCase):
-    def setUp(self):
-        super(TestProductionRuleField, self).setUp()
+    def setup_method(self):
+        super(TestProductionRuleField, self).setup_method()
         self.vocab = Vocabulary()
         self.s_rule_index = self.vocab.add_token_to_namespace(
             "S -> [NP, VP]", namespace="rule_labels"

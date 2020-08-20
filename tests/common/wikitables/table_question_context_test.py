@@ -6,8 +6,8 @@ from allennlp_semparse.common.wikitables import TableQuestionContext
 
 
 class TestTableQuestionContext(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.tokenizer = SpacyTokenizer(pos_tags=True)
 
     def test_table_data(self):

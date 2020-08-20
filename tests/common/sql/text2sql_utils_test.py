@@ -4,9 +4,9 @@ from ... import SemparseTestCase
 from allennlp_semparse.common.sql import text2sql_utils
 
 
-class Text2SqlUtilsTest(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+class TestText2SqlUtils(SemparseTestCase):
+    def setup_method(self):
+        super().setup_method()
         self.data = self.FIXTURES_ROOT / "data" / "text2sql" / "restaurants_tiny.json"
 
     def test_process_sql_data_blob(self):

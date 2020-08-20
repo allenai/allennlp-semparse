@@ -10,8 +10,8 @@ from ..simple_transition_system import SimpleState, SimpleTransitionFunction
 
 
 class TestMaximumMarginalLikelihood(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.initial_state = SimpleState(
             [0, 1], [[], []], [torch.Tensor([0.0]), torch.Tensor([0.0])], [0, 1]
         )

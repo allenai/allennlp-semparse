@@ -108,9 +108,9 @@ def check_productions_match(actual_rules: List[str], expected_right_sides: List[
     assert set(actual_right_sides) == set(expected_right_sides)
 
 
-class DomainLanguageTest(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+class TestDomainLanguage(SemparseTestCase):
+    def setup_method(self):
+        super().setup_method()
         self.language = Arithmetic()
 
     def test_constant_logical_form(self):

@@ -7,8 +7,8 @@ from allennlp.predictors import Predictor
 
 
 class TestNlvrParserPredictor(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.inputs = {
             "worlds": [
                 [

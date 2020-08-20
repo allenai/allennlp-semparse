@@ -746,3 +746,8 @@ class DomainLanguage:
                 Tree(right_side, [])
             )  # you add a child to an nltk.Tree with `append`
         return remaining_actions
+
+    def __len__(self):
+        # This method exists just to make it easier to use this in a MetadataField.  Kind of
+        # annoying, but oh well.
+        return 0

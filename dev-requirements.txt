@@ -1,0 +1,36 @@
+#### TESTING-RELATED PACKAGES ####
+
+# Checks style, syntax, and other useful errors.
+flake8
+
+# Static type checking
+mypy==0.782
+
+# Automatic code formatting
+black
+
+# Running unit tests.
+pytest
+
+# Allows generation of coverage reports with pytest.
+pytest-cov
+
+# Lets you run tests in forked subprocesses.
+pytest-forked
+
+# Lets you run tests in parallel.
+pytest-xdist
+
+# Allows codecov to generate coverage reports
+coverage
+codecov
+
+# For running tests that aren't 100% reliable
+flaky
+
+#### PACKAGE-UPLOAD PACKAGES ####
+
+# Pypi uploads
+twine>=1.11.0
+setuptools
+wheel

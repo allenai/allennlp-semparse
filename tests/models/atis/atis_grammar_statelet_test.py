@@ -2,7 +2,6 @@ from numpy.testing import assert_almost_equal
 import torch
 
 from allennlp.common import Params
-from allennlp.modules import SimilarityFunction
 
 from allennlp_semparse.models.atis.atis_semantic_parser import AtisSemanticParser
 from allennlp_semparse.parsimonious_languages.worlds import AtisWorld
@@ -10,7 +9,7 @@ from allennlp_semparse.state_machines.states import GrammarStatelet
 from ... import SemparseTestCase
 
 
-class AtisGrammarStateletTest(SemparseTestCase):
+class TestAtisGrammarStatelet(SemparseTestCase):
     def test_atis_grammar_statelet(self):
         world = AtisWorld(
             [("give me all flights from boston to " "philadelphia next week arriving after lunch")]

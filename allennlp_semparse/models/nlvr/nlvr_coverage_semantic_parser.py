@@ -207,27 +207,19 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
         agenda: torch.LongTensor,
         identifier: List[str] = None,
         labels: torch.LongTensor = None,
-        epoch_num: List[int] = None,
         metadata: List[Dict[str, Any]] = None,
     ) -> Dict[str, torch.Tensor]:
         """
         Decoder logic for producing type constrained target sequences that maximize coverage of
         their respective agendas, and minimize a denotation based loss.
         """
-        # We look at the epoch number and adjust the checklist cost weight if needed here.
-        instance_epoch_num = epoch_num[0] if epoch_num is not None else None
         if self._dynamic_cost_rate is not None:
-            if self.training and instance_epoch_num is None:
-                raise RuntimeError(
-                    "If you want a dynamic cost weight, use the "
-                    "BucketIterator with track_epoch=True."
-                )
-            if instance_epoch_num != self._last_epoch_in_forward:
-                if instance_epoch_num >= self._dynamic_cost_wait_epochs:
-                    decrement = self._checklist_cost_weight * self._dynamic_cost_rate
-                    self._checklist_cost_weight -= decrement
-                    logger.info("Checklist cost weight is now %f", self._checklist_cost_weight)
-                self._last_epoch_in_forward = instance_epoch_num
+            # This could be added back pretty easily with an EpochCallback passed to the Trainer (it
+            # just has to set the epoch number on the model, which could then be queried in here).
+            logger.warning(
+                "Dynamic cost rate functionality was removed in AllenNLP 1.0. If you want this, "
+                "use version 0.9.  We will just use the static checklist cost weight."
+            )
         batch_size = len(worlds)
 
         initial_rnn_state = self._get_initial_rnn_state(sentence)

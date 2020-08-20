@@ -9,8 +9,8 @@ from ..simple_transition_system import SimpleState, SimpleTransitionFunction
 
 
 class TestExpectedRiskMinimization(SemparseTestCase):
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         self.initial_state = SimpleState([0], [[0]], [torch.Tensor([0.0])])
         self.decoder_step = SimpleTransitionFunction()
         # Cost is the number of odd elements in the action history.

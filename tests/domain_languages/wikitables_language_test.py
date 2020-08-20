@@ -14,8 +14,8 @@ from .domain_language_test import check_productions_match
 
 class TestWikiTablesLanguage(SemparseTestCase):
     # TODO(mattg, pradeep): Add tests for the ActionSpaceWalker as well.
-    def setUp(self):
-        super().setUp()
+    def setup_method(self):
+        super().setup_method()
         # Adding a bunch of random tokens in here so we get them as constants in the language.
         question_tokens = [
             Token(x)
@@ -268,20 +268,13 @@ class TestWikiTablesLanguage(SemparseTestCase):
         cell_list = self.language.execute(logical_form)
         assert cell_list == ["4th_western"]
 
-    def test_execute_logs_warning_with_first_on_empty_list(self):
+    def test_execute_logs_warning_with_first_on_empty_list(self, caplog):
         # Selecting "regular season" from the first row where year is greater than 2010.
-        with self.assertLogs("allennlp_semparse.domain_languages.wikitables_language") as log:
-            logical_form = """(select_string (first (filter_date_greater all_rows date_column:year
-                                                (date 2010 -1 -1)))
-                                      string_column:regular_season)"""
-            self.language.execute(logical_form)
-        self.assertEqual(
-            log.output,
-            [
-                "WARNING:allennlp_semparse.domain_languages.wikitables_language:"
-                "Trying to get first row from an empty list"
-            ],
-        )
+        logical_form = """(select_string (first (filter_date_greater all_rows date_column:year
+                                            (date 2010 -1 -1)))
+                                  string_column:regular_season)"""
+        self.language.execute(logical_form)
+        assert "Trying to get first row from an empty list" in caplog.text
 
     def test_execute_works_with_last(self):
         # Selecting "regular season" from the last row where year is not equal to 2010.
@@ -291,20 +284,13 @@ class TestWikiTablesLanguage(SemparseTestCase):
         cell_list = self.language.execute(logical_form)
         assert cell_list == ["5th"]
 
-    def test_execute_logs_warning_with_last_on_empty_list(self):
+    def test_execute_logs_warning_with_last_on_empty_list(self, caplog):
         # Selecting "regular season" from the last row where year is greater than 2010.
-        with self.assertLogs("allennlp_semparse.domain_languages.wikitables_language") as log:
-            logical_form = """(select_string (last (filter_date_greater all_rows date_column:year
-                                                (date 2010 -1 -1)))
-                                      string_column:regular_season)"""
-            self.language.execute(logical_form)
-        self.assertEqual(
-            log.output,
-            [
-                "WARNING:allennlp_semparse.domain_languages.wikitables_language:"
-                "Trying to get last row from an empty list"
-            ],
-        )
+        logical_form = """(select_string (last (filter_date_greater all_rows date_column:year
+                                            (date 2010 -1 -1)))
+                                  string_column:regular_season)"""
+        self.language.execute(logical_form)
+        assert "Trying to get last row from an empty list" in caplog.text
 
     def test_execute_works_with_previous(self):
         # Selecting "regular season" from the row before last where year is not equal to 2010.
