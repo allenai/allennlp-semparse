@@ -112,7 +112,6 @@ jobs:
         python setup.py bdist_wheel sdist
 
     - name: Save package
-      if: matrix.python == '3.7'
       uses: actions/upload-artifact@v1
       with:
         name: semparse-package
