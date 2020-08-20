@@ -1,6 +1,6 @@
 # allennlp-semparse
 [![Build status](https://github.com/allenai/allennlp-semparse/workflows/CI/badge.svg)](https://github.com/allenai/allennlp-semparse/actions?workflow=CI)
-[![PyPI](https://img.shields.io/pypi/v/allennlp)](https://pypi.org/project/allennlp-semparse/)
+[![PyPI](https://img.shields.io/pypi/v/allennlp-semparse)](https://pypi.org/project/allennlp-semparse/)
 [![codecov](https://codecov.io/gh/allenai/allennlp-semparse/branch/master/graph/badge.svg)](https://codecov.io/gh/allenai/allennlp-semparse)
 
 A framework for building semantic parsers (including neural module networks) with AllenNLP, built by the authors of AllenNLP
