@@ -33,19 +33,28 @@ jobs:
       run: |
         pip freeze
 
+    - name: Check setup.py
+      if: always()
+      run: |
+        python setup.py check
+
     - name: Format
+      if: always()
       run: |
         black --check .
 
     - name: Lint
+      if: always()
       run: |
         flake8
 
     - name: Type check
+      if: always()
       run: |
         mypy allennlp_semparse tests --ignore-missing-imports --no-strict-optional --no-site-packages
 
     - name: Run tests
+      if: always()
       run: |
         pytest -v --color=yes --cov=allennlp_semparse/ --cov-report=xml
 
