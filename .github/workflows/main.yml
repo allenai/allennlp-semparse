@@ -1,4 +1,5 @@
 name: CI
+
 on:
   pull_request:
     branches:
@@ -6,6 +7,9 @@ on:
   push:
     branches:
     - master
+  release:
+    types: [published]
+
 jobs:
   checks:
     name: Checks
@@ -68,3 +72,110 @@ jobs:
         # in the github UI just because the coverage report failed to
         # be published.
         fail_ci_if_error: false
+
+  build_package:
+    name: Build Package
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+
+    - name: Install requirements
+      run: |
+        pip install --upgrade pip setuptools wheel
+        pip install --upgrade --upgrade-strategy eager -r requirements.txt
+        pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt
+
+    - name: Check version and release tag match
+      if: github.event_name == 'release'
+      run: |
+        # Remove 'refs/tags/' to get the actual tag from the release.
+        TAG=${GITHUB_REF#refs/tags/};
+        VERSION=$(scripts/get_version.py current)
+        if [ "$TAG" != "$VERSION" ]; then
+            echo "Bad tag or version. Tag $TAG does not match $VERSION";
+            exit 1;
+        fi
+
+    - name: Build Package
+      run: |
+        python setup.py bdist_wheel sdist
+
+    - name: Save package
+      if: matrix.python == '3.7'
+      uses: actions/upload-artifact@v1
+      with:
+        name: semparse-package
+        path: dist
+
+  test_package:
+    name: Test Package
+    needs: [build_package]  # needs the package artifact created from 'build_package' job.
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cleanup directory
+      run: |
+        # Remove the source code so that it doesn't conflict with the wheel
+        # installation.
+        rm -rf allennlp_semparse/
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Install requirements
+      run: |
+        pip install --upgrade pip setuptools wheel
+
+    - name: Download semparse package
+      uses: actions/download-artifact@v1
+      with:
+        name: semparse-package
+        path: dist
+
+    - name: Install semparse package
+      run: |
+        pip install $(ls dist/*.whl)
+
+  publish:
+    name: Publish to PyPI
+    if: github.event_name == 'release'
+    needs: [checks, build_package, test_package]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Install requirements
+      run: |
+        pip install --upgrade pip setuptools wheel twine
+
+    - name: Download semparse package
+      uses: actions/download-artifact@v1
+      with:
+        name: semparse-package
+        path: dist
+
+    - name: Upload to PyPI
+      env:
+        PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: twine upload -u allennlp -p $PYPI_PASSWORD dist/*
