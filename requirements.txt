@@ -1,4 +1,4 @@
-allennlp==1.0
+allennlp>=1.1,<2.0
 
 # Used to create grammars for parsing SQL
 parsimonious>=0.8.0
