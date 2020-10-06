@@ -160,8 +160,7 @@ class AtisDatasetReader(DatasetReader):
 
         action_field = ListField(production_rule_fields)
         action_map = {
-            action.rule: i  # type: ignore
-            for i, action in enumerate(action_field.field_list)
+            action.rule: i for i, action in enumerate(action_field.field_list)  # type: ignore
         }
         index_fields: List[Field] = []
         world_field = MetadataField(world)
