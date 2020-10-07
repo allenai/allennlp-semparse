@@ -128,7 +128,7 @@ class GrammarStatelet(Generic[ActionRepresentation]):
                 [
                     self._nonterminal_stack == other._nonterminal_stack,
                     util.tensors_equal(self._valid_actions, other._valid_actions),
-                    self._is_nonterminal == other._is_nonterminal,
+                    self._is_nonterminal.__code__ == other._is_nonterminal.__code__,
                     #  all(
                     #      [
                     #          self._is_nonterminal.__module__ == other._is_nonterminal.__module__,
