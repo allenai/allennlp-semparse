@@ -128,12 +128,13 @@ class GrammarStatelet(Generic[ActionRepresentation]):
                 [
                     self._nonterminal_stack == other._nonterminal_stack,
                     util.tensors_equal(self._valid_actions, other._valid_actions),
-                    all(
-                        [
-                            self._is_nonterminal.__module__ == other._is_nonterminal.__module__,
-                            self._is_nonterminal.__name__ == other._is_nonterminal.__name__,
-                        ]
-                    ),
+                    self._is_nonterminal == other._is_nonterminal,
+                    #  all(
+                    #      [
+                    #          self._is_nonterminal.__module__ == other._is_nonterminal.__module__,
+                    #          self._is_nonterminal.__name__ == other._is_nonterminal.__name__,
+                    #      ]
+                    #  ),
                     self._reverse_productions == other._reverse_productions,
                 ]
             )
