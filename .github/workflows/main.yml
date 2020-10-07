@@ -20,7 +20,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
 
     - uses: actions/cache@v2
       with:
@@ -83,7 +83,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
 
     - uses: actions/cache@v2
       with:
@@ -134,7 +134,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
 
     - name: Install requirements
       run: |
@@ -162,7 +162,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
 
     - name: Install requirements
       run: |
