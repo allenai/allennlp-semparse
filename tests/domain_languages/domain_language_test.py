@@ -180,6 +180,8 @@ class TestDomainLanguage(SemparseTestCase):
             "<int,int,int:List[int]>",
             "<int,int,int,int:List[int]>",
             "<<int,int:int>:<int,int:int>>",
+            # Types induced by allowing function composition
+            "<List[int]:List[int]>"
         }
         check_productions_match(valid_actions["@start@"], ["int"])
         check_productions_match(
@@ -213,7 +215,14 @@ class TestDomainLanguage(SemparseTestCase):
                 "[<int,int,int,int:List[int]>, int, int, int, int]",
             ],
         )
-        check_productions_match(valid_actions["<int:int>"], ["halve"])
+        check_productions_match(
+            valid_actions["<int:int>"],
+            [
+                "halve",
+                # Production due to function composition
+                "[<int:int>, <int:int>]",
+                "[<List[int]:int>, <int:List[int]>]",
+            ])
         check_productions_match(
             valid_actions["<int,int:int>"],
             [
@@ -225,12 +234,33 @@ class TestDomainLanguage(SemparseTestCase):
                 "power",
             ],
         )
-        check_productions_match(valid_actions["<List[int]:int>"], ["sum"])
-        check_productions_match(valid_actions["<int:List[int]>"], ["list1"])
+        check_productions_match(
+            valid_actions["<List[int]:int>"],
+            [
+                "sum",
+                # Production due to function composition
+                "[<int:int>, <List[int]:int>]",
+            ]
+        )
+        check_productions_match(
+            valid_actions["<int:List[int]>"],
+            [
+                "list1",
+                # Production due to function composition
+                "[<int:List[int]>, <int:int>]",
+            ]
+        )
         check_productions_match(valid_actions["<int,int:List[int]>"], ["list2"])
         check_productions_match(valid_actions["<int,int,int:List[int]>"], ["list3"])
         check_productions_match(valid_actions["<int,int,int,int:List[int]>"], ["list4"])
         check_productions_match(valid_actions["<<int,int:int>:<int,int:int>>"], ["three_less"])
+        # Production due to function composition
+        check_productions_match(
+            valid_actions["<List[int]:List[int]>"],
+            [
+                "[<int:<List[int]>, <int:List[int]>]",
+            ]
+        )
 
     def test_logical_form_to_action_sequence(self):
         action_sequence = self.language.logical_form_to_action_sequence("(add 2 3)")
