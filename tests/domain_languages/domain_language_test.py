@@ -315,6 +315,41 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 3",
         ]
 
+    def test_logical_form_to_action_sequence_with_function_composition(self):
+        action_sequence = self.language.logical_form_to_action_sequence("((halve *halve) 8)")
+        assert action_sequence == [
+            "@start@ -> int",
+            "int -> [<int:int>, int]",
+            "<int:int> -> [<int:int>, <int:int>]",
+            "<int:int> -> halve",
+            "<int:int> -> halve",
+            "int -> 8",
+        ]
+
+        action_sequence = self.language.logical_form_to_action_sequence("((sum *list1) 8)")
+        assert action_sequence == [
+            "@start@ -> int",
+            "int -> [<int:int>, int]",
+            "<int:int> -> [<List[int]:int>, <int:List[int]>]",
+            "<List[int]:int> -> sum",
+            "<int:List[int]> -> list1",
+            "int -> 8",
+        ]
+
+        # Idea is to execute multiply(4, halve(sum(list1(8)))) where
+        action_sequence = self.language.logical_form_to_action_sequence("(multiply 4 ((sum *list1) 6))")
+        assert action_sequence == [
+            "@start@ -> int",
+            "int -> [<int,int:int>, int, int]",
+            "<int,int:int> -> multiply",
+            "int -> 4",
+            "int -> [<int:int>, int]",
+            "<int:int> -> [<List[int]:int>, <int:List[int]>]",
+            "<List[int]:int> -> sum",
+            "<int:List[int]> -> list1",
+            "int -> 6",
+        ]
+
     def test_action_sequence_to_logical_form(self):
         logical_form = "(add 2 3)"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
