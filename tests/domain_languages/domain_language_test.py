@@ -166,6 +166,27 @@ class TestDomainLanguage(SemparseTestCase):
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         assert self.language.execute_action_sequence(action_sequence) == 2
 
+    def test_execute_function_composition(self):
+        assert self.language.execute("((halve *halve) 8)") == 2
+        assert self.language.execute("((sum *list1) 8)") == 8
+        assert self.language.execute("(multiply 4 ((sum *list1) 6))") == 24
+        assert self.language.execute("(halve ((halve *halve) 8))") == 1
+
+    def test_execute_action_sequence_function_composition(self):
+        # Repeats tests from above, but using `execute_action_sequence` instead of `execute`.
+        logical_form = "((halve *halve) 8)"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        assert self.language.execute_action_sequence(action_sequence) == 2
+        logical_form = "((sum *list1) 8)"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        assert self.language.execute_action_sequence(action_sequence) == 8
+        logical_form = "(multiply 4 ((sum *list1) 6))"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        assert self.language.execute_action_sequence(action_sequence) == 24
+        logical_form = "(halve ((halve *halve) 8))"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        assert self.language.execute_action_sequence(action_sequence) == 1
+
     def test_get_nonterminal_productions(self):
         valid_actions = self.language.get_nonterminal_productions()
         assert set(valid_actions.keys()) == {
@@ -375,6 +396,27 @@ class TestDomainLanguage(SemparseTestCase):
         assert recovered_logical_form == logical_form
 
         logical_form = "((three_less add) 2 3)"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
+        assert recovered_logical_form == logical_form
+
+    def test_action_sequence_to_logical_form_with_function_composition(self):
+        logical_form = "((halve *halve) 8)"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
+        assert recovered_logical_form == logical_form
+
+        logical_form = "((sum *list1) 8)"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
+        assert recovered_logical_form == logical_form
+
+        logical_form = "(multiply 4 ((sum *list1) 6))"
+        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
+        recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
+        assert recovered_logical_form == logical_form
+
+        logical_form = "(halve ((halve *halve) 8))"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
