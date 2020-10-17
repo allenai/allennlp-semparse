@@ -350,6 +350,19 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 6",
         ]
 
+        # Trying a mix of regular composition and function-composition
+        action_sequence = self.language.logical_form_to_action_sequence("(halve ((halve *halve) 8))")
+        assert action_sequence == [
+            "@start@ -> int",
+            "int -> [<int:int>, int]",
+            "<int:int> -> halve",
+            "int -> [<int:int>, int]",
+            "<int:int> -> [<int:int>, <int:int>]",
+            "<int:int> -> halve",
+            "<int:int> -> halve",
+            "int -> 8",
+        ]
+
     def test_action_sequence_to_logical_form(self):
         logical_form = "(add 2 3)"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
