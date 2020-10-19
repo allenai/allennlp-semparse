@@ -64,6 +64,7 @@ def infer_collection_type(collection: Any) -> Type:
     else:
         raise ValueError(f"Unsupported top-level generic type: {collection}")
 
+
 class PredicateType:
     """
     A base class for `types` in a domain language.  This serves much the same purpose as
@@ -284,6 +285,11 @@ class DomainLanguage:
     (mutiply 3))``.  In this way we do not need to introduce variables into the language, which are
     tricky from a modeling perspective.  All of the actual terminal productions in this version
     should have a reasonably strong correspondence with the words in the input utterance.
+
+    In order to perform type inference on curried functions (to know which argument is being
+    ommitted), we currently rely on `executing` the subexpressions.  This should be ok for simple,
+    determinstic languages, but this is very much not recommended for things like NMNs at this
+    point.  We'd need to implement smarter type inference for that to work.
 
     We have rudimentary support for class hierarchies in the types that you provide.  This is done
     through adding constants multiple times with different types.  For example, say you have a
@@ -669,7 +675,19 @@ class DomainLanguage:
                     remaining_actions, remaining_side_args
                 )
                 arguments.append(argument)
-            return function(*arguments), remaining_actions, remaining_side_args
+            try:
+                function_value = function(*arguments)
+            except TypeError:
+                if not self._allow_currying:
+                    raise
+                # If we got here, then maybe the error is because this should be a curried
+                # function.  We'll check for that and return the curried function if possible.
+                curried_function = self._get_curried_function(function, arguments)
+                if curried_function:
+                    function_value = curried_function
+                else:
+                    raise
+            return function_value, remaining_actions, remaining_side_args
 
     def _get_transitions(
         self, expression: Any, expected_type: PredicateType
@@ -681,7 +699,7 @@ class DomainLanguage:
         """
         if isinstance(expression, (list, tuple)):
             function_transitions, return_type, argument_types = self._get_function_transitions(
-                expression[0], expected_type
+                expression, expected_type
             )
             if len(argument_types) != len(expression[1:]):
                 raise ParsingError(f"Wrong number of arguments for function in {expression}")
@@ -721,36 +739,72 @@ class DomainLanguage:
             )
 
     def _get_function_transitions(
-        self, expression: Union[str, List], expected_type: PredicateType
+        self, expression: List, expected_type: PredicateType
     ) -> Tuple[List[str], PredicateType, List[PredicateType]]:
         """
         A helper method for ``_get_transitions``.  This gets the transitions for the predicate
         itself in a function call.  If we only had simple functions (e.g., "(add 2 3)"), this would
         be pretty straightforward and we wouldn't need a separate method to handle it.  We split it
-        out into its own method because handling higher-order functions is complicated (e.g.,
-        something like "((negate add) 2 3)").
+        out into its own method because handling higher-order functions and currying is complicated
+        (e.g., something like "((negate add) 2 3)" or "((multiply 3) 2)").
         """
+        function_expression = expression[0]
         # This first block handles getting the transitions and function type (and some error
         # checking) _just for the function itself_.  If this is a simple function, this is easy; if
         # it's a higher-order function, it involves some recursion.
-        if isinstance(expression, list):
+        if isinstance(function_expression, list):
             # This is a higher-order function.  TODO(mattg): we'll just ignore type checking on
             # higher-order functions, for now.
-            transitions, function_type = self._get_transitions(expression, None)
-        elif expression in self._functions:
-            name = expression
-            function_types = self._function_types[expression]
+            transitions, function_type = self._get_transitions(function_expression, None)
+        elif function_expression in self._functions:
+            name = function_expression
+            function_types = self._function_types[function_expression]
             if len(function_types) != 1:
                 raise ParsingError(
-                    f"{expression} had multiple types; this is not yet supported for functions"
+                    f"{function_expression} had multiple types; this is not yet supported for functions"
                 )
             function_type = function_types[0]
+
             transitions = [f"{function_type} -> {name}"]
+            if (
+                self._allow_currying
+                # This check means we're missing an argument to the function.
+                and len(expression) > 0
+                and len(function_type.argument_types) - 1 == len(expression) - 1
+            ):
+                # If we're currying this function, we need to add a transition that encodes the
+                # currying, and change the function_type accordingly.
+                arguments = [self._execute_expression(e) for e in expression[1:]]
+                function = self._functions[function_expression]
+                curried_function = self._get_curried_function(function, arguments)
+
+                # Here we get the FunctionType corresponding to the new, curried function.
+                signature = inspect.signature(curried_function)
+                return_type = PredicateType.get_type(signature.return_annotation)
+                t = list(signature.parameters.values())[0].annotation
+                uncurried_arg_type = PredicateType.get_type(list(signature.parameters.values())[0].annotation)
+                curried_function_type = PredicateType.get_function_type(
+                    [uncurried_arg_type], return_type
+                )
+
+                # To fit in with the logic below, we need to basically make a fake `curry`
+                # FunctionType, with the arguments being the function we're currying and all of the
+                # curried arguments, and the return type being the one-argument function.  Then we
+                # can re-use all of the existing logic without modification.
+                curried_arg_types = list(reversed([t for t in function_type.argument_types]))
+                curried_arg_types.remove(uncurried_arg_type)
+                curried_arg_types.reverse()
+                right_side = f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+                curry_transition = f"{curried_function_type} -> {right_side}"
+                transitions.insert(0, curry_transition)
+                return transitions, curried_function_type, curried_arg_types
         else:
-            if isinstance(expression, str):
-                raise ParsingError(f"Unrecognized function: {expression[0]}")
+            if isinstance(function_expression, str):
+                raise ParsingError(f"Unrecognized function: {function_expression[0]}")
             else:
-                raise ParsingError(f"Unsupported expression type: {expression}")
+                raise ParsingError(f"Unsupported function_expression type: {function_expression}")
+
+
         if not isinstance(function_type, FunctionType):
             raise ParsingError(f"Zero-arg function or constant called with arguments: {name}")
 
@@ -763,7 +817,8 @@ class DomainLanguage:
         transitions.insert(0, first_transition)
         if expected_type and expected_type != return_type:
             raise ParsingError(
-                f"{expression} did not have expected type {expected_type} " f"(found {return_type})"
+                f"{function_expression} did not have expected type {expected_type} "
+                f"(found {return_type})"
             )
         return transitions, return_type, argument_types
 
@@ -839,7 +894,8 @@ class DomainLanguage:
             else:
                 break
 
-        def curried_function(x: parameter_types[missing_arg_index]) -> signature.return_annotation:
+        arg_type = parameter_types[missing_arg_index].annotation
+        def curried_function(x: arg_type) -> signature.return_annotation:
             new_arguments = arguments[:missing_arg_index] + [x] + arguments[missing_arg_index:]
             return function(*new_arguments)
 

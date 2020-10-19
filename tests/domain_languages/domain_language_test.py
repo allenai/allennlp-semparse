@@ -208,11 +208,11 @@ class TestDomainLanguage(SemparseTestCase):
     def test_execute_action_sequence_function_currying(self):
         # Repeats tests from above, but using `execute_action_sequence` instead of `execute`.
         logical_form = "((multiply 3) 6)"
-        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
-        assert self.language.execute_action_sequence(action_sequence) == 18
-        logical_form = "(sum ((list2 1) 7))"
-        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
-        assert self.language.execute_action_sequence(action_sequence) == 8
+        action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
+        assert self.curried_language.execute_action_sequence(action_sequence) == 18
+        logical_form = "(sum ((list3 1 2) 7))"
+        action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
+        assert self.curried_language.execute_action_sequence(action_sequence) == 10
 
     def test_get_nonterminal_productions(self):
         valid_actions = self.language.get_nonterminal_productions()
@@ -422,24 +422,26 @@ class TestDomainLanguage(SemparseTestCase):
         ]
 
     def test_logical_form_to_action_sequence_with_function_currying(self):
-        action_sequence = self.language.logical_form_to_action_sequence("((multiply 3) 6)")
+        action_sequence = self.curried_language.logical_form_to_action_sequence("((multiply 3) 6)")
         assert action_sequence == [
             "@start@ -> int",
-            "int -> [<int:int>, int]" "<int:int> -> [<int,int:int>, int]",
+            "int -> [<int:int>, int]",
+            "<int:int> -> [<int,int:int>, int]",
             "<int,int:int> -> multiply",
             "int -> 3",
             "int -> 6",
         ]
 
-        action_sequence = self.language.logical_form_to_action_sequence("(sum ((list2 1) 7)")
+        action_sequence = self.curried_language.logical_form_to_action_sequence("(sum ((list3 1 2) 7))")
         assert action_sequence == [
             "@start@ -> int",
             "int -> [<List[int]:int>, List[int]]",
             "<List[int]:int> -> sum",
             "List[int] -> [<int:List[int]>, int]",
-            "<int:List[int]> -> [<int,int:List[int]>, int]",
-            "<int,int:List[int]> -> list2",
+            "<int:List[int]> -> [<int,int,int:List[int]>, int, int]",
+            "<int,int,int:List[int]> -> list3",
             "int -> 1",
+            "int -> 2",
             "int -> 7",
         ]
 
@@ -482,13 +484,13 @@ class TestDomainLanguage(SemparseTestCase):
 
     def test_action_sequence_to_logical_form_with_function_currying(self):
         logical_form = "((multiply 3) 6)"
-        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
-        recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
+        action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
+        recovered_logical_form = self.curried_language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
 
-        logical_form = "(sum ((list2 1) 7)"
-        action_sequence = self.language.logical_form_to_action_sequence(logical_form)
-        recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
+        logical_form = "(sum ((list3 1 2) 7))"
+        action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
+        recovered_logical_form = self.curried_language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
 
     def test_logical_form_parsing_fails_on_bad_inputs(self):
