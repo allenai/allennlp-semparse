@@ -249,9 +249,29 @@ class DomainLanguage:
     predicates, as the ``allowed_constants`` dictionary doesn't pass along the generic type
     information).
 
-    The language we construct is purely functional - no defining variables or using lambda
-    functions, or anything like that.  If you would like to extend this code to handle more complex
-    languages, open an issue on github.
+    By default, the language we construct is purely functional - no defining variables or using
+    lambda functions, or anything like that.  There are options to allow two extensions to the
+    default language behavior, which together allow for behavior that is essentially equivalent to
+    lambda functions: (1) function currying, and (2) function composition.  Currying is still
+    functional, but allows only giving some of the arguments to a function, with a functional return
+    type.  For example, if you allow currying, you can convert a two-argument function like
+    ``(multiply 4 5)`` into a one-argument function like ``(multiply 4)`` (which would then multiply
+    its single argument by 4).  Without being able to save variables, currying isn't `that` useful,
+    so it is not enabled by default, but it can be used in conjunction with function composition to
+    get the behavior of lambda functions without needing to explicitly deal with lambdas.  Function
+    composition calls two functions in succession, passing the output of one as the input to
+    another.  The difference between this and regular nested function calls is that it happens
+    `outside` the nesting, so the input type of the outer function is the input type of the first
+    function, not the second, as would be the case with nesting.  As a simple example, with function
+    composition you could change the nested expression ``(sum (list1 8))`` into the equivalent
+    expression ``(sum * list1 8)``.  As a more useful example, consider taking an argmax over a
+    list: ``(argmax (list3 5 9 2) sin)``, where this will call the ``sin`` function on each element
+    of the list and return the element with the highest value.  If you want a more complex function
+    when computing a value, say ``sin(3x)``, this would typically be done with lambda functions.  We
+    can accomplish this with currying and function composition: ``(argmax (list3 5 9 2) sin *
+    (mutiply 3))``.  In this way we do not need to introduce variables into the language, which are
+    tricky from a modeling perspective.  All of the actual terminal productions in this version
+    should have a reasonably strong correspondence with the words in the input utterance.
 
     We have rudimentary support for class hierarchies in the types that you provide.  This is done
     through adding constants multiple times with different types.  For example, say you have a
@@ -267,10 +287,35 @@ class DomainLanguage:
     ``type_`` argument (which infers the type as ``NumberColumn``), and once with ``type_=Column``.
     You can see a concrete example of how this works in the
     :class:`~allennlp_semparse.domain_languages.wikitables_language.WikiTablesLanguage`.
+
+    Parameters
+    ----------
+    allowed_constants : ``Dict[str, Any]``, optional (default=None)
+        If given, we add all items in this dictionary as constants (instances of non-functional
+        types) in the language.  You can also add them manually by calling ``add_constant`` in the
+        constructor of your ``DomainLanguage``.
+    start_types : ``Set[Type]``, optional (default=None)
+        If given, we will constrain the set of start types in the grammar to be this set.
+        Otherwise, we allow any type that we can get as a return type in the functions in the
+        language.
+    allow_function_currying : ``bool``, optional (default=False)
+        If ``True``, we will add production rules to the grammar (and support in function execution,
+        etc.) to curry all two-or-more-argument functions into one-argument functions.  See the
+        above for a discussion of what this means and when you might want to do it.  If you set this
+        to ``True``, you likely also want to set ``allow_function_composition`` to ``True``.
+    allow_function_composition : ``bool``, optional (default=False)
+        If ``True``, function composition as described above will be enabled in the language,
+        including support for parsing expressions with function composition, for executing these
+        expressions, and for converting them to and from action sequences.  If you set this to
+        ``True``, you likely also want to set ``allow_function_currying`` to ``True``.
     """
 
     def __init__(
-        self, allowed_constants: Dict[str, Any] = None, start_types: Set[Type] = None
+        self,
+        allowed_constants: Dict[str, Any] = None,
+        start_types: Set[Type] = None,
+        allow_function_currying: bool = False,
+        allow_function_composition: bool = False,
     ) -> None:
         self._functions: Dict[str, Callable] = {}
         self._function_types: Dict[str, List[PredicateType]] = defaultdict(list)
