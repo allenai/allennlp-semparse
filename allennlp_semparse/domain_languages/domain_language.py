@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Set, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
 import inspect
 import logging
 import sys
@@ -51,6 +51,18 @@ def get_generic_name(type_: Type) -> str:
     args = type_.__args__
     return f'{origin}[{",".join(arg.__name__ for arg in args)}]'
 
+
+def infer_collection_type(collection: Any) -> Type:
+    instance_types = set([type(instance) for instance in collection])
+    if len(instance_types) != 1:
+        raise ValueError(f"Inconsistent types in collection: {instance_types}, {collection}")
+    subtype = list(instance_types)[0]
+    if isinstance(collection, list):
+        return List[subtype]
+    elif isinstance(collection, set):
+        return Set[subtype]
+    else:
+        raise ValueError(f"Unsupported top-level generic type: {collection}")
 
 class PredicateType:
     """
@@ -307,7 +319,7 @@ class DomainLanguage:
         If ``True``, function composition as described above will be enabled in the language,
         including support for parsing expressions with function composition, for executing these
         expressions, and for converting them to and from action sequences.  If you set this to
-        ``True``, you likely also want to set ``allow_function_currying`` to ``True``.
+        ``True``, you likely also want to set ``allow_function_composition`` to ``True``.
     """
 
     def __init__(
@@ -317,6 +329,7 @@ class DomainLanguage:
         allow_function_currying: bool = False,
         allow_function_composition: bool = False,
     ) -> None:
+        self._allow_currying = allow_function_currying
         self._functions: Dict[str, Callable] = {}
         self._function_types: Dict[str, List[PredicateType]] = defaultdict(list)
         self._start_types: Set[PredicateType] = {
@@ -552,6 +565,12 @@ class DomainLanguage:
             try:
                 return function(*arguments)
             except (TypeError, ValueError):
+                if self._allow_currying:
+                    # If we got here, then maybe the error is because this should be a curried
+                    # function.  We'll check for that and return the curried function if possible.
+                    curried_function = self._get_curried_function(function, arguments)
+                    if curried_function:
+                        return curried_function
                 traceback.print_exc()
                 raise ExecutionError(
                     f"Error executing expression {expression} (see stderr for stack trace)"
@@ -791,6 +810,40 @@ class DomainLanguage:
                 Tree(right_side, [])
             )  # you add a child to an nltk.Tree with `append`
         return remaining_actions
+
+    def _get_curried_function(self, function: Callable, arguments: List[Any]) -> Optional[Callable]:
+        signature = inspect.signature(function)
+        parameters = signature.parameters
+        if len(parameters) != len(arguments) + 1:
+            # We only allow currying that makes a function into a one-argument function.  This is to
+            # simplify both the complexity of the `DomainLanguage` code and the complexity of
+            # whatever model might use the resulting grammar.  For all currently-envisioned uses of
+            # currying, we only need to make one-argument functions.  These are predominantly for
+            # replacing lambda functions in argmaxes and the like.
+            return None
+        # Now we have to decide where the missing argument goes in the list of arguments.  We will
+        # look at types to figure that out, and arbitrarily say that if there are multiple matching
+        # types, the missing one comes last.
+        missing_arg_index = 0
+        parameter_types = list(parameters.values())
+        for parameter in parameter_types:
+            argument = arguments[missing_arg_index]
+            if isinstance(argument, (list, set)):
+                arg_type = infer_collection_type(argument)
+            else:
+                arg_type = type(argument)
+            if parameter.annotation == arg_type:
+                missing_arg_index += 1
+                if missing_arg_index == len(parameters) - 1:
+                    break
+            else:
+                break
+
+        def curried_function(x: parameter_types[missing_arg_index]) -> signature.return_annotation:
+            new_arguments = arguments[:missing_arg_index] + [x] + arguments[missing_arg_index:]
+            return function(*new_arguments)
+
+        return curried_function
 
     def __len__(self):
         # This method exists just to make it easier to use this in a MetadataField.  Kind of

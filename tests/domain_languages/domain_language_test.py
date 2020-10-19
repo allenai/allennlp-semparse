@@ -103,6 +103,10 @@ class Arithmetic(DomainLanguage):
 
         return new_function
 
+    @predicate
+    def append(self, list_: List[int], num: int) -> List[int]:
+        return list_ + [num]
+
     def not_a_predicate(self) -> int:
         return 5
 
@@ -180,8 +184,11 @@ class TestDomainLanguage(SemparseTestCase):
         assert self.language.execute("(halve ((halve * halve) 8))") == 1
 
     def test_execute_function_currying(self):
-        assert self.language.execute("((multiply 3) 6)") == 18
-        assert self.language.execute("(sum ((list2 1) 7))") == 8
+        assert self.curried_language.execute("((multiply 3) 6)") == 18
+        assert self.curried_language.execute("(sum ((list2 1) 7))") == 8
+        assert self.curried_language.execute("((append 3) (list1 2))") == [2, 3]
+        assert self.curried_language.execute("((append (list1 4)) 6)") == [4, 6]
+        assert self.curried_language.execute("((list3 1 2) 3)") == [1, 2, 3]
 
     def test_execute_action_sequence_function_composition(self):
         # Repeats tests from above, but using `execute_action_sequence` instead of `execute`.
