@@ -432,123 +432,123 @@ class NlvrLanguageFuncComposition(DomainLanguage):
         return {obj for obj in objects if obj.size == 30}
 
     @predicate
-    def box_count_equals(self, boxes: Set[Box], count: int) -> bool:
+    def box_count_equals(self, count: int, boxes: Set[Box]) -> bool:
         return len(boxes) == count
 
     @predicate
-    def box_count_not_equals(self, boxes: Set[Box], count: int) -> bool:
+    def box_count_not_equals(self, count: int, boxes: Set[Box]) -> bool:
         return len(boxes) != count
 
     @predicate
-    def box_count_greater(self, boxes: Set[Box], count: int) -> bool:
+    def box_count_greater(self, count: int, boxes: Set[Box]) -> bool:
         return len(boxes) > count
 
     @predicate
-    def box_count_greater_equals(self, boxes: Set[Box], count: int) -> bool:
+    def box_count_greater_equals(self, count: int, boxes: Set[Box]) -> bool:
         return len(boxes) >= count
 
     @predicate
-    def box_count_lesser(self, boxes: Set[Box], count: int) -> bool:
+    def box_count_lesser(self, count: int, boxes: Set[Box]) -> bool:
         return len(boxes) < count
 
     @predicate
-    def box_count_lesser_equals(self, boxes: Set[Box], count: int) -> bool:
+    def box_count_lesser_equals(self, count: int, boxes: Set[Box]) -> bool:
         return len(boxes) <= count
 
     @predicate
-    def object_color_all_equals(self, objects: Set[Object], color: Color) -> bool:
+    def object_color_all_equals(self, color: Color, objects: Set[Object]) -> bool:
         return all([obj.color == color.color for obj in objects])
 
     @predicate
-    def object_color_any_equals(self, objects: Set[Object], color: Color) -> bool:
+    def object_color_any_equals(self, color: Color, objects: Set[Object]) -> bool:
         return any([obj.color == color.color for obj in objects])
 
     @predicate
-    def object_color_none_equals(self, objects: Set[Object], color: Color) -> bool:
+    def object_color_none_equals(self, color: Color, objects: Set[Object]) -> bool:
         return all([obj.color != color.color for obj in objects])
 
     @predicate
-    def object_shape_all_equals(self, objects: Set[Object], shape: Shape) -> bool:
+    def object_shape_all_equals(self, shape: Shape, objects: Set[Object]) -> bool:
         return all([obj.shape == shape.shape for obj in objects])
 
     @predicate
-    def object_shape_any_equals(self, objects: Set[Object], shape: Shape) -> bool:
+    def object_shape_any_equals(self, shape: Shape, objects: Set[Object]) -> bool:
         return any([obj.shape == shape.shape for obj in objects])
 
     @predicate
-    def object_shape_none_equals(self, objects: Set[Object], shape: Shape) -> bool:
+    def object_shape_none_equals(self, shape: Shape, objects: Set[Object]) -> bool:
         return all([obj.shape != shape.shape for obj in objects])
 
     @predicate
-    def object_count_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_count_equals(self, count: int, objects: Set[Object]) -> bool:
         return len(objects) == count
 
     @predicate
-    def object_count_not_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_count_not_equals(self, count: int, objects: Set[Object]) -> bool:
         return len(objects) != count
 
     @predicate
-    def object_count_greater(self, objects: Set[Object], count: int) -> bool:
+    def object_count_greater(self, count: int, objects: Set[Object]) -> bool:
         return len(objects) > count
 
     @predicate
-    def object_count_greater_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_count_greater_equals(self, count: int, objects: Set[Object]) -> bool:
         return len(objects) >= count
 
     @predicate
-    def object_count_lesser(self, objects: Set[Object], count: int) -> bool:
+    def object_count_lesser(self, count: int, objects: Set[Object]) -> bool:
         return len(objects) < count
 
     @predicate
-    def object_count_lesser_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_count_lesser_equals(self, count: int, objects: Set[Object]) -> bool:
         return len(objects) <= count
 
     @predicate
-    def object_color_count_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_color_count_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.color for obj in objects}) == count
 
     @predicate
-    def object_color_count_not_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_color_count_not_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.color for obj in objects}) != count
 
     @predicate
-    def object_color_count_greater(self, objects: Set[Object], count: int) -> bool:
+    def object_color_count_greater(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.color for obj in objects}) > count
 
     @predicate
-    def object_color_count_greater_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_color_count_greater_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.color for obj in objects}) >= count
 
     @predicate
-    def object_color_count_lesser(self, objects: Set[Object], count: int) -> bool:
+    def object_color_count_lesser(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.color for obj in objects}) < count
 
     @predicate
-    def object_color_count_lesser_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_color_count_lesser_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.color for obj in objects}) <= count
 
     @predicate
-    def object_shape_count_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_shape_count_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.shape for obj in objects}) == count
 
     @predicate
-    def object_shape_count_not_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_shape_count_not_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.shape for obj in objects}) != count
 
     @predicate
-    def object_shape_count_greater(self, objects: Set[Object], count: int) -> bool:
+    def object_shape_count_greater(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.shape for obj in objects}) > count
 
     @predicate
-    def object_shape_count_greater_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_shape_count_greater_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.shape for obj in objects}) >= count
 
     @predicate
-    def object_shape_count_lesser(self, objects: Set[Object], count: int) -> bool:
+    def object_shape_count_lesser(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.shape for obj in objects}) < count
 
     @predicate
-    def object_shape_count_lesser_equals(self, objects: Set[Object], count: int) -> bool:
+    def object_shape_count_lesser_equals(self, count: int, objects: Set[Object]) -> bool:
         return len({obj.shape for obj in objects}) <= count
 
     @predicate
@@ -655,7 +655,7 @@ class NlvrLanguageFuncComposition(DomainLanguage):
     # def member_color_none_equals(self, boxes: Set[Box], color: Color) -> Set[Box]:
     #     return {box for box in boxes if self.object_color_none_equals(box.objects, color)}
 
-    """Can be accomplished using filter_function == object_shape_COND_equals(color)(object_in_box)"""
+    """Can be accomplished using filter_function == object_shape_COND_equals(shape)(object_in_box)"""
     # @predicate
     # def member_shape_all_equals(self, boxes: Set[Box], shape: Shape) -> Set[Box]:
     #     return {box for box in boxes if self.object_shape_all_equals(box.objects, shape)}
