@@ -228,9 +228,75 @@ class TestDomainLanguage(SemparseTestCase):
             "<int,int,int:List[int]>",
             "<int,int,int,int:List[int]>",
             "<<int,int:int>:<int,int:int>>",
+        }
+        check_productions_match(valid_actions["@start@"], ["int"])
+        check_productions_match(
+            valid_actions["int"],
+            [
+                "[<int,int:int>, int, int]",
+                "[<int:int>, int]",
+                "[<List[int]:int>, List[int]]",
+                "three",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "20",
+                "-5",
+                "-2",
+            ],
+        )
+        check_productions_match(
+            valid_actions["List[int]"],
+            [
+                "[<int:List[int]>, int]",
+                "[<int,int:List[int]>, int, int]",
+                "[<int,int,int:List[int]>, int, int, int]",
+                "[<int,int,int,int:List[int]>, int, int, int, int]",
+            ],
+        )
+        check_productions_match(valid_actions["<int:int>"], ["halve"])
+        check_productions_match(
+            valid_actions["<int,int:int>"],
+            [
+                "[<<int,int:int>:<int,int:int>>, <int,int:int>]",
+                "add",
+                "subtract",
+                "multiply",
+                "divide",
+                "power",
+            ],
+        )
+        check_productions_match(valid_actions["<List[int]:int>"], ["sum"])
+        check_productions_match(valid_actions["<int:List[int]>"], ["list1"])
+        check_productions_match(valid_actions["<int,int:List[int]>"], ["list2"])
+        check_productions_match(valid_actions["<int,int,int:List[int]>"], ["list3"])
+        check_productions_match(valid_actions["<int,int,int,int:List[int]>"], ["list4"])
+        check_productions_match(valid_actions["<<int,int:int>:<int,int:int>>"], ["three_less"])
+
+    def test_get_nonterminal_productions_curried_language_and_function_composition(self):
+        valid_actions = self.curried_language.get_nonterminal_productions()
+        assert set(valid_actions.keys()) == {
+            "@start@",
+            "int",
+            "List[int]",
+            "<int:int>",
+            "<int,int:int>",
+            "<List[int]:int>",
+            "<int:List[int]>",
+            "<int,int:List[int]>",
+            "<int,int,int:List[int]>",
+            "<int,int,int,int:List[int]>",
+            "<<int,int:int>:<int,int:int>>",
             # Types induced by allowing function composition
             "<List[int]:List[int]>"
-            # Types induced from currying first-arg of two-arg functions already exist
+            # No new types induced from currying arguments of functions to create single argument functions
         }
         check_productions_match(valid_actions["@start@"], ["int"])
         check_productions_match(
@@ -271,7 +337,7 @@ class TestDomainLanguage(SemparseTestCase):
                 # Production due to function composition
                 "[<int:int>, <int:int>]",
                 "[<List[int]:int>, <int:List[int]>]",
-                # Production due to currying first-arg of a two-arg function
+                # Production due to function currying
                 "[<int,int:int>, int]",
             ],
         )
@@ -300,8 +366,10 @@ class TestDomainLanguage(SemparseTestCase):
                 "list1",
                 # Production due to function composition
                 "[<int:List[int]>, <int:int>]",
-                # Production due to currying first-arg of a two-arg function
+                # Production due to function currying
                 "[<int,int:List[int]>, int]",
+                "[<int,int,int:List[int]>, int, int]",
+                "[<int,int,int,int:List[int]>, int, int, int]",
             ],
         )
         check_productions_match(valid_actions["<int,int:List[int]>"], ["list2"])
@@ -310,10 +378,7 @@ class TestDomainLanguage(SemparseTestCase):
         check_productions_match(valid_actions["<<int,int:int>:<int,int:int>>"], ["three_less"])
         # Production due to function composition
         check_productions_match(
-            valid_actions["<List[int]:List[int]>"],
-            [
-                "[<int:<List[int]>, <int:List[int]>]",
-            ],
+            valid_actions["<List[int]:List[int]>"], ["[<int:<List[int]>, <int:List[int]>]",],
         )
 
     def test_logical_form_to_action_sequence(self):
@@ -370,7 +435,9 @@ class TestDomainLanguage(SemparseTestCase):
         ]
 
     def test_logical_form_to_action_sequence_with_function_composition(self):
-        action_sequence = self.language.logical_form_to_action_sequence("((halve * halve) 8)")
+        action_sequence = self.curried_language.logical_form_to_action_sequence(
+            "((halve * halve) 8)"
+        )
         assert action_sequence == [
             "@start@ -> int",
             "int -> [<int:int>, int]",
@@ -380,7 +447,7 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 8",
         ]
 
-        action_sequence = self.language.logical_form_to_action_sequence("((sum *list1) 8)")
+        action_sequence = self.curried_language.logical_form_to_action_sequence("((sum * list1) 8)")
         assert action_sequence == [
             "@start@ -> int",
             "int -> [<int:int>, int]",
@@ -390,9 +457,9 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 8",
         ]
 
-        # Idea is to execute multiply(4, halve(sum(list1(8)))) where
-        action_sequence = self.language.logical_form_to_action_sequence(
-            "(multiply 4 ((sum *list1) 6))"
+        # Idea is to execute multiply(4, sum(list3(2, 4))(8)) where list3 is curried and then composed with sum
+        action_sequence = self.curried_language.logical_form_to_action_sequence(
+            "(multiply 4 ((sum * (list3 2 4)) 6))"
         )
         assert action_sequence == [
             "@start@ -> int",
@@ -402,12 +469,15 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> [<int:int>, int]",
             "<int:int> -> [<List[int]:int>, <int:List[int]>]",
             "<List[int]:int> -> sum",
-            "<int:List[int]> -> list1",
+            "<int:List[int]> -> [<int,int,int:List[int]>, int, int]",
+            "<int,int,int:List[int]> -> list3",
+            "int -> 2",
+            "int -> 4",
             "int -> 6",
         ]
 
         # Trying a mix of regular composition and function-composition
-        action_sequence = self.language.logical_form_to_action_sequence(
+        action_sequence = self.curried_language.logical_form_to_action_sequence(
             "(halve ((halve * halve) 8))"
         )
         assert action_sequence == [
@@ -432,7 +502,9 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 6",
         ]
 
-        action_sequence = self.curried_language.logical_form_to_action_sequence("(sum ((list3 1 2) 7))")
+        action_sequence = self.curried_language.logical_form_to_action_sequence(
+            "(sum ((list3 1 2) 7))"
+        )
         assert action_sequence == [
             "@start@ -> int",
             "int -> [<List[int]:int>, List[int]]",
@@ -485,12 +557,16 @@ class TestDomainLanguage(SemparseTestCase):
     def test_action_sequence_to_logical_form_with_function_currying(self):
         logical_form = "((multiply 3) 6)"
         action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
-        recovered_logical_form = self.curried_language.action_sequence_to_logical_form(action_sequence)
+        recovered_logical_form = self.curried_language.action_sequence_to_logical_form(
+            action_sequence
+        )
         assert recovered_logical_form == logical_form
 
         logical_form = "(sum ((list3 1 2) 7))"
         action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
-        recovered_logical_form = self.curried_language.action_sequence_to_logical_form(action_sequence)
+        recovered_logical_form = self.curried_language.action_sequence_to_logical_form(
+            action_sequence
+        )
         assert recovered_logical_form == logical_form
 
     def test_logical_form_parsing_fails_on_bad_inputs(self):
