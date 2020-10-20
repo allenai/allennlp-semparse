@@ -178,10 +178,10 @@ class TestDomainLanguage(SemparseTestCase):
         assert self.language.execute_action_sequence(action_sequence) == 2
 
     def test_execute_function_composition(self):
-        assert self.language.execute("((halve * halve) 8)") == 2
-        assert self.language.execute("((sum * list1) 8)") == 8
-        assert self.language.execute("(multiply 4 ((sum * list1) 6))") == 24
-        assert self.language.execute("(halve ((halve * halve) 8))") == 1
+        assert self.language.execute("((* halve halve) 8)") == 2
+        assert self.language.execute("((* sum list1) 8)") == 8
+        assert self.language.execute("(multiply 4 ((* sum list1) 6))") == 24
+        assert self.language.execute("(halve ((* halve halve) 8))") == 1
 
     def test_execute_function_currying(self):
         assert self.curried_language.execute("((multiply 3) 6)") == 18
@@ -192,16 +192,16 @@ class TestDomainLanguage(SemparseTestCase):
 
     def test_execute_action_sequence_function_composition(self):
         # Repeats tests from above, but using `execute_action_sequence` instead of `execute`.
-        logical_form = "((halve * halve) 8)"
+        logical_form = "((* halve halve) 8)"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         assert self.language.execute_action_sequence(action_sequence) == 2
-        logical_form = "((sum * list1) 8)"
+        logical_form = "((* sum list1) 8)"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         assert self.language.execute_action_sequence(action_sequence) == 8
-        logical_form = "(multiply 4 ((sum * list1) 6))"
+        logical_form = "(multiply 4 ((* sum list1) 6))"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         assert self.language.execute_action_sequence(action_sequence) == 24
-        logical_form = "(halve ((halve * halve) 8))"
+        logical_form = "(halve ((* halve halve) 8))"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         assert self.language.execute_action_sequence(action_sequence) == 1
 
@@ -435,9 +435,7 @@ class TestDomainLanguage(SemparseTestCase):
         ]
 
     def test_logical_form_to_action_sequence_with_function_composition(self):
-        action_sequence = self.curried_language.logical_form_to_action_sequence(
-            "((halve * halve) 8)"
-        )
+        action_sequence = self.curried_language.logical_form_to_action_sequence("((* halve halve) 8)")
         assert action_sequence == [
             "@start@ -> int",
             "int -> [<int:int>, int]",
@@ -447,7 +445,7 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 8",
         ]
 
-        action_sequence = self.curried_language.logical_form_to_action_sequence("((sum * list1) 8)")
+        action_sequence = self.curried_language.logical_form_to_action_sequence("((* sum list1) 8)")
         assert action_sequence == [
             "@start@ -> int",
             "int -> [<int:int>, int]",
@@ -457,9 +455,9 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 8",
         ]
 
-        # Idea is to execute multiply(4, sum(list3(2, 4))(8)) where list3 is curried and then composed with sum
+        # Idea is to execute multiply(4, sum(list3(2, 4))(6)) where list3 is curried and then composed with sum
         action_sequence = self.curried_language.logical_form_to_action_sequence(
-            "(multiply 4 ((sum * (list3 2 4)) 6))"
+            "(multiply 4 ((* sum (list3 2 4)) 6))"
         )
         assert action_sequence == [
             "@start@ -> int",
@@ -478,7 +476,7 @@ class TestDomainLanguage(SemparseTestCase):
 
         # Trying a mix of regular composition and function-composition
         action_sequence = self.curried_language.logical_form_to_action_sequence(
-            "(halve ((halve * halve) 8))"
+            "(halve ((* halve halve) 8))"
         )
         assert action_sequence == [
             "@start@ -> int",
@@ -534,22 +532,22 @@ class TestDomainLanguage(SemparseTestCase):
         assert recovered_logical_form == logical_form
 
     def test_action_sequence_to_logical_form_with_function_composition(self):
-        logical_form = "((halve * halve) 8)"
+        logical_form = "((* halve halve) 8)"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
 
-        logical_form = "((sum *list1) 8)"
+        logical_form = "((* sum list1) 8)"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
 
-        logical_form = "(multiply 4 ((sum *list1) 6))"
+        logical_form = "(multiply 4 ((* sum list1) 6))"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
 
-        logical_form = "(halve ((halve *halve) 8))"
+        logical_form = "(halve ((* halve halve) 8))"
         action_sequence = self.language.logical_form_to_action_sequence(logical_form)
         recovered_logical_form = self.language.action_sequence_to_logical_form(action_sequence)
         assert recovered_logical_form == logical_form
