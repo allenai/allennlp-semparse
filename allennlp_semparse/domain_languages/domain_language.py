@@ -416,6 +416,7 @@ class DomainLanguage:
                         arg_types = function_type.argument_types
                         right_side = f"[{function_type}, {', '.join(str(arg_type) for arg_type in arg_types)}]"
                         actions[return_type].add(f"{return_type} -> {right_side}")
+
             if self._allow_currying:
                 function_types = [t for t in actions if isinstance(t, FunctionType)]
                 for function_type in function_types:
