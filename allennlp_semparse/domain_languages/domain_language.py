@@ -336,6 +336,7 @@ class DomainLanguage:
         allow_function_composition: bool = False,
     ) -> None:
         self._allow_currying = allow_function_currying
+        self._allow_composition = allow_function_composition
         self._functions: Dict[str, Callable] = {}
         self._function_types: Dict[str, List[PredicateType]] = defaultdict(list)
         self._start_types: Set[PredicateType] = {
@@ -562,6 +563,8 @@ class DomainLanguage:
                 function = self._execute_expression(expression[0])
             elif expression[0] in self._functions:
                 function = self._functions[expression[0]]
+            elif self._allow_composition and expression[0] == "*":
+                function = "*"
             else:
                 if isinstance(expression[0], str):
                     raise ExecutionError(f"Unrecognized function: {expression[0]}")
@@ -569,6 +572,10 @@ class DomainLanguage:
                     raise ExecutionError(f"Unsupported expression type: {expression}")
             arguments = [self._execute_expression(arg) for arg in expression[1:]]
             try:
+                if self._allow_composition and function == "*":
+                    def composed_function(*args):
+                        return arguments[0](arguments[1](*args))
+                    return composed_function
                 return function(*arguments)
             except (TypeError, ValueError):
                 if self._allow_currying:
@@ -664,17 +671,31 @@ class DomainLanguage:
             # things will just work.
             right_side_parts = right_side.split(", ")
 
-            # We don't really need to know what the types are, just how many of them there are, so
+            if right_side_parts[0] == "[*" and self._allow_composition:
+                # This one we need to handle differently, because the "function" is a function
+                # composition which doesn't show up in the action sequence.
+                function = "*"
+            else:
+                # Otherwise, we grab the function itself by executing the next self-contained action
+                # sequence (if this is a simple function call, that will be exactly one action; if
+                # it's a higher-order function, it could be many actions).
+                function, remaining_actions, remaining_side_args = self._execute_sequence(
+                    remaining_actions, remaining_side_args
+                )
+            # We don't really need to know what the types of the argumentare, just how many of them there are, so
             # we recurse the right number of times.
-            function, remaining_actions, remaining_side_args = self._execute_sequence(
-                remaining_actions, remaining_side_args
-            )
             arguments = []
             for _ in right_side_parts[1:]:
                 argument, remaining_actions, remaining_side_args = self._execute_sequence(
                     remaining_actions, remaining_side_args
                 )
                 arguments.append(argument)
+            if self._allow_composition and function == "*":
+                # In this case, both arguments should be functions, and we want to compose them, by
+                # calling the second argument first, and passing the result to the first argument.
+                def composed_function(*args):
+                    return arguments[0](arguments[1](*args))
+                return composed_function, remaining_actions, remaining_side_args
             try:
                 function_value = function(*arguments)
             except TypeError:
@@ -769,7 +790,7 @@ class DomainLanguage:
             if (
                 self._allow_currying
                 # This check means we're missing an argument to the function.
-                and len(expression) > 0
+                and len(expression) > 1
                 and len(function_type.argument_types) - 1 == len(expression) - 1
             ):
                 # If we're currying this function, we need to add a transition that encodes the
@@ -782,7 +803,9 @@ class DomainLanguage:
                 signature = inspect.signature(curried_function)
                 return_type = PredicateType.get_type(signature.return_annotation)
                 t = list(signature.parameters.values())[0].annotation
-                uncurried_arg_type = PredicateType.get_type(list(signature.parameters.values())[0].annotation)
+                uncurried_arg_type = PredicateType.get_type(
+                    list(signature.parameters.values())[0].annotation
+                )
                 curried_function_type = PredicateType.get_function_type(
                     [uncurried_arg_type], return_type
                 )
@@ -794,16 +817,61 @@ class DomainLanguage:
                 curried_arg_types = list(reversed([t for t in function_type.argument_types]))
                 curried_arg_types.remove(uncurried_arg_type)
                 curried_arg_types.reverse()
-                right_side = f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+                right_side = (
+                    f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+                )
                 curry_transition = f"{curried_function_type} -> {right_side}"
                 transitions.insert(0, curry_transition)
                 return transitions, curried_function_type, curried_arg_types
+        elif self._allow_composition and function_expression == "*":
+            outer_function_expression = expression[1]
+            if not isinstance(outer_function_expression, list):
+                outer_function_expression = [outer_function_expression]
+            inner_function_expression = expression[2]
+            if not isinstance(inner_function_expression, list):
+                inner_function_expression = [inner_function_expression]
+
+            # This is unfortunately a bit complex.  What we really what is the _type_ of these
+            # expressions.  We don't have a function that will give us that.  Instead, we have a
+            # function that will give us return types and argument types.  If we have a bare
+            # function name, like "sum", this works fine.  But if it's a higher-order function
+            # (including a curried function), then the return types and argument types from
+            # _get_function_transitions aren't what we're looking for here, because that function is
+            # designed for something else.  We need to hack our way around that a bit, by grabbing
+            # the return type from the inner return type (confusing, I know).
+            _, outer_return_type, outer_arg_types = self._get_function_transitions(
+                outer_function_expression, None
+            )
+            if isinstance(expression[1], list):
+                outer_function_type = outer_return_type
+            else:
+                outer_function_type = PredicateType.get_function_type(
+                    outer_arg_types, outer_return_type
+                )
+
+            _, inner_return_type, inner_arg_types = self._get_function_transitions(
+                inner_function_expression, None
+            )
+            if isinstance(expression[2], list):
+                inner_function_type = inner_return_type
+            else:
+                inner_function_type = PredicateType.get_function_type(
+                    inner_arg_types, inner_return_type
+                )
+
+            composition_argument_types = [outer_function_type, inner_function_type]
+            composition_type = PredicateType.get_function_type(
+                inner_function_type.argument_types, outer_function_type.return_type
+            )
+            right_side = f'[*, {", ".join(str(arg) for arg in composition_argument_types)}]'
+            composition_transition = f"{composition_type} -> {right_side}"
+            return [composition_transition], composition_type, composition_argument_types
+
         else:
             if isinstance(function_expression, str):
                 raise ParsingError(f"Unrecognized function: {function_expression[0]}")
             else:
                 raise ParsingError(f"Unsupported function_expression type: {function_expression}")
-
 
         if not isinstance(function_type, FunctionType):
             raise ParsingError(f"Zero-arg function or constant called with arguments: {name}")
@@ -895,6 +963,7 @@ class DomainLanguage:
                 break
 
         arg_type = parameter_types[missing_arg_index].annotation
+
         def curried_function(x: arg_type) -> signature.return_annotation:
             new_arguments = arguments[:missing_arg_index] + [x] + arguments[missing_arg_index:]
             return function(*new_arguments)
