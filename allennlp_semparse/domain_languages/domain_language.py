@@ -397,7 +397,7 @@ class DomainLanguage:
         predicate to produce an int.
         """
         if not self._nonterminal_productions:
-            actions: Dict[str, Set[str]] = defaultdict(set)
+            actions: Dict[Union[str, PredicateType], Set[str]] = defaultdict(set)
             # If you didn't give us a set of valid start types, we'll assume all types we know
             # about (including functional types) are valid start types.
             if self._start_types:
@@ -410,13 +410,48 @@ class DomainLanguage:
                 actions[START_SYMBOL].add(f"{START_SYMBOL} -> {start_type}")
             for name, function_type_list in self._function_types.items():
                 for function_type in function_type_list:
-                    actions[str(function_type)].add(f"{function_type} -> {name}")
+                    actions[function_type].add(f"{function_type} -> {name}")
                     if isinstance(function_type, FunctionType):
                         return_type = function_type.return_type
                         arg_types = function_type.argument_types
                         right_side = f"[{function_type}, {', '.join(str(arg_type) for arg_type in arg_types)}]"
-                        actions[str(return_type)].add(f"{return_type} -> {right_side}")
-            self._nonterminal_productions = {key: sorted(value) for key, value in actions.items()}
+                        actions[return_type].add(f"{return_type} -> {right_side}")
+            if self._allow_currying:
+                function_types = [t for t in actions if isinstance(t, FunctionType)]
+                for function_type in function_types:
+                    if len(function_type.argument_types) > 1:
+                        argument_types = list(set(function_type.argument_types))
+                        for uncurried_arg_type in argument_types:
+                            curried_arg_types = list(
+                                reversed([t for t in function_type.argument_types])
+                            )
+                            curried_arg_types.remove(uncurried_arg_type)
+                            curried_arg_types.reverse()
+                            curried_function_type = PredicateType.get_function_type(
+                                [uncurried_arg_type], function_type.return_type
+                            )
+                            right_side = f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+                            actions[curried_function_type].add(
+                                f"{curried_function_type} -> {right_side}"
+                            )
+
+            if self._allow_composition:
+                function_types = [t for t in actions if isinstance(t, FunctionType)]
+                for type1 in function_types:
+                    for type2 in function_types:
+                        if len(type1.argument_types) != 1:
+                            continue
+                        if type1.argument_types[0] != type2.return_type:
+                            continue
+                        composed_type = PredicateType.get_function_type(
+                            type2.argument_types, type1.return_type
+                        )
+                        right_side = f"[*, {type1}, {type2}]"
+                        actions[composed_type].add(f"{composed_type} -> {right_side}")
+
+            self._nonterminal_productions = {
+                str(key): sorted(value) for key, value in actions.items()
+            }
         return self._nonterminal_productions
 
     def all_possible_productions(self) -> List[str]:
@@ -573,8 +608,10 @@ class DomainLanguage:
             arguments = [self._execute_expression(arg) for arg in expression[1:]]
             try:
                 if self._allow_composition and function == "*":
+
                     def composed_function(*args):
                         return arguments[0](arguments[1](*args))
+
                     return composed_function
                 return function(*arguments)
             except (TypeError, ValueError):
@@ -695,6 +732,7 @@ class DomainLanguage:
                 # calling the second argument first, and passing the result to the first argument.
                 def composed_function(*args):
                     return arguments[0](arguments[1](*args))
+
                 return composed_function, remaining_actions, remaining_side_args
             try:
                 function_value = function(*arguments)
