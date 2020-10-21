@@ -924,6 +924,11 @@ class DomainLanguage:
                 # For now, we assume that all children in a list like this are non-terminals, so we
                 # recurse on them.  I'm pretty sure that will always be true for the way our
                 # grammar induction works.  We can revisit this later if we need to.
+                if self._allow_composition and child_type == "*":
+                    # One exception to the comment above is when we are doing function composition.
+                    # The function composition operator * does not have a corresponding action, so
+                    # the recursion on constructing that node doesn't work.
+                    continue
                 remaining_actions = self._construct_node_from_actions(child_node, remaining_actions)
         else:
             # The current node is a pre-terminal; we'll add a single terminal child.  By
