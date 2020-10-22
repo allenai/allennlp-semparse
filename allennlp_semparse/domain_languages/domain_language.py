@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, Type, Union
 import inspect
 import logging
 import sys
@@ -58,9 +58,9 @@ def infer_collection_type(collection: Any) -> Type:
         raise ValueError(f"Inconsistent types in collection: {instance_types}, {collection}")
     subtype = list(instance_types)[0]
     if isinstance(collection, list):
-        return List[subtype]
+        return List[subtype]  # type: ignore
     elif isinstance(collection, set):
-        return Set[subtype]
+        return Set[subtype]  # type: ignore
     else:
         raise ValueError(f"Unsupported top-level generic type: {collection}")
 
@@ -100,7 +100,7 @@ class PredicateType:
 
     @staticmethod
     def get_function_type(
-        arg_types: List["PredicateType"], return_type: "PredicateType"
+        arg_types: Sequence["PredicateType"], return_type: "PredicateType"
     ) -> "PredicateType":
         """
         Constructs an NLTK ``ComplexType`` representing a function with the given argument and
@@ -144,7 +144,7 @@ class FunctionType(PredicateType):
     like ``<str:int>``, and ``def g(a: int, b: int) -> int`` would look like ``<int,int:int>``.
     """
 
-    def __init__(self, argument_types: List[PredicateType], return_type: PredicateType) -> None:
+    def __init__(self, argument_types: Sequence[PredicateType], return_type: PredicateType) -> None:
         self.argument_types = argument_types
         self.return_type = return_type
         self.name = f'<{",".join(str(arg) for arg in argument_types)}:{return_type}>'
@@ -712,7 +712,7 @@ class DomainLanguage:
             if right_side_parts[0] == "[*" and self._allow_composition:
                 # This one we need to handle differently, because the "function" is a function
                 # composition which doesn't show up in the action sequence.
-                function = "*"
+                function = "*"  # type: ignore
             else:
                 # Otherwise, we grab the function itself by executing the next self-contained action
                 # sequence (if this is a simple function call, that will be exactly one action; if
@@ -799,8 +799,8 @@ class DomainLanguage:
             )
 
     def _get_function_transitions(
-        self, expression: List, expected_type: PredicateType
-    ) -> Tuple[List[str], PredicateType, List[PredicateType]]:
+        self, expression: Sequence, expected_type: PredicateType
+    ) -> Tuple[List[str], PredicateType, Sequence[PredicateType]]:
         """
         A helper method for ``_get_transitions``.  This gets the transitions for the predicate
         itself in a function call.  If we only had simple functions (e.g., "(add 2 3)"), this would
@@ -815,7 +815,11 @@ class DomainLanguage:
         if isinstance(function_expression, list):
             # This is a higher-order function.  TODO(mattg): we'll just ignore type checking on
             # higher-order functions, for now.
-            transitions, function_type = self._get_transitions(function_expression, None)
+            # Some annoying redirection here to make mypy happy; need to specify the type of
+            # function_type.
+            result = self._get_transitions(function_expression, None)
+            transitions = result[0]
+            function_type: FunctionType = result[1]  # type: ignore
         elif function_expression in self._functions:
             name = function_expression
             function_types = self._function_types[function_expression]
@@ -823,7 +827,7 @@ class DomainLanguage:
                 raise ParsingError(
                     f"{function_expression} had multiple types; this is not yet supported for functions"
                 )
-            function_type = function_types[0]
+            function_type = function_types[0]  # type: ignore
 
             transitions = [f"{function_type} -> {name}"]
             if (
@@ -881,9 +885,9 @@ class DomainLanguage:
                 outer_function_expression, None
             )
             if isinstance(expression[1], list):
-                outer_function_type = outer_return_type
+                outer_function_type: FunctionType = outer_return_type  # type: ignore
             else:
-                outer_function_type = PredicateType.get_function_type(
+                outer_function_type = PredicateType.get_function_type(  # type: ignore
                     outer_arg_types, outer_return_type
                 )
 
@@ -891,9 +895,9 @@ class DomainLanguage:
                 inner_function_expression, None
             )
             if isinstance(expression[2], list):
-                inner_function_type = inner_return_type
+                inner_function_type: FunctionType = inner_return_type  # type: ignore
             else:
-                inner_function_type = PredicateType.get_function_type(
+                inner_function_type = PredicateType.get_function_type(  # type: ignore
                     inner_arg_types, inner_return_type
                 )
 
@@ -1007,7 +1011,9 @@ class DomainLanguage:
 
         arg_type = parameter_types[missing_arg_index].annotation
 
-        def curried_function(x: arg_type) -> signature.return_annotation:
+        # Pretty cool that you can give runtime types to a function defined at runtime, but mypy has
+        # no idea what to do with this.
+        def curried_function(x: arg_type) -> signature.return_annotation:  # type: ignore
             new_arguments = arguments[:missing_arg_index] + [x] + arguments[missing_arg_index:]
             return function(*new_arguments)
 
