@@ -277,7 +277,7 @@ class DomainLanguage:
     `outside` the nesting, so the input type of the outer function is the input type of the first
     function, not the second, as would be the case with nesting.  As a simple example, with function
     composition you could change the nested expression ``(sum (list1 8))`` into the equivalent
-    expression ``(sum * list1 8)``.  As a more useful example, consider taking an argmax over a
+    expression ``((* sum list1) 8)``.  As a more useful example, consider taking an argmax over a
     list: ``(argmax (list3 5 9 2) sin)``, where this will call the ``sin`` function on each element
     of the list and return the element with the highest value.  If you want a more complex function
     when computing a value, say ``sin(3x)``, this would typically be done with lambda functions.  We
