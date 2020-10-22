@@ -720,8 +720,8 @@ class DomainLanguage:
                 function, remaining_actions, remaining_side_args = self._execute_sequence(
                     remaining_actions, remaining_side_args
                 )
-            # We don't really need to know what the types of the argumentare, just how many of them there are, so
-            # we recurse the right number of times.
+            # We don't really need to know what the types of the arguments are, just how many of them
+            # there are, so we recurse the right number of times.
             arguments = []
             for _ in right_side_parts[1:]:
                 argument, remaining_actions, remaining_side_args = self._execute_sequence(
