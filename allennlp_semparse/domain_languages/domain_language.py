@@ -841,7 +841,6 @@ class DomainLanguage:
                 # Here we get the FunctionType corresponding to the new, curried function.
                 signature = inspect.signature(curried_function)
                 return_type = PredicateType.get_type(signature.return_annotation)
-                t = list(signature.parameters.values())[0].annotation
                 uncurried_arg_type = PredicateType.get_type(
                     list(signature.parameters.values())[0].annotation
                 )
