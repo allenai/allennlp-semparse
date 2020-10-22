@@ -281,8 +281,8 @@ class DomainLanguage:
     list: ``(argmax (list3 5 9 2) sin)``, where this will call the ``sin`` function on each element
     of the list and return the element with the highest value.  If you want a more complex function
     when computing a value, say ``sin(3x)``, this would typically be done with lambda functions.  We
-    can accomplish this with currying and function composition: ``(argmax (list3 5 9 2) sin *
-    (mutiply 3))``.  In this way we do not need to introduce variables into the language, which are
+    can accomplish this with currying and function composition: ``(argmax (list3 5 9 2) (* sin
+    (mutiply 3)))``.  In this way we do not need to introduce variables into the language, which are
     tricky from a modeling perspective.  All of the actual terminal productions in this version
     should have a reasonably strong correspondence with the words in the input utterance.
 
