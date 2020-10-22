@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, Callable, Dict, List, Set, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, Type, Union
 import inspect
 import logging
 import sys
@@ -52,6 +52,19 @@ def get_generic_name(type_: Type) -> str:
     return f'{origin}[{",".join(arg.__name__ for arg in args)}]'
 
 
+def infer_collection_type(collection: Any) -> Type:
+    instance_types = set([type(instance) for instance in collection])
+    if len(instance_types) != 1:
+        raise ValueError(f"Inconsistent types in collection: {instance_types}, {collection}")
+    subtype = list(instance_types)[0]
+    if isinstance(collection, list):
+        return List[subtype]  # type: ignore
+    elif isinstance(collection, set):
+        return Set[subtype]  # type: ignore
+    else:
+        raise ValueError(f"Unsupported top-level generic type: {collection}")
+
+
 class PredicateType:
     """
     A base class for `types` in a domain language.  This serves much the same purpose as
@@ -87,7 +100,7 @@ class PredicateType:
 
     @staticmethod
     def get_function_type(
-        arg_types: List["PredicateType"], return_type: "PredicateType"
+        arg_types: Sequence["PredicateType"], return_type: "PredicateType"
     ) -> "PredicateType":
         """
         Constructs an NLTK ``ComplexType`` representing a function with the given argument and
@@ -131,7 +144,7 @@ class FunctionType(PredicateType):
     like ``<str:int>``, and ``def g(a: int, b: int) -> int`` would look like ``<int,int:int>``.
     """
 
-    def __init__(self, argument_types: List[PredicateType], return_type: PredicateType) -> None:
+    def __init__(self, argument_types: Sequence[PredicateType], return_type: PredicateType) -> None:
         self.argument_types = argument_types
         self.return_type = return_type
         self.name = f'<{",".join(str(arg) for arg in argument_types)}:{return_type}>'
@@ -249,9 +262,34 @@ class DomainLanguage:
     predicates, as the ``allowed_constants`` dictionary doesn't pass along the generic type
     information).
 
-    The language we construct is purely functional - no defining variables or using lambda
-    functions, or anything like that.  If you would like to extend this code to handle more complex
-    languages, open an issue on github.
+    By default, the language we construct is purely functional - no defining variables or using
+    lambda functions, or anything like that.  There are options to allow two extensions to the
+    default language behavior, which together allow for behavior that is essentially equivalent to
+    lambda functions: (1) function currying, and (2) function composition.  Currying is still
+    functional, but allows only giving some of the arguments to a function, with a functional return
+    type.  For example, if you allow currying, you can convert a two-argument function like
+    ``(multiply 4 5)`` into a one-argument function like ``(multiply 4)`` (which would then multiply
+    its single argument by 4).  Without being able to save variables, currying isn't `that` useful,
+    so it is not enabled by default, but it can be used in conjunction with function composition to
+    get the behavior of lambda functions without needing to explicitly deal with lambdas.  Function
+    composition calls two functions in succession, passing the output of one as the input to
+    another.  The difference between this and regular nested function calls is that it happens
+    `outside` the nesting, so the input type of the outer function is the input type of the first
+    function, not the second, as would be the case with nesting.  As a simple example, with function
+    composition you could change the nested expression ``(sum (list1 8))`` into the equivalent
+    expression ``((* sum list1) 8)``.  As a more useful example, consider taking an argmax over a
+    list: ``(argmax (list3 5 9 2) sin)``, where this will call the ``sin`` function on each element
+    of the list and return the element with the highest value.  If you want a more complex function
+    when computing a value, say ``sin(3x)``, this would typically be done with lambda functions.  We
+    can accomplish this with currying and function composition: ``(argmax (list3 5 9 2) (* sin
+    (mutiply 3)))``.  In this way we do not need to introduce variables into the language, which are
+    tricky from a modeling perspective.  All of the actual terminal productions in this version
+    should have a reasonably strong correspondence with the words in the input utterance.
+
+    In order to perform type inference on curried functions (to know which argument is being
+    ommitted), we currently rely on `executing` the subexpressions.  This should be ok for simple,
+    determinstic languages, but this is very much not recommended for things like NMNs at this
+    point.  We'd need to implement smarter type inference for that to work.
 
     We have rudimentary support for class hierarchies in the types that you provide.  This is done
     through adding constants multiple times with different types.  For example, say you have a
@@ -267,11 +305,38 @@ class DomainLanguage:
     ``type_`` argument (which infers the type as ``NumberColumn``), and once with ``type_=Column``.
     You can see a concrete example of how this works in the
     :class:`~allennlp_semparse.domain_languages.wikitables_language.WikiTablesLanguage`.
+
+    Parameters
+    ----------
+    allowed_constants : ``Dict[str, Any]``, optional (default=None)
+        If given, we add all items in this dictionary as constants (instances of non-functional
+        types) in the language.  You can also add them manually by calling ``add_constant`` in the
+        constructor of your ``DomainLanguage``.
+    start_types : ``Set[Type]``, optional (default=None)
+        If given, we will constrain the set of start types in the grammar to be this set.
+        Otherwise, we allow any type that we can get as a return type in the functions in the
+        language.
+    allow_function_currying : ``bool``, optional (default=False)
+        If ``True``, we will add production rules to the grammar (and support in function execution,
+        etc.) to curry all two-or-more-argument functions into one-argument functions.  See the
+        above for a discussion of what this means and when you might want to do it.  If you set this
+        to ``True``, you likely also want to set ``allow_function_composition`` to ``True``.
+    allow_function_composition : ``bool``, optional (default=False)
+        If ``True``, function composition as described above will be enabled in the language,
+        including support for parsing expressions with function composition, for executing these
+        expressions, and for converting them to and from action sequences.  If you set this to
+        ``True``, you likely also want to set ``allow_function_composition`` to ``True``.
     """
 
     def __init__(
-        self, allowed_constants: Dict[str, Any] = None, start_types: Set[Type] = None
+        self,
+        allowed_constants: Dict[str, Any] = None,
+        start_types: Set[Type] = None,
+        allow_function_currying: bool = False,
+        allow_function_composition: bool = False,
     ) -> None:
+        self._allow_currying = allow_function_currying
+        self._allow_composition = allow_function_composition
         self._functions: Dict[str, Callable] = {}
         self._function_types: Dict[str, List[PredicateType]] = defaultdict(list)
         self._start_types: Set[PredicateType] = {
@@ -332,7 +397,7 @@ class DomainLanguage:
         predicate to produce an int.
         """
         if not self._nonterminal_productions:
-            actions: Dict[str, Set[str]] = defaultdict(set)
+            actions: Dict[Union[str, PredicateType], Set[str]] = defaultdict(set)
             # If you didn't give us a set of valid start types, we'll assume all types we know
             # about (including functional types) are valid start types.
             if self._start_types:
@@ -345,13 +410,49 @@ class DomainLanguage:
                 actions[START_SYMBOL].add(f"{START_SYMBOL} -> {start_type}")
             for name, function_type_list in self._function_types.items():
                 for function_type in function_type_list:
-                    actions[str(function_type)].add(f"{function_type} -> {name}")
+                    actions[function_type].add(f"{function_type} -> {name}")
                     if isinstance(function_type, FunctionType):
                         return_type = function_type.return_type
                         arg_types = function_type.argument_types
                         right_side = f"[{function_type}, {', '.join(str(arg_type) for arg_type in arg_types)}]"
-                        actions[str(return_type)].add(f"{return_type} -> {right_side}")
-            self._nonterminal_productions = {key: sorted(value) for key, value in actions.items()}
+                        actions[return_type].add(f"{return_type} -> {right_side}")
+
+            if self._allow_currying:
+                function_types = [t for t in actions if isinstance(t, FunctionType)]
+                for function_type in function_types:
+                    if len(function_type.argument_types) > 1:
+                        argument_types = list(set(function_type.argument_types))
+                        for uncurried_arg_type in argument_types:
+                            curried_arg_types = list(
+                                reversed([t for t in function_type.argument_types])
+                            )
+                            curried_arg_types.remove(uncurried_arg_type)
+                            curried_arg_types.reverse()
+                            curried_function_type = PredicateType.get_function_type(
+                                [uncurried_arg_type], function_type.return_type
+                            )
+                            right_side = f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+                            actions[curried_function_type].add(
+                                f"{curried_function_type} -> {right_side}"
+                            )
+
+            if self._allow_composition:
+                function_types = [t for t in actions if isinstance(t, FunctionType)]
+                for type1 in function_types:
+                    for type2 in function_types:
+                        if len(type1.argument_types) != 1:
+                            continue
+                        if type1.argument_types[0] != type2.return_type:
+                            continue
+                        composed_type = PredicateType.get_function_type(
+                            type2.argument_types, type1.return_type
+                        )
+                        right_side = f"[*, {type1}, {type2}]"
+                        actions[composed_type].add(f"{composed_type} -> {right_side}")
+
+            self._nonterminal_productions = {
+                str(key): sorted(value) for key, value in actions.items()
+            }
         return self._nonterminal_productions
 
     def all_possible_productions(self) -> List[str]:
@@ -498,6 +599,8 @@ class DomainLanguage:
                 function = self._execute_expression(expression[0])
             elif expression[0] in self._functions:
                 function = self._functions[expression[0]]
+            elif self._allow_composition and expression[0] == "*":
+                function = "*"
             else:
                 if isinstance(expression[0], str):
                     raise ExecutionError(f"Unrecognized function: {expression[0]}")
@@ -505,8 +608,20 @@ class DomainLanguage:
                     raise ExecutionError(f"Unsupported expression type: {expression}")
             arguments = [self._execute_expression(arg) for arg in expression[1:]]
             try:
+                if self._allow_composition and function == "*":
+
+                    def composed_function(*args):
+                        return arguments[0](arguments[1](*args))
+
+                    return composed_function
                 return function(*arguments)
             except (TypeError, ValueError):
+                if self._allow_currying:
+                    # If we got here, then maybe the error is because this should be a curried
+                    # function.  We'll check for that and return the curried function if possible.
+                    curried_function = self._get_curried_function(function, arguments)
+                    if curried_function:
+                        return curried_function
                 traceback.print_exc()
                 raise ExecutionError(
                     f"Error executing expression {expression} (see stderr for stack trace)"
@@ -594,18 +709,45 @@ class DomainLanguage:
             # things will just work.
             right_side_parts = right_side.split(", ")
 
-            # We don't really need to know what the types are, just how many of them there are, so
-            # we recurse the right number of times.
-            function, remaining_actions, remaining_side_args = self._execute_sequence(
-                remaining_actions, remaining_side_args
-            )
+            if right_side_parts[0] == "[*" and self._allow_composition:
+                # This one we need to handle differently, because the "function" is a function
+                # composition which doesn't show up in the action sequence.
+                function = "*"  # type: ignore
+            else:
+                # Otherwise, we grab the function itself by executing the next self-contained action
+                # sequence (if this is a simple function call, that will be exactly one action; if
+                # it's a higher-order function, it could be many actions).
+                function, remaining_actions, remaining_side_args = self._execute_sequence(
+                    remaining_actions, remaining_side_args
+                )
+            # We don't really need to know what the types of the arguments are, just how many of them
+            # there are, so we recurse the right number of times.
             arguments = []
             for _ in right_side_parts[1:]:
                 argument, remaining_actions, remaining_side_args = self._execute_sequence(
                     remaining_actions, remaining_side_args
                 )
                 arguments.append(argument)
-            return function(*arguments), remaining_actions, remaining_side_args
+            if self._allow_composition and function == "*":
+                # In this case, both arguments should be functions, and we want to compose them, by
+                # calling the second argument first, and passing the result to the first argument.
+                def composed_function(*args):
+                    return arguments[0](arguments[1](*args))
+
+                return composed_function, remaining_actions, remaining_side_args
+            try:
+                function_value = function(*arguments)
+            except TypeError:
+                if not self._allow_currying:
+                    raise
+                # If we got here, then maybe the error is because this should be a curried
+                # function.  We'll check for that and return the curried function if possible.
+                curried_function = self._get_curried_function(function, arguments)
+                if curried_function:
+                    function_value = curried_function
+                else:
+                    raise
+            return function_value, remaining_actions, remaining_side_args
 
     def _get_transitions(
         self, expression: Any, expected_type: PredicateType
@@ -617,7 +759,7 @@ class DomainLanguage:
         """
         if isinstance(expression, (list, tuple)):
             function_transitions, return_type, argument_types = self._get_function_transitions(
-                expression[0], expected_type
+                expression, expected_type
             )
             if len(argument_types) != len(expression[1:]):
                 raise ParsingError(f"Wrong number of arguments for function in {expression}")
@@ -657,36 +799,122 @@ class DomainLanguage:
             )
 
     def _get_function_transitions(
-        self, expression: Union[str, List], expected_type: PredicateType
-    ) -> Tuple[List[str], PredicateType, List[PredicateType]]:
+        self, expression: Sequence, expected_type: PredicateType
+    ) -> Tuple[List[str], PredicateType, Sequence[PredicateType]]:
         """
         A helper method for ``_get_transitions``.  This gets the transitions for the predicate
         itself in a function call.  If we only had simple functions (e.g., "(add 2 3)"), this would
         be pretty straightforward and we wouldn't need a separate method to handle it.  We split it
-        out into its own method because handling higher-order functions is complicated (e.g.,
-        something like "((negate add) 2 3)").
+        out into its own method because handling higher-order functions and currying is complicated
+        (e.g., something like "((negate add) 2 3)" or "((multiply 3) 2)").
         """
+        function_expression = expression[0]
         # This first block handles getting the transitions and function type (and some error
         # checking) _just for the function itself_.  If this is a simple function, this is easy; if
         # it's a higher-order function, it involves some recursion.
-        if isinstance(expression, list):
+        if isinstance(function_expression, list):
             # This is a higher-order function.  TODO(mattg): we'll just ignore type checking on
             # higher-order functions, for now.
-            transitions, function_type = self._get_transitions(expression, None)
-        elif expression in self._functions:
-            name = expression
-            function_types = self._function_types[expression]
+            # Some annoying redirection here to make mypy happy; need to specify the type of
+            # function_type.
+            result = self._get_transitions(function_expression, None)
+            transitions = result[0]
+            function_type: FunctionType = result[1]  # type: ignore
+        elif function_expression in self._functions:
+            name = function_expression
+            function_types = self._function_types[function_expression]
             if len(function_types) != 1:
                 raise ParsingError(
-                    f"{expression} had multiple types; this is not yet supported for functions"
+                    f"{function_expression} had multiple types; this is not yet supported for functions"
                 )
-            function_type = function_types[0]
+            function_type = function_types[0]  # type: ignore
+
             transitions = [f"{function_type} -> {name}"]
-        else:
-            if isinstance(expression, str):
-                raise ParsingError(f"Unrecognized function: {expression[0]}")
+            if (
+                self._allow_currying
+                # This check means we're missing an argument to the function.
+                and len(expression) > 1
+                and len(function_type.argument_types) - 1 == len(expression) - 1
+            ):
+                # If we're currying this function, we need to add a transition that encodes the
+                # currying, and change the function_type accordingly.
+                arguments = [self._execute_expression(e) for e in expression[1:]]
+                function = self._functions[function_expression]
+                curried_function = self._get_curried_function(function, arguments)
+
+                # Here we get the FunctionType corresponding to the new, curried function.
+                signature = inspect.signature(curried_function)
+                return_type = PredicateType.get_type(signature.return_annotation)
+                uncurried_arg_type = PredicateType.get_type(
+                    list(signature.parameters.values())[0].annotation
+                )
+                curried_function_type = PredicateType.get_function_type(
+                    [uncurried_arg_type], return_type
+                )
+
+                # To fit in with the logic below, we need to basically make a fake `curry`
+                # FunctionType, with the arguments being the function we're currying and all of the
+                # curried arguments, and the return type being the one-argument function.  Then we
+                # can re-use all of the existing logic without modification.
+                curried_arg_types = list(reversed([t for t in function_type.argument_types]))
+                curried_arg_types.remove(uncurried_arg_type)
+                curried_arg_types.reverse()
+                right_side = (
+                    f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+                )
+                curry_transition = f"{curried_function_type} -> {right_side}"
+                transitions.insert(0, curry_transition)
+                return transitions, curried_function_type, curried_arg_types
+        elif self._allow_composition and function_expression == "*":
+            outer_function_expression = expression[1]
+            if not isinstance(outer_function_expression, list):
+                outer_function_expression = [outer_function_expression]
+            inner_function_expression = expression[2]
+            if not isinstance(inner_function_expression, list):
+                inner_function_expression = [inner_function_expression]
+
+            # This is unfortunately a bit complex.  What we really what is the _type_ of these
+            # expressions.  We don't have a function that will give us that.  Instead, we have a
+            # function that will give us return types and argument types.  If we have a bare
+            # function name, like "sum", this works fine.  But if it's a higher-order function
+            # (including a curried function), then the return types and argument types from
+            # _get_function_transitions aren't what we're looking for here, because that function is
+            # designed for something else.  We need to hack our way around that a bit, by grabbing
+            # the return type from the inner return type (confusing, I know).
+            _, outer_return_type, outer_arg_types = self._get_function_transitions(
+                outer_function_expression, None
+            )
+            if isinstance(expression[1], list):
+                outer_function_type: FunctionType = outer_return_type  # type: ignore
             else:
-                raise ParsingError(f"Unsupported expression type: {expression}")
+                outer_function_type = PredicateType.get_function_type(  # type: ignore
+                    outer_arg_types, outer_return_type
+                )
+
+            _, inner_return_type, inner_arg_types = self._get_function_transitions(
+                inner_function_expression, None
+            )
+            if isinstance(expression[2], list):
+                inner_function_type: FunctionType = inner_return_type  # type: ignore
+            else:
+                inner_function_type = PredicateType.get_function_type(  # type: ignore
+                    inner_arg_types, inner_return_type
+                )
+
+            composition_argument_types = [outer_function_type, inner_function_type]
+            composition_type = PredicateType.get_function_type(
+                inner_function_type.argument_types, outer_function_type.return_type
+            )
+            right_side = f'[*, {", ".join(str(arg) for arg in composition_argument_types)}]'
+            composition_transition = f"{composition_type} -> {right_side}"
+            return [composition_transition], composition_type, composition_argument_types
+
+        else:
+            if isinstance(function_expression, str):
+                raise ParsingError(f"Unrecognized function: {function_expression[0]}")
+            else:
+                raise ParsingError(f"Unsupported function_expression type: {function_expression}")
+
         if not isinstance(function_type, FunctionType):
             raise ParsingError(f"Zero-arg function or constant called with arguments: {name}")
 
@@ -699,7 +927,8 @@ class DomainLanguage:
         transitions.insert(0, first_transition)
         if expected_type and expected_type != return_type:
             raise ParsingError(
-                f"{expression} did not have expected type {expected_type} " f"(found {return_type})"
+                f"{function_expression} did not have expected type {expected_type} "
+                f"(found {return_type})"
             )
         return transitions, return_type, argument_types
 
@@ -737,6 +966,11 @@ class DomainLanguage:
                 # For now, we assume that all children in a list like this are non-terminals, so we
                 # recurse on them.  I'm pretty sure that will always be true for the way our
                 # grammar induction works.  We can revisit this later if we need to.
+                if self._allow_composition and child_type == "*":
+                    # One exception to the comment above is when we are doing function composition.
+                    # The function composition operator * does not have a corresponding action, so
+                    # the recursion on constructing that node doesn't work.
+                    continue
                 remaining_actions = self._construct_node_from_actions(child_node, remaining_actions)
         else:
             # The current node is a pre-terminal; we'll add a single terminal child.  By
@@ -746,6 +980,44 @@ class DomainLanguage:
                 Tree(right_side, [])
             )  # you add a child to an nltk.Tree with `append`
         return remaining_actions
+
+    def _get_curried_function(self, function: Callable, arguments: List[Any]) -> Optional[Callable]:
+        signature = inspect.signature(function)
+        parameters = signature.parameters
+        if len(parameters) != len(arguments) + 1:
+            # We only allow currying that makes a function into a one-argument function.  This is to
+            # simplify both the complexity of the `DomainLanguage` code and the complexity of
+            # whatever model might use the resulting grammar.  For all currently-envisioned uses of
+            # currying, we only need to make one-argument functions.  These are predominantly for
+            # replacing lambda functions in argmaxes and the like.
+            return None
+        # Now we have to decide where the missing argument goes in the list of arguments.  We will
+        # look at types to figure that out, and arbitrarily say that if there are multiple matching
+        # types, the missing one comes last.
+        missing_arg_index = 0
+        parameter_types = list(parameters.values())
+        for parameter in parameter_types:
+            argument = arguments[missing_arg_index]
+            if isinstance(argument, (list, set)):
+                arg_type = infer_collection_type(argument)
+            else:
+                arg_type = type(argument)
+            if parameter.annotation == arg_type:
+                missing_arg_index += 1
+                if missing_arg_index == len(parameters) - 1:
+                    break
+            else:
+                break
+
+        arg_type = parameter_types[missing_arg_index].annotation
+
+        # Pretty cool that you can give runtime types to a function defined at runtime, but mypy has
+        # no idea what to do with this.
+        def curried_function(x: arg_type) -> signature.return_annotation:  # type: ignore
+            new_arguments = arguments[:missing_arg_index] + [x] + arguments[missing_arg_index:]
+            return function(*new_arguments)
+
+        return curried_function
 
     def __len__(self):
         # This method exists just to make it easier to use this in a MetadataField.  Kind of
