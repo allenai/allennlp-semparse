@@ -335,20 +335,14 @@ class TestNlvrLanguage(SemparseTestCase):
 
         # Logical-form
         # '(box_count_equals 2 ((* ((* (box_filter object_exists) box_filter) object_exists) box_filter) all_boxes (* object_exists yellow)))'
-
-        failed = False
-        try:
-            language.execute_action_sequence(action_sequence=action_sequence)
-        except:
-            failed = True
-
-        assert failed is False
+        result = language.execute_action_sequence(action_sequence=action_sequence)
+        assert result is False
 
         action_sequence = [
             "@start@ -> bool",
             "bool -> [<int,Set[Box]:bool>, int, Set[Box]]",
             "<int,Set[Box]:bool> -> box_count_equals",
-            "int -> 2",
+            "int -> 1",
             "Set[Box] -> [<Set[Box],<Set[Object]:bool>:Set[Box]>, Set[Box], <Set[Object]:bool>]",
             "<Set[Box],<Set[Object]:bool>:Set[Box]> -> [*, <Set[Box]:Set[Box]>, <Set[Box],<Set[Object]:bool>:Set[Box]>]",
             "<Set[Box]:Set[Box]> -> [<Set[Box],<Set[Object]:bool>:Set[Box]>, <Set[Object]:bool>]",
@@ -365,15 +359,10 @@ class TestNlvrLanguage(SemparseTestCase):
             "<Set[Object]:Set[Object]> -> black",
         ]
         # logical-form
-        # '(box_count_equals 2 ((* ((* (box_filter object_exists) box_filter) object_exists) box_filter) all_boxes (* object_exists black)))'
+        # '(box_count_equals 1 ((* ((* (box_filter object_exists) box_filter) object_exists) box_filter) all_boxes (* object_exists black)))'
 
-        failed = False
-        try:
-            language.execute_action_sequence(action_sequence=action_sequence)
-        except:
-            failed = True
-
-        assert failed is False
+        result = language.execute_action_sequence(action_sequence=action_sequence)
+        assert result is True
 
     def test_get_agenda_for_sentence(self):
         language = self.languages[0]
