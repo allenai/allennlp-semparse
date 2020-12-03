@@ -229,10 +229,14 @@ class TestDomainLanguage(SemparseTestCase):
             "int -> 2",
             "int -> 7",
         ]
-        generated_logical_form = self.curried_language.action_sequence_to_logical_form(action_sequence)
+        generated_logical_form = self.curried_language.action_sequence_to_logical_form(
+            action_sequence
+        )
         assert generated_logical_form == logical_form
 
-        generated_action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
+        generated_action_sequence = self.curried_language.logical_form_to_action_sequence(
+            logical_form
+        )
         assert generated_action_sequence == action_sequence
 
         assert self.curried_language.execute(logical_form) == 10
