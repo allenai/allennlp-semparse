@@ -732,22 +732,47 @@ class DomainLanguage:
                 # In this case, both arguments should be functions, and we want to compose them, by
                 # calling the second argument first, and passing the result to the first argument.
                 def composed_function(*args):
-                    return arguments[0](arguments[1](*args))
+                    function_argument, is_curried = self._execute_function(arguments[1], list(args))
+                    if is_curried:
+                        # If the inner function ended up curried, we have to curry the outer
+                        # function too.
+                        return_type = inspect.signature(arguments[0]).return_annotation
+                        inner_signature = inspect.signature(function_argument)
+                        arg_type = list(inner_signature.parameters.values())[0].annotation
+
+                        # Pretty cool that you can give runtime types to a function defined at
+                        # runtime, but mypy has no idea what to do with this.
+                        def curried_function(x: arg_type) -> return_type:  # type: ignore
+                            return arguments[0](function_argument(x))
+                        function_value = curried_function
+                    else:
+                        function_value, _ = self._execute_function(arguments[0], [function_argument])
+                    return function_value
 
                 return composed_function, remaining_actions, remaining_side_args
-            try:
-                function_value = function(*arguments)
-            except TypeError:
-                if not self._allow_currying:
-                    raise
-                # If we got here, then maybe the error is because this should be a curried
-                # function.  We'll check for that and return the curried function if possible.
-                curried_function = self._get_curried_function(function, arguments)
-                if curried_function:
-                    function_value = curried_function
-                else:
-                    raise
+            function_value, _ = self._execute_function(function, arguments)
             return function_value, remaining_actions, remaining_side_args
+
+    def _execute_function(self, function: Callable, arguments: List[Any]) -> Any:
+        """
+        Calls `function` with the given `arguments`, allowing for the possibility of currying the
+        `function`.
+        """
+        is_curried = False
+        try:
+            function_value = function(*arguments)
+        except TypeError:
+            if not self._allow_currying:
+                raise
+            # If we got here, then maybe the error is because this should be a curried
+            # function.  We'll check for that and return the curried function if possible.
+            curried_function = self._get_curried_function(function, arguments)
+            if curried_function:
+                function_value = curried_function
+                is_curried = True
+            else:
+                raise
+        return function_value, is_curried
 
     def _get_transitions(
         self, expression: Any, expected_type: PredicateType
