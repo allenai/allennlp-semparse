@@ -286,10 +286,16 @@ class DomainLanguage:
     tricky from a modeling perspective.  All of the actual terminal productions in this version
     should have a reasonably strong correspondence with the words in the input utterance.
 
-    In order to perform type inference on curried functions (to know which argument is being
-    ommitted), we currently rely on `executing` the subexpressions.  This should be ok for simple,
-    determinstic languages, but this is very much not recommended for things like NMNs at this
-    point.  We'd need to implement smarter type inference for that to work.
+    Two important notes on currying and composition: first, in order to perform type inference on
+    curried functions (to know which argument is being ommitted), we currently rely on `executing`
+    the subexpressions.  This should be ok for simple, determinstic languages, but this is very much
+    not recommended for things like NMNs at this point.  We'd need to implement smarter type
+    inference for that to work.  Second, the grammar induction that we do for currying and
+    composition is very permissive and quite likely overgenerates productions.  If you use this, you
+    probably should double check all productions that were induced and make sure you really want
+    them in your grammar, manually removing any that you don't want in your subclass after the
+    grammar induction step (i.e., in your constructor, after calling `super().__init__()` and
+    `self.get_nonterminal_productions()`, modify `self._nonterminal_productions` directly).
 
     We have rudimentary support for class hierarchies in the types that you provide.  This is done
     through adding constants multiple times with different types.  For example, say you have a
@@ -609,11 +615,7 @@ class DomainLanguage:
             arguments = [self._execute_expression(arg) for arg in expression[1:]]
             try:
                 if self._allow_composition and function == "*":
-
-                    def composed_function(*args):
-                        return arguments[0](arguments[1](*args))
-
-                    return composed_function
+                    return self._create_composed_function(arguments[0], arguments[1])
                 return function(*arguments)
             except (TypeError, ValueError):
                 if self._allow_currying:
@@ -732,22 +734,50 @@ class DomainLanguage:
                 # In this case, both arguments should be functions, and we want to compose them, by
                 # calling the second argument first, and passing the result to the first argument.
                 def composed_function(*args):
-                    return arguments[0](arguments[1](*args))
+                    function_argument, is_curried = self._execute_function(arguments[1], list(args))
+                    if is_curried:
+                        # If the inner function ended up curried, we have to curry the outer
+                        # function too.
+                        return_type = inspect.signature(arguments[0]).return_annotation
+                        inner_signature = inspect.signature(function_argument)
+                        arg_type = list(inner_signature.parameters.values())[0].annotation
+
+                        # Pretty cool that you can give runtime types to a function defined at
+                        # runtime, but mypy has no idea what to do with this.
+                        def curried_function(x: arg_type) -> return_type:  # type: ignore
+                            return arguments[0](function_argument(x))
+
+                        function_value = curried_function
+                    else:
+                        function_value, _ = self._execute_function(
+                            arguments[0], [function_argument]
+                        )
+                    return function_value
 
                 return composed_function, remaining_actions, remaining_side_args
-            try:
-                function_value = function(*arguments)
-            except TypeError:
-                if not self._allow_currying:
-                    raise
-                # If we got here, then maybe the error is because this should be a curried
-                # function.  We'll check for that and return the curried function if possible.
-                curried_function = self._get_curried_function(function, arguments)
-                if curried_function:
-                    function_value = curried_function
-                else:
-                    raise
+            function_value, _ = self._execute_function(function, arguments)
             return function_value, remaining_actions, remaining_side_args
+
+    def _execute_function(self, function: Callable, arguments: List[Any]) -> Any:
+        """
+        Calls `function` with the given `arguments`, allowing for the possibility of currying the
+        `function`.
+        """
+        is_curried = False
+        try:
+            function_value = function(*arguments)
+        except TypeError:
+            if not self._allow_currying:
+                raise
+            # If we got here, then maybe the error is because this should be a curried
+            # function.  We'll check for that and return the curried function if possible.
+            curried_function = self._get_curried_function(function, arguments)
+            if curried_function:
+                function_value = curried_function
+                is_curried = True
+            else:
+                raise
+        return function_value, is_curried
 
     def _get_transitions(
         self, expression: Any, expected_type: PredicateType
@@ -820,6 +850,13 @@ class DomainLanguage:
             result = self._get_transitions(function_expression, None)
             transitions = result[0]
             function_type: FunctionType = result[1]  # type: ignore
+            # This is a bit of an unfortunate hack. In order to handle currying, we currently rely
+            # on executing the function, for which we need actual function code (see the class
+            # docstring).  I want to avoid executing the function prematurely, though, so this still
+            # works in cases where you don't need to handle currying higher-order functions.  So,
+            # we'll leave this as `None` and handle it below, if indeed you are currying this
+            # function.
+            function = None
         elif function_expression in self._functions:
             name = function_expression
             function_types = self._function_types[function_expression]
@@ -830,41 +867,8 @@ class DomainLanguage:
             function_type = function_types[0]  # type: ignore
 
             transitions = [f"{function_type} -> {name}"]
-            if (
-                self._allow_currying
-                # This check means we're missing an argument to the function.
-                and len(expression) > 1
-                and len(function_type.argument_types) - 1 == len(expression) - 1
-            ):
-                # If we're currying this function, we need to add a transition that encodes the
-                # currying, and change the function_type accordingly.
-                arguments = [self._execute_expression(e) for e in expression[1:]]
-                function = self._functions[function_expression]
-                curried_function = self._get_curried_function(function, arguments)
+            function = self._functions[function_expression]
 
-                # Here we get the FunctionType corresponding to the new, curried function.
-                signature = inspect.signature(curried_function)
-                return_type = PredicateType.get_type(signature.return_annotation)
-                uncurried_arg_type = PredicateType.get_type(
-                    list(signature.parameters.values())[0].annotation
-                )
-                curried_function_type = PredicateType.get_function_type(
-                    [uncurried_arg_type], return_type
-                )
-
-                # To fit in with the logic below, we need to basically make a fake `curry`
-                # FunctionType, with the arguments being the function we're currying and all of the
-                # curried arguments, and the return type being the one-argument function.  Then we
-                # can re-use all of the existing logic without modification.
-                curried_arg_types = list(reversed([t for t in function_type.argument_types]))
-                curried_arg_types.remove(uncurried_arg_type)
-                curried_arg_types.reverse()
-                right_side = (
-                    f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
-                )
-                curry_transition = f"{curried_function_type} -> {right_side}"
-                transitions.insert(0, curry_transition)
-                return transitions, curried_function_type, curried_arg_types
         elif self._allow_composition and function_expression == "*":
             outer_function_expression = expression[1]
             if not isinstance(outer_function_expression, list):
@@ -919,7 +923,43 @@ class DomainLanguage:
             raise ParsingError(f"Zero-arg function or constant called with arguments: {name}")
 
         # Now that we have the transitions for the function itself, and the function's type, we can
-        # get argument types and do the rest of the transitions.
+        # get argument types and do the rest of the transitions.  The first thing we need to do is
+        # check if we need to curry this function, because we're missing an argument.
+        if (
+            self._allow_currying
+            # This check means we're missing an argument to the function.
+            and len(expression) > 1
+            and len(function_type.argument_types) - 1 == len(expression) - 1
+        ):
+            # If we're currying this function, we need to add a transition that encodes the
+            # currying, and change the function_type accordingly.
+            arguments = [self._execute_expression(e) for e in expression[1:]]
+            if function is None:
+                function = self._execute_expression(function_expression)
+            curried_function = self._get_curried_function(function, arguments)
+
+            # Here we get the FunctionType corresponding to the new, curried function.
+            signature = inspect.signature(curried_function)
+            return_type = PredicateType.get_type(signature.return_annotation)
+            uncurried_arg_type = PredicateType.get_type(
+                list(signature.parameters.values())[0].annotation
+            )
+            curried_function_type = PredicateType.get_function_type(
+                [uncurried_arg_type], return_type
+            )
+
+            # To fit in with the logic below, we need to basically make a fake `curry`
+            # FunctionType, with the arguments being the function we're currying and all of the
+            # curried arguments, and the return type being the one-argument function.  Then we
+            # can re-use all of the existing logic without modification.
+            curried_arg_types = list(reversed([t for t in function_type.argument_types]))
+            curried_arg_types.remove(uncurried_arg_type)
+            curried_arg_types.reverse()
+            right_side = f'[{function_type}, {", ".join(str(arg) for arg in curried_arg_types)}]'
+            curry_transition = f"{curried_function_type} -> {right_side}"
+            transitions.insert(0, curry_transition)
+            return transitions, curried_function_type, curried_arg_types
+
         argument_types = function_type.argument_types
         return_type = function_type.return_type
         right_side = f'[{function_type}, {", ".join(str(arg) for arg in argument_types)}]'
@@ -1018,6 +1058,63 @@ class DomainLanguage:
             return function(*new_arguments)
 
         return curried_function
+
+    def _create_composed_function(
+        self, outer_function: Callable, inner_function: Callable
+    ) -> Callable:
+        """
+        Creating a composed function is easy; just do a `def` and call the functions in order.  This
+        function exists because we need the composed function to have _correct type annotations_,
+        which is harder.  We can't use `*args` for the lambda function that we construct, so we need
+        to switch on how many arguments the inner function takes, and create functions with the
+        right argument type annotations.
+
+        And, as in other places where we assign types at runtime, mypy has no idea what's going on,
+        so we tell it to ignore this code.  `inspect` will do the right thing, even if mypy can't
+        analyze it.
+        """
+        inner_signature = inspect.signature(inner_function)
+        outer_signature = inspect.signature(outer_function)
+        argument_types = [arg.annotation for arg in inner_signature.parameters.values()]
+        return_type = outer_signature.return_annotation
+
+        if len(argument_types) == 1:
+
+            def composed_function(arg1: argument_types[0]) -> return_type:  # type: ignore
+                return outer_function(inner_function(arg1))
+
+        elif len(argument_types) == 2:
+
+            def composed_function(  # type: ignore
+                arg1: argument_types[0], arg2: argument_types[1]  # type:ignore
+            ) -> return_type:  # type: ignore
+                return outer_function(inner_function(arg1, arg2))
+
+        elif len(argument_types) == 3:
+
+            def composed_function(  # type:ignore
+                arg1: argument_types[0],  # type: ignore
+                arg2: argument_types[1],  # type: ignore
+                arg3: argument_types[2],  # type:ignore
+            ) -> return_type:  # type: ignore
+                return outer_function(inner_function(arg1, arg2, arg3))
+
+        elif len(argument_types) == 4:
+
+            def composed_function(  # type:ignore
+                arg1: argument_types[0],  # type:ignore
+                arg2: argument_types[1],  # type:ignore
+                arg3: argument_types[2],  # type:ignore
+                arg4: argument_types[3],  # type:ignore
+            ) -> return_type:  # type: ignore
+                return outer_function(inner_function(arg1, arg2, arg3, arg4))
+
+        else:
+            raise ValueError(
+                f"Inner function has a type signature that's not currently handled: {inner_function}"
+            )
+
+        return composed_function
 
     def __len__(self):
         # This method exists just to make it easier to use this in a MetadataField.  Kind of

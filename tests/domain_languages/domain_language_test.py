@@ -215,6 +215,33 @@ class TestDomainLanguage(SemparseTestCase):
         action_sequence = self.curried_language.logical_form_to_action_sequence(logical_form)
         assert self.curried_language.execute_action_sequence(action_sequence) == 10
 
+    def test_currying_composed_functions(self):
+        # Testing all of our operations (conversion and execution) for currying composed functions.
+        logical_form = "(((* sum list3) 1 2) 7)"
+        action_sequence = [
+            "@start@ -> int",
+            "int -> [<int:int>, int]",
+            "<int:int> -> [<int,int,int:int>, int, int]",
+            "<int,int,int:int> -> [*, <List[int]:int>, <int,int,int:List[int]>]",
+            "<List[int]:int> -> sum",
+            "<int,int,int:List[int]> -> list3",
+            "int -> 1",
+            "int -> 2",
+            "int -> 7",
+        ]
+        generated_logical_form = self.curried_language.action_sequence_to_logical_form(
+            action_sequence
+        )
+        assert generated_logical_form == logical_form
+
+        generated_action_sequence = self.curried_language.logical_form_to_action_sequence(
+            logical_form
+        )
+        assert generated_action_sequence == action_sequence
+
+        assert self.curried_language.execute(logical_form) == 10
+        assert self.curried_language.execute_action_sequence(action_sequence) == 10
+
     def test_get_nonterminal_productions(self):
         valid_actions = self.language.get_nonterminal_productions()
         assert set(valid_actions.keys()) == {
