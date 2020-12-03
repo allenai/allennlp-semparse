@@ -286,10 +286,16 @@ class DomainLanguage:
     tricky from a modeling perspective.  All of the actual terminal productions in this version
     should have a reasonably strong correspondence with the words in the input utterance.
 
-    In order to perform type inference on curried functions (to know which argument is being
-    ommitted), we currently rely on `executing` the subexpressions.  This should be ok for simple,
-    determinstic languages, but this is very much not recommended for things like NMNs at this
-    point.  We'd need to implement smarter type inference for that to work.
+    Two important notes on currying and composition: first, in order to perform type inference on
+    curried functions (to know which argument is being ommitted), we currently rely on `executing`
+    the subexpressions.  This should be ok for simple, determinstic languages, but this is very much
+    not recommended for things like NMNs at this point.  We'd need to implement smarter type
+    inference for that to work.  Second, the grammar induction that we do for currying and
+    composition is very permissive and quite likely overgenerates productions.  If you use this, you
+    probably should double check all productions that were induced and make sure you really want
+    them in your grammar, manually removing any that you don't want in your subclass after the
+    grammar induction step (i.e., in your constructor, after calling `super().__init__()` and
+    `self.get_nonterminal_productions()`, modify `self._nonterminal_productions` directly).
 
     We have rudimentary support for class hierarchies in the types that you provide.  This is done
     through adding constants multiple times with different types.  For example, say you have a
