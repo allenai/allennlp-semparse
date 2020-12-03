@@ -1079,26 +1079,28 @@ class DomainLanguage:
 
         elif len(argument_types) == 2:
 
-            def composed_function(
-                arg1: argument_types[0], arg2: argument_types[1]
-            ) -> return_type:  # type:ignore
+            def composed_function(  # type: ignore
+                arg1: argument_types[0], arg2: argument_types[1]  # type:ignore
+            ) -> return_type:  # type: ignore
                 return outer_function(inner_function(arg1, arg2))
 
         elif len(argument_types) == 3:
 
-            def composed_function(
-                arg1: argument_types[0], arg2: argument_types[1], arg3: argument_types[2]
-            ) -> return_type:  # type:ignore
+            def composed_function(  # type:ignore
+                arg1: argument_types[0],  # type: ignore
+                arg2: argument_types[1],  # type: ignore
+                arg3: argument_types[2],  # type:ignore
+            ) -> return_type:  # type: ignore
                 return outer_function(inner_function(arg1, arg2, arg3))
 
         elif len(argument_types) == 4:
 
-            def composed_function(
-                arg1: argument_types[0],
-                arg2: argument_types[1],
-                arg3: argument_types[2],
-                arg4: argument_types[3],
-            ) -> return_type:  # type:ignore
+            def composed_function(  # type:ignore
+                arg1: argument_types[0],  # type:ignore
+                arg2: argument_types[1],  # type:ignore
+                arg3: argument_types[2],  # type:ignore
+                arg4: argument_types[3],  # type:ignore
+            ) -> return_type:  # type: ignore
                 return outer_function(inner_function(arg1, arg2, arg3, arg4))
 
         else:
