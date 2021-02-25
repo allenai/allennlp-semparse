@@ -50,10 +50,12 @@
     "dropout": 0.5,
     "mml_model_file": "/mml_model/model.tar.gz"
   },
-  "iterator": {
-    "type": "bucket",
-    "padding_noise": 0.0,
-    "batch_size" : 10
+  "data_loader": {
+    "batch_sampler": {
+      "type": "bucket",
+      "padding_noise": 0.0,
+      "batch_size" : 10,
+    },
   },
   "trainer": {
     "num_epochs": 30,

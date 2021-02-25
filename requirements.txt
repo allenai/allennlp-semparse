@@ -1,4 +1,6 @@
-allennlp>=1.1,<2.0
+allennlp>=2.0,<3.0
+
+spacy<3.0
 
 # Used to create grammars for parsing SQL
 parsimonious>=0.8.0

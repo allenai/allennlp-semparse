@@ -130,9 +130,11 @@ class LinkingTransitionFunction(BasicTransitionFunction):
                 action_ids = embedded_actions + linked_actions
                 # linking_scores: (num_entities, num_question_tokens)
                 # linked_action_logits: (num_entities, 1)
-                linked_action_logits = linking_scores.mm(
-                    attention_weights[group_index].unsqueeze(-1)
-                ).squeeze(-1)
+                linked_action_logits = (
+                    linking_scores.float()
+                    .mm(attention_weights[group_index].unsqueeze(-1))
+                    .squeeze(-1)
+                )
 
                 # The `output_action_embeddings` tensor gets used later as the input to the next
                 # decoder step.  For linked actions, we don't have any action embedding, so we use

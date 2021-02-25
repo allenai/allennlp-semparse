@@ -4,10 +4,10 @@
 flake8
 
 # Static type checking
-mypy==0.782
+mypy==0.812
 
 # Automatic code formatting
-black
+black==20.8b1
 
 # Running unit tests.
 pytest

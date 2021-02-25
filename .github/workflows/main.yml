@@ -30,8 +30,7 @@ jobs:
     - name: Install requirements
       run: |
         pip install --upgrade pip setuptools wheel
-        pip install --upgrade --upgrade-strategy eager -r requirements.txt
-        pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt
+        pip install --upgrade -r requirements.txt -r dev-requirements.txt
 
     - name: Show pip freeze
       run: |
@@ -93,8 +92,7 @@ jobs:
     - name: Install requirements
       run: |
         pip install --upgrade pip setuptools wheel
-        pip install --upgrade --upgrade-strategy eager -r requirements.txt
-        pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt
+        pip install --upgrade -r requirements.txt -r dev-requirements.txt
 
     - name: Check version and release tag match
       if: github.event_name == 'release'

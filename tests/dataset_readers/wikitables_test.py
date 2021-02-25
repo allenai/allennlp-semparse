@@ -85,7 +85,6 @@ class TestWikiTablesDatasetReader(SemparseTestCase):
             self.FIXTURES_ROOT / "data" / "wikitables" / "action_space_walker_output"
         )
         params = {
-            "lazy": False,
             "tables_directory": self.FIXTURES_ROOT / "data" / "wikitables",
             "offline_logical_forms_directory": offline_search_directory,
         }
@@ -101,7 +100,6 @@ class TestWikiTablesDatasetReader(SemparseTestCase):
             / "action_space_walker_output_with_single_tarball"
         )
         params = {
-            "lazy": False,
             "tables_directory": self.FIXTURES_ROOT / "data" / "wikitables",
             "offline_logical_forms_directory": offline_search_directory,
         }

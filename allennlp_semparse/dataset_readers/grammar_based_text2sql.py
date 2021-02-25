@@ -68,9 +68,9 @@ class GrammarBasedText2SqlDatasetReader(DatasetReader):
         token_indexers: Dict[str, TokenIndexer] = None,
         cross_validation_split_to_exclude: int = None,
         keep_if_unparseable: bool = True,
-        lazy: bool = False,
+        **kwargs,
     ) -> None:
-        super().__init__(lazy)
+        super().__init__(**kwargs)
         self._token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
         self._use_all_sql = use_all_sql
         self._remove_unneeded_aliases = remove_unneeded_aliases
