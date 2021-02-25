@@ -587,7 +587,7 @@ class WikiTablesLanguage(DomainLanguage):
         if not value_row_pairs:
             return []
         # Returns a list containing the row with the max cell value.
-        return [sorted(value_row_pairs, key=lambda x: x[0], reverse=True)[0][1]]
+        return [sorted(value_row_pairs, key=lambda x: x[0], reverse=True)[0][1]]  # type: ignore
 
     def argmin(self, rows: List[Row], column: ComparableColumn) -> List[Row]:
         """
@@ -604,7 +604,7 @@ class WikiTablesLanguage(DomainLanguage):
         if not value_row_pairs:
             return []
         # Returns a list containing the row with the max cell value.
-        return [sorted(value_row_pairs, key=lambda x: x[0])[0][1]]
+        return [sorted(value_row_pairs, key=lambda x: x[0])[0][1]]  # type: ignore
 
     # These six methods take a list of rows, a column, and a numerical value and return all the
     # rows where the value in that column is [comparator] than the given value.  They only get

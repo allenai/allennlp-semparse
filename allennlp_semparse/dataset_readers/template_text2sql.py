@@ -45,9 +45,9 @@ class TemplateText2SqlDatasetReader(DatasetReader):
         use_all_sql: bool = False,
         token_indexers: Dict[str, TokenIndexer] = None,
         cross_validation_split_to_exclude: int = None,
-        lazy: bool = False,
+        **kwargs,
     ) -> None:
-        super().__init__(lazy)
+        super().__init__(**kwargs)
         self._token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
         self._use_all_sql = use_all_sql
         self._cross_validation_split_to_exclude = str(cross_validation_split_to_exclude)

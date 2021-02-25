@@ -55,9 +55,8 @@
     },
     "dropout": 0.5
   },
-  "iterator": {
-    "type": "basic",
-    "batch_size" : 1
+  "data_loader": {
+    "batch_size": 1,
   },
   "trainer": {
     "num_epochs": 100,

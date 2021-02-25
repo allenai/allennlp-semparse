@@ -78,9 +78,6 @@ class WikiTablesDatasetReader(DatasetReader):
 
     Parameters
     ----------
-    lazy : ``bool`` (optional, default=False)
-        Passed to ``DatasetReader``.  If this is ``True``, training will start sooner, but will
-        take longer per batch.
     tables_directory : ``str``, optional
         Prefix for the path to the directory in which the tables reside. For example,
         ``*.examples`` files contain paths like ``csv/204-csv/590.csv``, and we will use the corresponding
@@ -124,7 +121,6 @@ class WikiTablesDatasetReader(DatasetReader):
 
     def __init__(
         self,
-        lazy: bool = False,
         tables_directory: str = None,
         offline_logical_forms_directory: str = None,
         max_offline_logical_forms: int = 10,
@@ -135,8 +131,9 @@ class WikiTablesDatasetReader(DatasetReader):
         use_table_for_vocab: bool = False,
         max_table_tokens: int = None,
         output_agendas: bool = False,
+        **kwargs,
     ) -> None:
-        super().__init__(lazy=lazy)
+        super().__init__(**kwargs)
         self._tables_directory = tables_directory
         self._offline_logical_forms_directory = offline_logical_forms_directory
         self._max_offline_logical_forms = max_offline_logical_forms

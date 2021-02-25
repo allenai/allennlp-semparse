@@ -60,9 +60,6 @@ class NlvrDatasetReader(DatasetReader):
 
     Parameters
     ----------
-    lazy : ``bool`` (optional, default=False)
-        Passed to ``DatasetReader``.  If this is ``True``, training will start sooner, but will
-        take longer per batch.
     tokenizer : ``Tokenizer`` (optional)
         The tokenizer used for sentences in NLVR. Default is ``SpacyTokenizer``
     sentence_token_indexers : ``Dict[str, TokenIndexer]`` (optional)
@@ -83,14 +80,14 @@ class NlvrDatasetReader(DatasetReader):
 
     def __init__(
         self,
-        lazy: bool = False,
         tokenizer: Tokenizer = None,
         sentence_token_indexers: Dict[str, TokenIndexer] = None,
         nonterminal_indexers: Dict[str, TokenIndexer] = None,
         terminal_indexers: Dict[str, TokenIndexer] = None,
         output_agendas: bool = True,
+        **kwargs,
     ) -> None:
-        super().__init__(lazy)
+        super().__init__(**kwargs)
         self._tokenizer = tokenizer or SpacyTokenizer()
         self._sentence_token_indexers = sentence_token_indexers or {
             "tokens": SingleIdTokenIndexer()

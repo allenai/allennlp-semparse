@@ -59,9 +59,6 @@ class AtisDatasetReader(DatasetReader):
     ----------
     token_indexers : ``Dict[str, TokenIndexer]``, optional
         Token indexers for the utterances. Will default to ``{"tokens": SingleIdTokenIndexer()}``.
-    lazy : ``bool`` (optional, default=False)
-        Passed to ``DatasetReader``.  If this is ``True``, training will start sooner, but will
-        take longer per batch.
     tokenizer : ``Tokenizer``, optional
         Tokenizer to use for the utterances. Will default to ``SpacyTokenizer()`` with Spacy's tagger
         enabled.
@@ -76,12 +73,12 @@ class AtisDatasetReader(DatasetReader):
         self,
         token_indexers: Dict[str, TokenIndexer] = None,
         keep_if_unparseable: bool = False,
-        lazy: bool = False,
         tokenizer: Tokenizer = None,
         database_file: str = None,
         num_turns_to_concatenate: int = 1,
+        **kwargs,
     ) -> None:
-        super().__init__(lazy)
+        super().__init__(**kwargs)
         self._keep_if_unparseable = keep_if_unparseable
         self._token_indexers = token_indexers or {"tokens": SingleIdTokenIndexer()}
         self._tokenizer = tokenizer or SpacyTokenizer()
