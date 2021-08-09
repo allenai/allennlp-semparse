@@ -86,5 +86,5 @@ class SqlExecutor:
         # We strip off the parentheses that surround the entire query here.
         query = query.strip()
         if query.startswith("("):
-            return query[1 : query.rfind(")")] + ";"
+            return query[1: query.rfind(")")] + ";"
         return query
