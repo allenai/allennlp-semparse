@@ -36,11 +36,11 @@ class SqlExecutor:
         process.start()
 
         # If the query has not finished in 3 seconds then we will proceed.
-        process.join(3)
+        process.join(10)
         denotation_correct = process.exitcode  # type: ignore
 
         if process.is_alive():
-            logger.warning("Evaluating query took over 3 seconds, skipping query")
+            logger.warning("Evaluating query took over 10 seconds, skipping query")
             process.terminate()
             process.join()
 
