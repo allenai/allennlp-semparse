@@ -30,7 +30,7 @@ class SqlExecutor:
         # takes too long.
         process = Process(
             target=self._evaluate_sql_query_subprocess,
-            args=(self._database_file, predicted_sql_query, sql_query_labels)
+            args=(self._database_file, predicted_sql_query, sql_query_labels),
         )
         process.start()
 
@@ -89,5 +89,5 @@ class SqlExecutor:
         # We strip off the parentheses that surround the entire query here.
         query = query.strip()
         if query.startswith("("):
-            return query[1: query.rfind(")")] + ";"
+            return query[1 : query.rfind(")")] + ";"
         return query
