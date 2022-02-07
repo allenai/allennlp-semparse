@@ -1,12 +1,10 @@
 import logging
-from typing import Any, List, Dict
-
+from typing import Any, Dict, List
 
 import torch
-
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models.model import Model
-from allennlp.modules import Attention, TextFieldEmbedder, Seq2SeqEncoder
+from allennlp.modules import Attention, Seq2SeqEncoder, TextFieldEmbedder
 from allennlp.nn import Activation, util
 
 from allennlp_semparse.domain_languages import NlvrLanguage
@@ -81,8 +79,8 @@ class NlvrDirectSemanticParser(NlvrSemanticParser):
         self._max_decoding_steps = max_decoding_steps
         self._action_padding_index = -1
 
-    def forward(
-        self,  # type: ignore
+    def forward(  # type: ignore
+        self,
         sentence: Dict[str, torch.LongTensor],
         worlds: List[List[NlvrLanguage]],
         actions: List[List[ProductionRule]],

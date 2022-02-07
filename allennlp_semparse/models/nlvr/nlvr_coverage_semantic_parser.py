@@ -1,22 +1,20 @@
 import logging
 import os
 from functools import partial
-from typing import Any, Callable, List, Dict, Tuple, Union
-
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 import torch
-
 from allennlp.data.vocabulary import Vocabulary
-from allennlp.models.archival import load_archive, Archive
+from allennlp.models.archival import Archive, load_archive
 from allennlp.models.model import Model
-from allennlp.modules import Attention, TextFieldEmbedder, Seq2SeqEncoder
+from allennlp.modules import Attention, Seq2SeqEncoder, TextFieldEmbedder
 from allennlp.nn import Activation
 from allennlp.training.metrics import Average
 
 from allennlp_semparse.domain_languages import NlvrLanguage
 from allennlp_semparse.fields.production_rule_field import ProductionRule
 from allennlp_semparse.models.nlvr.nlvr_semantic_parser import NlvrSemanticParser
-from allennlp_semparse.state_machines.states import CoverageState, ChecklistStatelet
+from allennlp_semparse.state_machines.states import ChecklistStatelet, CoverageState
 from allennlp_semparse.state_machines.trainers import DecoderTrainer, ExpectedRiskMinimization
 from allennlp_semparse.state_machines.transition_functions import CoverageTransitionFunction
 
@@ -197,8 +195,8 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
                 vocab_index_mapping.append((index, archived_token_index))
         return vocab_index_mapping
 
-    def forward(
-        self,  # type: ignore
+    def forward(  # type: ignore
+        self,
         sentence: Dict[str, torch.LongTensor],
         worlds: List[List[NlvrLanguage]],
         actions: List[List[ProductionRule]],
