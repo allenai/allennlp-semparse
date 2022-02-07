@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
-from overrides import overrides
 
 import torch
 from torch.nn import Parameter
@@ -61,7 +60,6 @@ class CoverageTransitionFunction(BasicTransitionFunction):
         # See the class docstring for a description of what this does.
         self._checklist_multiplier = Parameter(torch.FloatTensor([1.0]))
 
-    @overrides
     def _compute_action_probabilities(  # type: ignore
         self,
         state: CoverageState,

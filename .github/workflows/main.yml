@@ -10,6 +10,9 @@ on:
   release:
     types: [published]
 
+env:
+  CACHE_PREFIX: "v0"
+
 jobs:
   checks:
     name: Checks
@@ -20,17 +23,17 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: 3.7
 
     - uses: actions/cache@v2
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        key: ${{ env.CACHE_PREFIX }}-${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
 
     - name: Install requirements
       run: |
         pip install --upgrade pip setuptools wheel
-        pip install --upgrade -r requirements.txt -r dev-requirements.txt
+        pip install -r requirements.txt -r dev-requirements.txt
 
     - name: Show pip freeze
       run: |
@@ -87,7 +90,7 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
+        key: ${{ env.CACHE_PREFIX }}-${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('dev-requirements.txt') }}
 
     - name: Install requirements
       run: |

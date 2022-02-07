@@ -4,7 +4,6 @@ import json
 import glob
 import os
 
-from overrides import overrides
 
 from allennlp.common.file_utils import cached_path
 from allennlp.data import DatasetReader
@@ -52,7 +51,6 @@ class TemplateText2SqlDatasetReader(DatasetReader):
         self._use_all_sql = use_all_sql
         self._cross_validation_split_to_exclude = str(cross_validation_split_to_exclude)
 
-    @overrides
     def _read(self, file_path: str):
         """
         This dataset reader consumes the data from
@@ -81,7 +79,6 @@ class TemplateText2SqlDatasetReader(DatasetReader):
                 template = " ".join(sql_data.sql)
                 yield self.text_to_instance(sql_data.text, sql_data.variable_tags, template)
 
-    @overrides
     def text_to_instance(
         self,  # type: ignore
         query: List[str],

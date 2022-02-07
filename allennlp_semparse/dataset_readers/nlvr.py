@@ -2,7 +2,6 @@ from typing import Any, Dict, List
 import json
 import logging
 
-from overrides import overrides
 
 from allennlp.common.util import JsonDict
 from allennlp.data import DatasetReader
@@ -100,7 +99,6 @@ class NlvrDatasetReader(DatasetReader):
         }
         self._output_agendas = output_agendas
 
-    @overrides
     def _read(self, file_path: str):
         with open(file_path, "r") as data_file:
             logger.info("Reading instances from lines in file: %s", file_path)
@@ -136,7 +134,6 @@ class NlvrDatasetReader(DatasetReader):
                 if instance is not None:
                     yield instance
 
-    @overrides
     def text_to_instance(
         self,  # type: ignore
         sentence: str,
