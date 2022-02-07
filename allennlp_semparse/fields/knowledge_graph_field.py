@@ -4,7 +4,7 @@
 from typing import Callable, Dict, List, Set
 
 import editdistance
-from overrides import overrides
+
 import torch
 
 from allennlp.common import util
@@ -176,19 +176,16 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
         else:
             self.linking_features = linking_features
 
-    @overrides
     def count_vocab_items(self, counter: Dict[str, Dict[str, int]]):
         if self._include_in_vocab:
             self._entity_text_field.count_vocab_items(counter)
 
-    @overrides
     def index(self, vocab: Vocabulary):
         self._entity_text_field.index(vocab)
 
     def __len__(self) -> int:
         return len(self.utterance_tokens)
 
-    @overrides
     def get_padding_lengths(self) -> Dict[str, int]:
         padding_lengths = {
             "num_entities": len(self.entity_texts),
@@ -197,7 +194,6 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
         padding_lengths.update(self._entity_text_field.get_padding_lengths())
         return padding_lengths
 
-    @overrides
     def as_tensor(self, padding_lengths: Dict[str, int]) -> Dict[str, torch.Tensor]:
         text_tensors = self._entity_text_field.as_tensor(padding_lengths)
         padded_linking_features = util.pad_sequence_to_length(
@@ -234,11 +230,9 @@ class KnowledgeGraphField(Field[Dict[str, torch.Tensor]]):
             linking_features.append(entity_features)
         return linking_features
 
-    @overrides
     def empty_field(self) -> "KnowledgeGraphField":
         return KnowledgeGraphField(KnowledgeGraph(set(), {}), [], self._token_indexers)
 
-    @overrides
     def batch_tensors(self, tensor_list: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
         text_tensors = [tensor["text"] for tensor in tensor_list]
         batched_text = self._entity_text_field.batch_tensors(text_tensors)

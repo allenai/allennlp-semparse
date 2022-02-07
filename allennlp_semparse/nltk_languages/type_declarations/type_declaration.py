@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 from collections import defaultdict
 import itertools
 
-from overrides import overrides
+
 from nltk.sem.logic import (
     Expression,
     ApplicationExpression,
@@ -93,14 +93,12 @@ class HigherOrderType(ComplexType):
         super().__init__(first, second)
         self.num_arguments = num_arguments
 
-    @overrides
     def return_type(self) -> Type:
         return_type = self.second
         for _ in range(self.num_arguments - 1):
             return_type = return_type.second
         return return_type
 
-    @overrides
     def argument_types(self) -> List[Type]:
         arguments = [self.first]
         remaining_type = self.second
@@ -155,7 +153,6 @@ class MultiMatchNamedBasicType(NamedBasicType):
         super().__init__(string_rep)
         self.types_to_match = set(types_to_match)
 
-    @overrides
     def matches(self, other):
         return super().matches(other) or other in self.types_to_match
 
@@ -189,7 +186,6 @@ class PlaceholderType(ComplexType):
 
     _signature: str = None
 
-    @overrides
     def resolve(self, other: Type) -> Optional[Type]:
         """
         This method is central to type inference and checking. When a variable's type is being
@@ -221,7 +217,6 @@ class PlaceholderType(ComplexType):
         """
         raise NotImplementedError
 
-    @overrides
     def substitute_any_type(self, basic_types: Set[BasicType]) -> List[Type]:
         """
         Placeholders mess with substitutions, so even though this method is implemented in the
@@ -230,16 +225,13 @@ class PlaceholderType(ComplexType):
         """
         raise NotImplementedError
 
-    @overrides
     def __eq__(self, other) -> bool:
         return self.__class__ == other.__class__
 
-    @overrides
     def matches(self, other) -> bool:
         # self == ANY_TYPE = True iff self.first == ANY_TYPE and self.second == ANY_TYPE.
         return self == other or self == ANY_TYPE or other == ANY_TYPE
 
-    @overrides
     def __str__(self):
         if self == ANY_TYPE:
             # If the type remains unresolved, we return ? instead of its signature.
@@ -247,7 +239,6 @@ class PlaceholderType(ComplexType):
         else:
             return self._signature
 
-    @overrides
     def str(self):
         if self == ANY_TYPE:
             return ANY_TYPE.str()
@@ -287,7 +278,6 @@ class UnaryOpType(PlaceholderType):
         self._allowed_substitutions = allowed_substitutions
         self._signature = signature
 
-    @overrides
     def resolve(self, other) -> Optional[Type]:
         """See ``PlaceholderType.resolve``"""
         if not isinstance(other, NltkComplexType):
@@ -300,11 +290,9 @@ class UnaryOpType(PlaceholderType):
             return None
         return UnaryOpType(other_first, self._allowed_substitutions, self._signature)
 
-    @overrides
     def get_application_type(self, argument_type: Type) -> Type:
         return argument_type
 
-    @overrides
     def substitute_any_type(self, basic_types: Set[BasicType]) -> List[Type]:
         if self.first != ANY_TYPE:
             return [self]
@@ -347,7 +335,6 @@ class BinaryOpType(PlaceholderType):
         self._allowed_substitutions = allowed_substitutions
         self._signature = signature
 
-    @overrides
     def resolve(self, other: Type) -> Optional[Type]:
         """See ``PlaceholderType.resolve``"""
         if not isinstance(other, NltkComplexType):
@@ -365,11 +352,9 @@ class BinaryOpType(PlaceholderType):
             return None
         return BinaryOpType(other_first, self._allowed_substitutions, self._signature)
 
-    @overrides
     def get_application_type(self, argument_type: Type) -> Type:
         return ComplexType(argument_type, argument_type)
 
-    @overrides
     def substitute_any_type(self, basic_types: Set[BasicType]) -> List[Type]:
         if self.first != ANY_TYPE:
             return [self]
@@ -392,7 +377,6 @@ class TypedConstantExpression(ConstantExpression):
         super(TypedConstantExpression, self).__init__(variable)
         self._default_type = default_type
 
-    @overrides
     def _set_type(self, other_type=ANY_TYPE, signature=None) -> None:
         if other_type == ANY_TYPE:
             super(TypedConstantExpression, self)._set_type(self._default_type, signature)
@@ -487,13 +471,11 @@ class DynamicTypeLogicParser(LogicParser):
             name for name, type_ in type_signatures.items() if isinstance(type_, PlaceholderType)
         }
 
-    @overrides
     def make_ApplicationExpression(self, function, argument):
         return DynamicTypeApplicationExpression(
             function, argument, self._variables_with_placeholders
         )
 
-    @overrides
     def make_VariableExpression(self, name):
         if ":" in name:
             prefix = name.split(":")[0]

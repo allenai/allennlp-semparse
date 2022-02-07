@@ -9,7 +9,7 @@ history.
 from collections import defaultdict
 from typing import List, Set, Dict
 
-from overrides import overrides
+
 import torch
 
 from allennlp_semparse.state_machines import State, TransitionFunction
@@ -53,7 +53,6 @@ class SimpleTransitionFunction(TransitionFunction[SimpleState]):
         # getting higher numbers first (and to differentiate action sequences).
         self._include_value_in_score = include_value_in_score
 
-    @overrides
     def take_step(
         self, state: SimpleState, max_actions: int = None, allowed_actions: List[Set] = None
     ) -> List[SimpleState]:

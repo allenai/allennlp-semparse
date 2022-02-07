@@ -3,7 +3,6 @@ import os
 from functools import partial
 from typing import Any, Callable, List, Dict, Tuple, Union
 
-from overrides import overrides
 
 import torch
 
@@ -198,7 +197,6 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
                 vocab_index_mapping.append((index, archived_token_index))
         return vocab_index_mapping
 
-    @overrides
     def forward(
         self,  # type: ignore
         sentence: Dict[str, torch.LongTensor],
@@ -382,7 +380,6 @@ class NlvrCoverageSemanticParser(NlvrSemanticParser):
             self._consistency(1 if all(sequence_is_correct) else 0)
             self._agenda_coverage(in_agenda_ratio)
 
-    @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         return {
             "denotation_accuracy": self._denotation_accuracy.get_metric(reset),

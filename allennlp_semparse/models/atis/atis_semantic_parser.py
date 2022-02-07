@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 import difflib
 import sqlparse
-from overrides import overrides
+
 import torch
 
 from allennlp.common.util import pad_sequence_to_length
@@ -137,7 +137,6 @@ class AtisSemanticParser(Model):
             num_layers=self._decoder_num_layers,
         )
 
-    @overrides
     def forward(
         self,  # type: ignore
         utterance: Dict[str, torch.LongTensor],
@@ -424,7 +423,6 @@ class AtisSemanticParser(Model):
             return False
         return True
 
-    @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         """
         We track four metrics here:
@@ -545,7 +543,6 @@ class AtisSemanticParser(Model):
 
         return GrammarStatelet(["statement"], translated_valid_actions, self.is_nonterminal)
 
-    @overrides
     def make_output_human_readable(
         self, output_dict: Dict[str, torch.Tensor]
     ) -> Dict[str, torch.Tensor]:
