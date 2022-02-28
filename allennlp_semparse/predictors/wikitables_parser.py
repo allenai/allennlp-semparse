@@ -1,4 +1,3 @@
-from overrides import overrides
 import torch
 
 from allennlp.common.util import JsonDict
@@ -14,7 +13,6 @@ class WikiTablesParserPredictor(Predictor):
     model.
     """
 
-    @overrides
     def _json_to_instance(self, json_dict: JsonDict) -> Instance:
         """
         Expects JSON that looks like ``{"question": "...", "table": "..."}``.
@@ -30,7 +28,6 @@ class WikiTablesParserPredictor(Predictor):
         )
         return instance
 
-    @overrides
     def predict_json(self, inputs: JsonDict) -> JsonDict:
         """
         We need to override this because of the interactive beam search aspects.

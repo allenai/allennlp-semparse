@@ -1,13 +1,10 @@
 import logging
-from typing import Any, List, Dict
-
-from overrides import overrides
+from typing import Any, Dict, List
 
 import torch
-
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models.model import Model
-from allennlp.modules import Attention, TextFieldEmbedder, Seq2SeqEncoder
+from allennlp.modules import Attention, Seq2SeqEncoder, TextFieldEmbedder
 from allennlp.nn import Activation, util
 
 from allennlp_semparse.domain_languages import NlvrLanguage
@@ -82,9 +79,8 @@ class NlvrDirectSemanticParser(NlvrSemanticParser):
         self._max_decoding_steps = max_decoding_steps
         self._action_padding_index = -1
 
-    @overrides
-    def forward(
-        self,  # type: ignore
+    def forward(  # type: ignore
+        self,
         sentence: Dict[str, torch.LongTensor],
         worlds: List[List[NlvrLanguage]],
         actions: List[List[ProductionRule]],
@@ -194,7 +190,6 @@ class NlvrDirectSemanticParser(NlvrSemanticParser):
                 self._denotation_accuracy(1 if correct_in_world else 0)
             self._consistency(1 if all(sequence_is_correct) else 0)
 
-    @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         return {
             "denotation_accuracy": self._denotation_accuracy.get_metric(reset),

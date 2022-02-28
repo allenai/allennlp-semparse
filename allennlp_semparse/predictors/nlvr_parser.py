@@ -1,6 +1,5 @@
 import json
 
-from overrides import overrides
 
 from allennlp.common.util import JsonDict
 from allennlp.data import Instance
@@ -9,7 +8,6 @@ from allennlp.predictors.predictor import Predictor
 
 @Predictor.register("nlvr-parser")
 class NlvrParserPredictor(Predictor):
-    @overrides
     def _json_to_instance(self, json_dict: JsonDict) -> Instance:
         sentence = json_dict["sentence"]
         if "worlds" in json_dict:
@@ -30,7 +28,6 @@ class NlvrParserPredictor(Predictor):
         )
         return instance
 
-    @overrides
     def dump_line(self, outputs: JsonDict) -> str:
         if "identifier" in outputs:
             # Returning CSV lines for official evaluation

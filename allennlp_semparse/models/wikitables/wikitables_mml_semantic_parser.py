@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from overrides import overrides
+
 import torch
 
 from allennlp.data import Vocabulary
@@ -128,7 +128,6 @@ class WikiTablesMmlSemanticParser(WikiTablesSemanticParser):
             dropout=dropout,
         )
 
-    @overrides
     def forward(
         self,  # type: ignore
         question: Dict[str, torch.LongTensor],

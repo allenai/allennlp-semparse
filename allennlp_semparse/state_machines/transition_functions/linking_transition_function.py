@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
-from overrides import overrides
 
 import torch
 
@@ -86,7 +85,6 @@ class LinkingTransitionFunction(BasicTransitionFunction):
                 "dimension for scalar value",
             )
 
-    @overrides
     def _compute_action_probabilities(
         self,
         state: GrammarBasedState,

@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, NamedTuple
 
 import torch
-from overrides import overrides
+
 
 from allennlp.data.fields.field import Field
 from allennlp.data.vocabulary import Vocabulary
@@ -87,21 +87,17 @@ class ProductionRuleField(Field[ProductionRule]):  # type: ignore
         self._vocab_namespace = vocab_namespace
         self._rule_id: int = None
 
-    @overrides
     def count_vocab_items(self, counter: Dict[str, Dict[str, int]]):
         if self.is_global_rule:
             counter[self._vocab_namespace][self.rule] += 1
 
-    @overrides
     def index(self, vocab: Vocabulary):
         if self.is_global_rule and self._rule_id is None:
             self._rule_id = vocab.get_token_index(self.rule, self._vocab_namespace)
 
-    @overrides
     def get_padding_lengths(self) -> Dict[str, int]:
         return {}
 
-    @overrides
     def as_tensor(self, padding_lengths: Dict[str, int]) -> ProductionRule:
         if self.is_global_rule:
             tensor = torch.LongTensor([self._rule_id])
@@ -109,14 +105,12 @@ class ProductionRuleField(Field[ProductionRule]):  # type: ignore
             tensor = None
         return ProductionRule(self.rule, self.is_global_rule, tensor, self.nonterminal)
 
-    @overrides
     def empty_field(self):
         # This _does_ get called, because we don't want to bother with modifying the ListField to
         # ignore padding for these.  We just make sure the rule is the empty string, which the
         # model will use to know that this rule is just padding.
         return ProductionRuleField(rule="", is_global_rule=False)
 
-    @overrides
     def batch_tensors(
         self, tensor_list: List[ProductionRule]
     ) -> List[ProductionRule]:  # type: ignore

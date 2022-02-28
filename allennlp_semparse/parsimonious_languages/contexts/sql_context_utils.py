@@ -3,7 +3,7 @@ from typing import List, Dict, Set
 from collections import defaultdict
 from sys import exc_info
 from six import reraise
-from overrides import overrides
+
 
 from parsimonious.expressions import Literal, OneOf, Sequence
 from parsimonious.nodes import Node, NodeVisitor
@@ -173,7 +173,6 @@ class SqlVisitor(NodeVisitor):
         self.grammar: Grammar = grammar
         self.keywords_to_uppercase = keywords_to_uppercase or []
 
-    @overrides
     def generic_visit(self, node: Node, visited_children: List[None]) -> List[str]:
         self.add_action(node)
         if node.expr.name == "statement":
@@ -211,7 +210,6 @@ class SqlVisitor(NodeVisitor):
             rule = nonterminal + right_hand_side
             self.action_sequence = [rule] + self.action_sequence
 
-    @overrides
     def visit(self, node):
         """
         See the ``NodeVisitor`` visit method. This just changes the order in which

@@ -8,7 +8,6 @@ import os
 import gzip
 import tarfile
 
-from overrides import overrides
 
 from allennlp.data import DatasetReader
 from allennlp.data.fields import Field, TextField, MetadataField, ListField, IndexField
@@ -147,7 +146,6 @@ class WikiTablesDatasetReader(DatasetReader):
         self._max_table_tokens = max_table_tokens
         self._output_agendas = output_agendas
 
-    @overrides
     def _read(self, file_path: str):
         # Checking if there is a single tarball with all the logical forms. If so, untaring it
         # first.

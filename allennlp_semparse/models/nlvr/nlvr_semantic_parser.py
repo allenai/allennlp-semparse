@@ -1,7 +1,6 @@
 import logging
 from typing import Dict, List, Tuple
 
-from overrides import overrides
 
 import torch
 
@@ -76,7 +75,6 @@ class NlvrSemanticParser(Model):
         self._first_action_embedding = torch.nn.Parameter(torch.FloatTensor(action_embedding_dim))
         torch.nn.init.normal_(self._first_action_embedding)
 
-    @overrides
     def forward(self):  # type: ignore
         # Sub-classes should define their own logic here.
         raise NotImplementedError
@@ -216,7 +214,6 @@ class NlvrSemanticParser(Model):
             )
         return GrammarStatelet([START_SYMBOL], translated_valid_actions, world.is_nonterminal)
 
-    @overrides
     def make_output_human_readable(
         self, output_dict: Dict[str, torch.Tensor]
     ) -> Dict[str, torch.Tensor]:

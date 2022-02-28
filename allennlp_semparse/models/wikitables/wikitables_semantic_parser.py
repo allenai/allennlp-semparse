@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
-from overrides import overrides
+
 import torch
 
 from allennlp.common.checks import check_dimensions_match
@@ -527,7 +527,6 @@ class WikiTablesSemanticParser(Model):
         # Return 1 if the predicted sequence is anywhere in the list of targets.
         return torch.max(torch.min(targets_trimmed.eq(predicted_tensor), dim=1)[0]).item()
 
-    @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         """
         We track three metrics here:
@@ -739,7 +738,6 @@ class WikiTablesSemanticParser(Model):
         if metadata is not None:
             outputs["question_tokens"] = [x["question_tokens"] for x in metadata]
 
-    @overrides
     def make_output_human_readable(
         self, output_dict: Dict[str, torch.Tensor]
     ) -> Dict[str, torch.Tensor]:

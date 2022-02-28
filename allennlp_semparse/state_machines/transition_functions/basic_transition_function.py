@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Set, Tuple
 
-from overrides import overrides
 
 import torch
 from torch.nn.modules.rnn import LSTM, LSTMCell
@@ -89,7 +88,6 @@ class BasicTransitionFunction(TransitionFunction[GrammarBasedState]):
         else:
             self._dropout = lambda x: x
 
-    @overrides
     def take_step(
         self,
         state: GrammarBasedState,

@@ -3,7 +3,7 @@ from typing import Dict, List
 import logging
 from copy import deepcopy
 
-from overrides import overrides
+
 from parsimonious.exceptions import ParseError
 
 from allennlp.common.file_utils import cached_path
@@ -85,7 +85,6 @@ class AtisDatasetReader(DatasetReader):
         self._database_file = database_file
         self._num_turns_to_concatenate = num_turns_to_concatenate
 
-    @overrides
     def _read(self, file_path: str):
         # if `file_path` is a URL, redirect to the cache
         file_path = cached_path(file_path)
@@ -106,7 +105,6 @@ class AtisDatasetReader(DatasetReader):
                         continue
                     yield instance
 
-    @overrides
     def text_to_instance(  # type: ignore
         self, utterances: List[str], sql_query_labels: List[str] = None
     ) -> Instance:

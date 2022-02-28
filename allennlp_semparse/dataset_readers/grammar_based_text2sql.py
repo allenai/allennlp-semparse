@@ -5,7 +5,6 @@ import glob
 import os
 import sqlite3
 
-from overrides import overrides
 
 from allennlp.common.file_utils import cached_path
 from allennlp.common.checks import ConfigurationError
@@ -100,7 +99,6 @@ class GrammarBasedText2SqlDatasetReader(DatasetReader):
             use_untyped_entities=use_untyped_entities,
         )
 
-    @overrides
     def _read(self, file_path: str):
         """
         This dataset reader consumes the data from
@@ -139,7 +137,6 @@ class GrammarBasedText2SqlDatasetReader(DatasetReader):
                 if instance is not None:
                     yield instance
 
-    @overrides
     def text_to_instance(
         self,  # type: ignore
         query: List[str],
