@@ -72,7 +72,7 @@ class Arithmetic(DomainLanguage):
 
     @predicate
     def power(self, num1: int, num2: int) -> int:
-        return num1 ** num2
+        return num1**num2
 
     @predicate
     def multiply(self, num1: int, num2: int) -> int:
