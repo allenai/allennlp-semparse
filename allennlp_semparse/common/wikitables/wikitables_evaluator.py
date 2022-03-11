@@ -395,7 +395,7 @@ def main():
                 target_values = target_values_map[ex_id]
                 predicted_values = to_value_list(line[1:])
                 correct = check_denotation(target_values, predicted_values)
-                print(u"%s\t%s\t%s\t%s" % (ex_id, correct, target_values, predicted_values))
+                print("%s\t%s\t%s\t%s" % (ex_id, correct, target_values, predicted_values))
                 num_examples += 1
                 if correct:
                     num_correct += 1
