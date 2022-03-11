@@ -527,7 +527,7 @@ class TableQuestionContext:
                     num_zeros = 1
                     while text[-(num_zeros + 1)] == "0":
                         num_zeros += 1
-                    numbers.append((str(int(number + 10 ** num_zeros)), i))
+                    numbers.append((str(int(number + 10**num_zeros)), i))
         return numbers
 
     def _string_in_table(self, candidate: str) -> List[str]:

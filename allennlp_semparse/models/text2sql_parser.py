@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import difflib
 import sqlparse
-from overrides import overrides
+
 import torch
 
 from allennlp.data import Vocabulary
@@ -116,7 +116,6 @@ class Text2SqlParser(Model):
         )
         initializer(self)
 
-    @overrides
     def forward(
         self,  # type: ignore
         tokens: Dict[str, torch.LongTensor],
@@ -289,7 +288,6 @@ class Text2SqlParser(Model):
             return False
         return True
 
-    @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         """
         We track four metrics here:
@@ -384,7 +382,6 @@ class Text2SqlParser(Model):
             ["statement"], translated_valid_actions, self.is_nonterminal, reverse_productions=True
         )
 
-    @overrides
     def make_output_human_readable(
         self, output_dict: Dict[str, torch.Tensor]
     ) -> Dict[str, torch.Tensor]:

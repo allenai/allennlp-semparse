@@ -3,7 +3,7 @@ import os
 from functools import partial
 from typing import Dict, List, Tuple, Set, Any
 
-from overrides import overrides
+
 import torch
 
 from allennlp.data import Vocabulary
@@ -216,7 +216,6 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
                 vocab_index_mapping.append((index, archived_token_index))
         return vocab_index_mapping
 
-    @overrides
     def forward(
         self,  # type: ignore
         question: Dict[str, torch.LongTensor],
@@ -431,7 +430,6 @@ class WikiTablesErmSemanticParser(WikiTablesSemanticParser):
             cost = checklist_cost + (1 - self._checklist_cost_weight) * denotation_cost
         return cost
 
-    @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         """
         The base class returns a dict with dpd accuracy, denotation accuracy, and logical form

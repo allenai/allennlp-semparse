@@ -20,8 +20,6 @@ class SqlExecutor:
     def __init__(self, database_file: str) -> None:
         # Initialize a cursor to our sqlite database, so we can execute SQL queries for denotation accuracy.
         self._database_file = cached_path(database_file)
-        self._connection = sqlite3.connect(self._database_file)
-        self._cursor = self._connection.cursor()
 
     def evaluate_sql_query(self, predicted_sql_query: str, sql_query_labels: List[str]) -> int:
         # We set the logging level for the subprocesses to warning, otherwise, it will
@@ -31,16 +29,17 @@ class SqlExecutor:
         # Since the query might hang, we run in another process and kill it if it
         # takes too long.
         process = Process(
-            target=self._evaluate_sql_query_subprocess, args=(predicted_sql_query, sql_query_labels)
+            target=self._evaluate_sql_query_subprocess,
+            args=(self._database_file, predicted_sql_query, sql_query_labels),
         )
         process.start()
 
         # If the query has not finished in 3 seconds then we will proceed.
-        process.join(3)
+        process.join(10)
         denotation_correct = process.exitcode  # type: ignore
 
         if process.is_alive():
-            logger.warning("Evaluating query took over 3 seconds, skipping query")
+            logger.warning("Evaluating query took over 10 seconds, skipping query")
             process.terminate()
             process.join()
 
@@ -49,20 +48,24 @@ class SqlExecutor:
 
         return denotation_correct
 
+    @staticmethod
     def _evaluate_sql_query_subprocess(
-        self, predicted_query: str, sql_query_labels: List[str]
-    ) -> int:
+        database_file: str, predicted_query: str, sql_query_labels: List[str]
+    ) -> None:
         """
         We evaluate here whether the predicted query and the query label evaluate to the
         exact same table. This method is only called by the subprocess, so we just exit with
         1 if it is correct and 0 otherwise.
         """
 
-        postprocessed_predicted_query = self.postprocess_query_sqlite(predicted_query)
+        connection = sqlite3.connect(database_file)
+        cursor = connection.cursor()
+
+        postprocessed_predicted_query = SqlExecutor.postprocess_query_sqlite(predicted_query)
 
         try:
-            self._cursor.execute(postprocessed_predicted_query)
-            predicted_rows = self._cursor.fetchall()
+            cursor.execute(postprocessed_predicted_query)
+            predicted_rows = cursor.fetchall()
         except sqlite3.Error as error:
             logger.warning(f"Error executing predicted: {error}")
             exit(0)
@@ -70,10 +73,10 @@ class SqlExecutor:
         # If predicted table matches any of the reference tables then it is counted as correct.
         target_rows = None
         for sql_query_label in sql_query_labels:
-            postprocessed_sql_query_label = self.postprocess_query_sqlite(sql_query_label)
+            postprocessed_sql_query_label = SqlExecutor.postprocess_query_sqlite(sql_query_label)
             try:
-                self._cursor.execute(postprocessed_sql_query_label)
-                target_rows = self._cursor.fetchall()
+                cursor.execute(postprocessed_sql_query_label)
+                target_rows = cursor.fetchall()
             except sqlite3.Error as error:
                 logger.warning(f"Error executing predicted: {error}")
             if predicted_rows == target_rows:
