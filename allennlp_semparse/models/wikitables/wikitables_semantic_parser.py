@@ -203,7 +203,7 @@ class WikiTablesSemanticParser(Model):
 
             neighbor_mask = util.get_text_field_mask(
                 {"ignored": {"ignored": neighbor_indices + 1}}, num_wrapping_dims=1
-            ).float()
+            )
 
             # Encoder initialized to easily obtain a masked average.
             neighbor_encoder = TimeDistributed(
@@ -435,7 +435,7 @@ class WikiTablesSemanticParser(Model):
         self,
         worlds: List[WikiTablesLanguage],
         linking_scores: torch.FloatTensor,
-        question_mask: torch.LongTensor,
+        question_mask: torch.BoolTensor,
         entity_type_dict: Dict[int, int],
     ) -> torch.FloatTensor:
         """
@@ -448,7 +448,7 @@ class WikiTablesSemanticParser(Model):
         worlds : ``List[WikiTablesLanguage]``
         linking_scores : ``torch.FloatTensor``
             Has shape (batch_size, num_question_tokens, num_entities).
-        question_mask: ``torch.LongTensor``
+        question_mask: ``torch.BoolTensor``
             Has shape (batch_size, num_question_tokens).
         entity_type_dict : ``Dict[int, int]``
             This is a mapping from ((batch_index * num_entities) + entity_index) to entity type id.
@@ -514,7 +514,7 @@ class WikiTablesSemanticParser(Model):
             probabilities = torch.cat(all_probabilities, dim=1)
             batch_probabilities.append(probabilities)
         batch_probabilities = torch.stack(batch_probabilities, dim=0)
-        return batch_probabilities * question_mask.unsqueeze(-1).float()
+        return batch_probabilities * question_mask.unsqueeze(-1)
 
     @staticmethod
     def _action_history_match(predicted: List[int], targets: torch.LongTensor) -> int:

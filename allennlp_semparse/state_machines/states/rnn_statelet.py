@@ -40,7 +40,7 @@ class RnnStatelet:
         mask unmodified, regardless of what's in the grouping for this state.  We'll use the
         ``batch_indices`` for the group to pull pieces out of these lists when we're ready to
         actually do some computation.
-    encoder_output_mask : ``List[torch.Tensor]``
+    encoder_output_mask : ``List[torch.BoolTensor]``
         A list of variables, each of shape ``(input_sequence_length,)``, containing a mask over
         question tokens for each batch instance.  This is a list over batch elements, for the same
         reasons as above.
@@ -53,7 +53,7 @@ class RnnStatelet:
         previous_action_embedding: torch.Tensor,
         attended_input: torch.Tensor,
         encoder_outputs: List[torch.Tensor],
-        encoder_output_mask: List[torch.Tensor],
+        encoder_output_mask: List[torch.BoolTensor],
     ) -> None:
         self.hidden_state = hidden_state
         self.memory_cell = memory_cell

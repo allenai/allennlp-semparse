@@ -57,7 +57,7 @@ class TestWikiTablesMmlSemanticParser(ModelTestCase):
             [[0, 1, 8, 10, 10, 4], [3, 2, -1, -2, 1, -6]],
         ]
         linking_scores = torch.FloatTensor(linking_scores)
-        question_mask = torch.LongTensor([[1, 1], [1, 0]])
+        question_mask = torch.tensor([[True, True], [True, False]])
         _, entity_type_dict = self.model._get_type_vector(worlds, num_entities, linking_scores)
 
         # (batch_size, num_question_tokens, num_entities)

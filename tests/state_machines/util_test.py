@@ -10,8 +10,11 @@ class TestStateMachinesUtil(SemparseTestCase):
         targets = torch.Tensor(
             [[[2, 3, 4], [1, 3, 4], [1, 2, 4]], [[3, 4, 0], [2, 3, 4], [0, 0, 0]]]
         )
-        target_mask = torch.Tensor(
-            [[[1, 1, 1], [1, 1, 1], [1, 1, 1]], [[1, 1, 0], [1, 1, 1], [0, 0, 0]]]
+        target_mask = torch.tensor(
+            [
+                [[True, True, True], [True, True, True], [True, True, True]],
+                [[True, True, False], [True, True, True], [False, False, False]],
+            ]
         )
         prefix_tree = util.construct_prefix_tree(targets, target_mask)
 

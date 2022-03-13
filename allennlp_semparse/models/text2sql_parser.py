@@ -226,7 +226,10 @@ class Text2SqlParser(Model):
         return outputs
 
     def _get_initial_state(
-        self, encoder_outputs: torch.Tensor, mask: torch.Tensor, actions: List[List[ProductionRule]]
+        self,
+        encoder_outputs: torch.Tensor,
+        mask: torch.BoolTensor,
+        actions: List[List[ProductionRule]]
     ) -> GrammarBasedState:
 
         batch_size = encoder_outputs.size(0)

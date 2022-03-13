@@ -37,7 +37,7 @@ class ConstrainedBeamSearch:
         A ``(batch_size, num_sequences, sequence_length)`` tensor containing the transition
         sequences that we will search in.  The values in this tensor must match whatever the
         ``State`` keeps in its ``action_history`` variable (typically this is action indices).
-    allowed_sequence_mask : ``torch.Tensor``
+    allowed_sequence_mask : ``torch.BoolTensor``
         A ``(batch_size, num_sequences, sequence_length)`` tensor indicating whether each entry in
         the ``allowed_sequences`` tensor is padding.  The allowed sequences could be padded both on
         the ``num_sequences`` dimension and the ``sequence_length`` dimension.
@@ -53,7 +53,7 @@ class ConstrainedBeamSearch:
         self,
         beam_size: Optional[int],
         allowed_sequences: torch.Tensor,
-        allowed_sequence_mask: torch.Tensor,
+        allowed_sequence_mask: torch.BoolTensor,
         per_node_beam_size: int = None,
     ) -> None:
         self._beam_size = beam_size
